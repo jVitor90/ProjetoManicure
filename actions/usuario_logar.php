@@ -25,7 +25,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             //criar sessão com os dados vindo do banco de dados
             $_SESSION['usuario'] = $resultado[0];
             //redirecionar para a área padina inicial
-            header('Location: ../html/login.html');
+            header('Location: '); // redirecionar para o conteudo principal
             exit();
         }
     }
