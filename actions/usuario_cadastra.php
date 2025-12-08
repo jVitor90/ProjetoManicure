@@ -19,8 +19,10 @@
         else{
             if($usuario->Cadastrar() == 1){
                 // header('Location: ../html/login.html');
+                print_r('Cadastro realizado com sucesso!');
             }
             else{
+                print_r('Erro ao cadastrar usuário.');
                 // header('Location: ../html/login.html');
                 // header('Location: ../html/cadastro.html');
             }

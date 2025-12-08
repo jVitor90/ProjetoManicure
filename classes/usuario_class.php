@@ -9,14 +9,14 @@ class Usuario{
     public $id;
 
     public function Cadastrar(){
-        $sql = "INSERT INTO usuarios (nome, email, senha,)
-        VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO usuarios (nome, email, senha)
+        VALUES (?, ?, ?)";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
-        $comando->execite([
+        $comando->execute([
             $this->nome,
             $this->email,
-            hash('sha256', $this->senha),
+            hash('sha256', $this->senha)
         ]);
         Banco::desconectar();
         return $comando->rowCount();

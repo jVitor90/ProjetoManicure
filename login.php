@@ -86,7 +86,7 @@
  
                     <!-- Formulário de Login -->
                     <div class="form-wrapper active" id="loginForm">
-                        <form id="formLogin" action="../actions/usuario_logar.php" method="POST" novalidate>
+                        <form id="formLogin" action="./actions/usuario_logar.php" method="POST" novalidate>
                             <div class="mb-3">
                                 <label for="emailLogin" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="emailLogin" name="email" required>
@@ -106,7 +106,7 @@
  
                     <!-- Formulário de Cadastro -->
                     <div class="form-wrapper" id="cadastroForm">
-                        <form id="formCadastro" action="../actions/usuario_cadastrar.php" method="POST" novalidate>
+                        <form id="formCadastro" action="./actions/usuario_cadastra.php" method="POST" novalidate>
                             <div class="mb-3">
                                 <label for="nomeCad" class="form-label">Nome Completo</label>
                                 <input type="text" class="form-control" id="nomeCad" name="nome" required>
