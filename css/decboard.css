@@ -1,0 +1,401 @@
+/* ===== VARIÁVEIS ===== */
+:root {
+    --cor-rosa: #d4a5a5;
+    --cor-rosa-claro: #f8e8e8;
+    --cor-rosa-escuro: #c48888;
+    --cor-dourado: #d4af37;
+    --cor-verde: #22c55e;
+    --cor-amarelo: #f59e0b;
+    --cor-texto: #1f2937;
+    --cor-texto-claro: #6b7280;
+    --cor-fundo: #faf8f7;
+    --cor-branco: #ffffff;
+    --cor-borda: #e5e7eb;
+    --sombra-leve: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --sombra-media: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --raio-padrao: 12px;
+    --raio-pequeno: 8px;
+    --fonte-titulo: "Playfair Display", serif;
+    --fonte-corpo: "Inter", sans-serif;
+  }
+  
+  /* ===== RESET E BASE ===== */
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: var(--fonte-corpo);
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* ===== PÁGINA ADMIN ===== */
+  .pagina-admin {
+    min-height: 100vh;
+  }
+  
+  /* ===== CABEÇALHO ===== */
+  /* Styling Bootstrap badge component for admin dashboard */
+  .badge-admin {
+    background: linear-gradient(135deg, var(--cor-verde), #16a34a) !important;
+    color: white !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+  
+  .titulo-boas-vindas {
+    font-family: var(--fonte-titulo);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    margin-bottom: 0.25rem;
+  }
+  
+  .subtitulo {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+  
+  /* Styling Bootstrap buttons for header actions */
+  .btn-configuracoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cor-branco) !important;
+    border: 1px solid var(--cor-borda) !important;
+    color: var(--cor-texto) !important;
+    font-weight: 500;
+    padding: 10px 18px !important;
+    border-radius: var(--raio-pequeno);
+    transition: all 0.2s ease;
+  }
+  
+  .btn-configuracoes:hover {
+    background: var(--cor-fundo) !important;
+    color: var(--cor-texto) !important;
+  }
+  
+  .btn-novo-servico {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--cor-rosa), var(--cor-rosa-escuro)) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 500;
+    padding: 10px 18px !important;
+    border-radius: var(--raio-pequeno);
+    transition: all 0.2s ease;
+  }
+  
+  .btn-novo-servico:hover {
+    background: linear-gradient(135deg, var(--cor-rosa-escuro), #b87878) !important;
+    color: white !important;
+  }
+  
+  /* ===== CARDS ESTATÍSTICAS ===== */
+  .card-estatistica {
+    background: var(--cor-branco);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-padrao);
+    padding: 20px;
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .card-estatistica:hover {
+    box-shadow: var(--sombra-media);
+  }
+  
+  .rotulo-estatistica {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--cor-texto-claro);
+    margin-bottom: 8px;
+  }
+  
+  .valor-estatistica {
+    font-family: var(--fonte-titulo);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+  }
+  
+  .valor-rosa {
+    color: var(--cor-rosa-escuro);
+  }
+  
+  .estrela {
+    color: var(--cor-dourado);
+  }
+  
+  .texto-auxiliar {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--cor-texto-claro);
+    margin-top: 2px;
+  }
+  
+  .icone-estatistica {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .icone-rosa {
+    background: var(--cor-rosa-claro);
+    color: var(--cor-rosa-escuro);
+  }
+  
+  .icone-cinza {
+    background: #f3f4f6;
+    color: var(--cor-texto-claro);
+  }
+  
+  /* ===== PAINÉIS ===== */
+  .card-painel {
+    background: var(--cor-branco);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-padrao);
+    padding: 24px;
+  }
+  
+  .titulo-painel {
+    font-family: var(--fonte-titulo);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+  }
+  
+  .titulo-painel-pequeno {
+    font-family: var(--fonte-titulo);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    margin: 0;
+  }
+  
+  .texto-data {
+    font-size: 0.85rem;
+    color: var(--cor-texto-claro);
+  }
+  
+  .link-ver-tudo {
+    color: var(--cor-texto-claro);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .link-ver-tudo:hover {
+    color: var(--cor-rosa-escuro);
+  }
+  
+  /* ===== LISTA DE AGENDAMENTOS ===== */
+  .lista-agendamentos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .item-agendamento {
+    background: var(--cor-fundo);
+    border-radius: var(--raio-pequeno);
+    padding: 16px;
+  }
+  
+  .avatar-cliente {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--cor-rosa), var(--cor-rosa-escuro));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  
+  .avatar-roxo {
+    background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  }
+  
+  .nome-cliente {
+    display: block;
+    font-weight: 600;
+    color: var(--cor-texto);
+    font-size: 0.95rem;
+  }
+  
+  .servico-cliente {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--cor-texto-claro);
+  }
+  
+  .info-agendamento {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .horario {
+    font-weight: 600;
+    color: var(--cor-texto);
+    font-size: 0.95rem;
+  }
+  
+  .preco {
+    color: var(--cor-rosa-escuro);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  /* Badges de Status usando Bootstrap badge */
+  .badge-confirmado {
+    background: #dcfce7 !important;
+    color: #16a34a !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  
+  .badge-pendente {
+    background: #f3f4f6 !important;
+    color: var(--cor-texto-claro) !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  
+  /* ===== AÇÕES RÁPIDAS ===== */
+  .lista-acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .item-acao {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--cor-rosa-claro);
+    border-radius: var(--raio-pequeno);
+    color: var(--cor-rosa-escuro);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  
+  .item-acao:hover {
+    background: var(--cor-rosa);
+    color: white;
+  }
+  
+  .item-acao svg {
+    flex-shrink: 0;
+  }
+  
+  /* ===== ESTE MÊS ===== */
+  .valor-grande {
+    display: block;
+    font-family: var(--fonte-titulo);
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    margin-bottom: 4px;
+  }
+  
+  .texto-auxiliar-bloco {
+    font-size: 0.85rem;
+    color: var(--cor-texto-claro);
+  }
+  
+  /* ===== BOTÃO WHATSAPP ===== */
+  .btn-whatsapp {
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    background: #25d366 !important;
+    color: white !important;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 1000;
+  }
+  
+  .btn-whatsapp:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+    color: white !important;
+  }
+  
+  /* ===== RESPONSIVO ===== */
+  @media (max-width: 991px) {
+    .titulo-boas-vindas {
+      font-size: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .titulo-boas-vindas {
+      font-size: 1.25rem;
+    }
+  
+    .valor-estatistica {
+      font-size: 1.4rem;
+    }
+  
+    .item-agendamento {
+      flex-direction: column;
+      align-items: flex-start !important;
+      gap: 12px;
+    }
+  
+    .valor-grande {
+      font-size: 1.75rem;
+    }
+  }
+  
+  @media (max-width: 575px) {
+    .titulo-boas-vindas {
+      font-size: 1.25rem;
+    }
+  
+    .card-estatistica {
+      padding: 16px;
+    }
+  
+    .valor-estatistica {
+      font-size: 1.2rem;
+    }
+  
+    .icone-estatistica {
+      width: 36px;
+      height: 36px;
+    }
+  
+    .icone-estatistica svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  

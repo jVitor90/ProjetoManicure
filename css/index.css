@@ -16,10 +16,28 @@ body {
   background-clip: text;
 }
  
-.bottom-bar {
-  border-top: 1px solid #f2d8e0 ;
+/* Custom dropdown button styles */
+.dropdown-toggle {
+  background: #eb6b9b ;
+  border: none ;
+  color: white ;
+  border-radius: 30px ;
+  padding: 14px 34px ;
+  font-weight: 600 ;
+  font-size: 15px ;
+  line-height: 1 ;
+  transition: all 0.3s ease ;
 }
- 
+.header-right .dropdown-toggle:hover {
+  background: #e03e7f;
+}
+
+.header-right .dropdown-menu {
+  border-radius: 10px;
+  padding: 8px 0;
+}
+
+
  
 /* Menu links */
 .link-nav {
