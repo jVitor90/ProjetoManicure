@@ -14,10 +14,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     }
     else{
         $resultado = $usuario->Logar();
-        if(sizeof($resultado) == 1 ){
-            header('Location: ../login.php?err=usuario_login_falha');
-            exit();
-            
+        if(sizeof($resultado) == 0 ){
+            // header('Location: ../login.php?err=usuario_login_falha');
+            // exit();
+            print_r('Usuário ou senha inválidos.');
         }
         else{
             //Iniciar sessão de 

@@ -1,3 +1,12 @@
+<?php
+//Verificar se o usuario esta logado:
+    session_start();
+    if(!isset($_SESSION['usuario.logado'])){
+        // Caso o usuario esteja Logado, retorna ao login.php
+        header("Location: login.php?err=usuario_sessao_invalida");
+        exit();
+    }
+?>
 <!doctype html>
 <html lang="pt-br">
 

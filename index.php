@@ -1,3 +1,12 @@
+<?php
+//Verifica se o usuario esta logado:
+// session_start();
+// if (!isset($_SESSION['usuario.logado'])) {
+  //Caso o usuario esteja logado, retorna ao login.php
+//   header("Location: login.php");
+//   exit();
+// }
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -10,7 +19,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../ProjetoManicure/css/index.css">
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap%22 rel=" stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap%22" rel= "stylesheet">
 </head>
 
 <body>
@@ -30,31 +39,31 @@
 
         <div class="header-right d-flex align-items-center gap-2">
           <a href="/agendar.php" class="btn btn-agendar">Agendar</a>
-          
+
           <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
               Login
-              </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li>
-                            <a 
-                            class="dropdown-item" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#exampleModal"
-                            href="#">Perfil
-                        </a>
-                    </li>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li>
+                <a
+                  class="dropdown-item"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
+                  href="#">
+                </a>
+              </li>
 
-                        <li><a class="dropdown-item" href="#">Configurações</a></li>
-                        <hr>
-                    <li>
-                            <a 
-                            class="dropdown-item d-flex align-items-center" 
-                            href="#">Sair
-                            
-                        </a>
-                    </li>                    
-                    </ul>
+              <li><a class="dropdown-item" href="#">Configurações</a></li>
+              <hr>
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                  href="./admin/sair.php">Sair
+
+                </a>
+              </li>
+            </ul>
           </div>
 
           <!-- botao mobile (aparece só em <lg) -->

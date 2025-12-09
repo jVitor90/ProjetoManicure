@@ -33,6 +33,7 @@ class Usuario{
         $resultado = $comando->fetchAll(PDO::FETCH_ASSOC);
         Banco::desconectar();
         return $resultado;
+
     }
 
     public function TrocarSenha(){
