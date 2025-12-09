@@ -27,8 +27,8 @@
       </div>
  
       <div class="header-right d-flex align-items-center gap-2">
-        <a href="/login" class="text-dark text-decoration-none fw-medium d-none d-lg-inline">Entrar</a>
-        <a href="/agendar" class="btn btn-agendar">Agendar</a>
+        <a href="login.php" class="text-dark text-decoration-none fw-medium d-none d-lg-inline">Entrar</a>
+        <a href="/agendar.php" class="btn btn-agendar">Agendar</a>
  
         <!-- botao mobile (aparece só em <lg) -->
         <button class="navbar-toggler d-lg-none border-0 ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">

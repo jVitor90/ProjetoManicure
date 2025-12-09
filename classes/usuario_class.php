@@ -30,7 +30,7 @@ class Usuario{
             $this->email,
             hash('sha256', $this->senha)
         ]);
-        $resultado = $comando->fetch(PDO::FETCH_ASSOC);
+        $resultado = $comando->fetchAll(PDO::FETCH_ASSOC);
         Banco::desconectar();
         return $resultado;
     }
