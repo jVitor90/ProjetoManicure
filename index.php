@@ -41,8 +41,8 @@ if (!isset($_SESSION['usuario'])) {
           <a href="/agendar.php" class="btn btn-agendar">Agendar</a>
 
           <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-              Login
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá,
+              <?=$_SESSION['usuario']['nome']?>!
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
               <li>
@@ -54,6 +54,7 @@ if (!isset($_SESSION['usuario'])) {
                 </a>
               </li>
 
+              <li><a class="dropdown-item" href="#">Perfil</a></li>
               <li><a class="dropdown-item" href="#">Configurações</a></li>
               <hr>
               <li>
