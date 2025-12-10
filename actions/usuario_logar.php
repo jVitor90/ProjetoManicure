@@ -15,9 +15,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     else{
         $resultado = $usuario->Logar();
         if(sizeof($resultado) == 0 ){
-            // header('Location: ../login.php?err=usuario_login_falha');
+            header('Location: ../login.php?err=usuario_login_falha');
             // exit();
-            print_r('Usuário ou senha inválidos.');
+        //     print_r('Usuário ou senha inválidos.');
         }
         else{
             //Iniciar sessão de 
