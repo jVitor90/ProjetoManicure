@@ -11,7 +11,7 @@ class Usuario{
     public $id;
 
     public function Cadastrar(){
-        $sql = "INSERT INTO usuarios (nome, sobrenome, email, telefone, senha, id_tipo)
+        $sql = "INSERT INTO usuarios (nome, sobrenome, email, telefone, senha)
         VALUES (?, ?, ?, ?, ?, 2)";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
