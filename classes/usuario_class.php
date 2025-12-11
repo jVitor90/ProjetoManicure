@@ -3,19 +3,23 @@ require_once('banco_class.php');
 
 class Usuario{
     public $nome;
+    public $sobrenome;
     public $email;
+    public $telefone;
     public $senha;
     public $id_tipo;
     public $id;
 
     public function Cadastrar(){
-        $sql = "INSERT INTO usuarios (nome, email, senha)
-        VALUES (?, ?, ?)";
+        $sql = "INSERT INTO usuarios (nome, sobrenome, email, telefone, senha, id_tipo)
+        VALUES (?, ?, ?, ?, ?, 2)";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
         $comando->execute([
             $this->nome,
+            $this->sobrenome,
             $this->email,
+            $this->telefone,
             hash('sha256', $this->senha)
         ]);
         Banco::desconectar();

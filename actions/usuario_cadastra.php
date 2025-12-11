@@ -4,14 +4,22 @@
         $usuario = new Usuario();
 
         $usuario->nome = strip_tags($_POST['nome']);
+        $usuario->sobrenome = strip_tags($_POST['sobrenome']);
         $usuario->email = strip_tags($_POST['email']);
+        $usuario->telefone = strip_tags($_POST['telefone']);
         $usuario->senha = strip_tags($_POST['senha']);
 
         if(empty($usuario->nome)){
             echo "O nome não foi informado";
         }
+        else if(empty($usuario->sobrenome)){
+            echo "O Sobrenome não foi informado";
+        }
         else if(empty($usuario->email)){
             echo "O Email não foi informado";
+        }
+        else if(empty($usuario->telefone)){
+            echo "O Telefone não foi informado";
         }
         else if(empty($usuario->senha)){
             echo "A senha não foi informado";
