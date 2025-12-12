@@ -7,6 +7,7 @@ if (!isset($_SESSION['usuario'])) {
   exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -19,52 +20,50 @@ if (!isset($_SESSION['usuario'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="./css/index.css">
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap%22" rel= "stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap%22" rel="stylesheet">
 </head>
 
 <body>
 
-<header class="header-custom sticky-top bg-white border-bottom">
+
+  <header class="header-custom sticky-top bg-white border-bottom">
     <div class="container-fluid px-4 position-relative">
- 
-        <!-- LOGO centralizado perfeitamente -->
-        <div class="text-center py-3">
-            <a href="/" class="logo fw-bold d-inline-block">Nail Pro</a>
-        </div>
- 
-        <!-- Ações à direita (Agendar + Login) -->
-        <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
-            <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
-            <a href="../Agendamento/index.php" class="btn btn-agendar">Deshboard</a>
- 
-            <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá,
-              <!-- <?=$_SESSION['usuario']['nome']?>! -->
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li>
-                <a
-                  class="dropdown-item"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                  href="#">
-                </a>
-              </li>
 
-              <li><a class="dropdown-item" href="#">Perfil</a></li>
-              <li><a class="dropdown-item" href="#">Configurações</a></li>
-              <hr>
-              <li>
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                  href="./admin/sair.php">Sair
+      <!-- LOGO centralizado perfeitamente -->
+      <div class="text-center py-3">
+        <a href="../index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
+      </div>
 
-                </a>
-              </li>
-            </ul>
-          </div>
+      <!-- Ações à direita (Agendar + Login) -->
+      <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
+        <a href="./Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+        <a href="./Dashboard/index.php" class="btn btn-agendar">Deshboard</a>
+
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown">
+            <!-- <?= $_SESSION['usuario']['nome'] ?>! -->
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Perfil</a></li>
+            <li><a class="dropdown-item" href="#">Configurações</a></li>
+            <hr>
+            <li><a class="dropdown-item" href="#">Sair</a></li>
+          </ul>
         </div>
+      </div>
     </div>
+
+    <!-- MENU inferior 100% centralizado -->
+    <div class="bottom-bar border-top">
+      <nav class="py-2">
+        <ul class="nav justify-content-center gap-4 mb-0">
+          <li class="nav-item"><a class="nav-link link-nav px-3" href="#servicos">Serviços</a></li>
+          <li class="nav-item"><a class="nav-link link-nav px-3" href="./Contato/index.php">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </header>
 
   <!-- HERO -->
   <section class="hero position-relative d-flex align-items-center">
@@ -86,7 +85,7 @@ if (!isset($_SESSION['usuario'])) {
           </p>
 
           <div class="d-flex flex-wrap gap-3 mb-5">
-            <a href="/agendar" class="btn btn-lg btn-primary btn-schedule">Agendar Horário</a>
+            <a href="./Agendamento/index.php" class="btn btn-lg btn-primary btn-schedule">Agendar Horário</a>
             <a href="#servicos" class="btn btn-lg btn-services">Ver Serviços</a>
           </div>
 

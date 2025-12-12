@@ -16,7 +16,7 @@ if (!isset($_SESSION['usuario'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body class="bg-white">
 
@@ -28,7 +28,7 @@ if (!isset($_SESSION['usuario'])) {
         <div class="header-left"></div>
 
         <div class="text-center">
-          <a href="/" class="logo fw-bold d-inline-block">Nail Pro</a>
+          <a href="./index.php class="logo fw-bold d-inline-block">Nail Pro</a>
         </div>
 
         <div class="header-right d-flex align-items-center gap-2">
@@ -73,9 +73,7 @@ if (!isset($_SESSION['usuario'])) {
         <nav class="py-2">
           <ul class="nav justify-content-center gap-4 mb-0">
             <li class="nav-item"><a class="nav-link link-nav px-3" href="#servicos">Serviços</a></li>
-            <li class="nav-item"><a class="nav-link link-nav px-3" href="#portfolio">Portfólio</a></li>
-            <li class="nav-item"><a class="nav-link link-nav px-3" href="#depoimentos">Depoimentos</a></li>
-            <li class="nav-item"><a class="nav-link link-nav px-3" href="#contato">Contato</a></li>
+            <li class="nav-item"><a class="nav-link link-nav px-3" href="../Contato/index.php">Contato</a></li>
           </ul>
         </nav>
       </div>
