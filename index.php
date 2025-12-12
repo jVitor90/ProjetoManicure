@@ -17,32 +17,29 @@ if (!isset($_SESSION['usuario'])) {
   <meta name="description" content="Transforme suas unhas em obras de arte. Manicure profissional em São Paulo com atendimento personalizado e produtos premium.">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../ProjetoManicure/css/index.css">
+  <link rel="stylesheet" href="./css/index.css">
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap%22" rel= "stylesheet">
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <!-- REPLACE HEADER -->
-  <header class="header-custom sticky-top bg-white">
-    <div class="container-fluid px-4">
-
-      <!-- Linha superior: left spacer / logo central / right actions -->
-      <div class="header-top d-flex align-items-center justify-content-between py-3">
-        <div class="header-left"></div>
-
-        <div class="text-center">
-          <a href="/" class="logo fw-bold d-inline-block">Nail Pro</a>
+<header class="header-custom sticky-top bg-white border-bottom">
+    <div class="container-fluid px-4 position-relative">
+ 
+        <!-- LOGO centralizado perfeitamente -->
+        <div class="text-center py-3">
+            <a href="/" class="logo fw-bold d-inline-block">Nail Pro</a>
         </div>
-
-        <div class="header-right d-flex align-items-center gap-2">
-          <a href="/agendar.php" class="btn btn-agendar">Agendar</a>
-
-          <div class="dropdown">
+ 
+        <!-- Ações à direita (Agendar + Login) -->
+        <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
+            <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+            <a href="../Agendamento/index.php" class="btn btn-agendar">Deshboard</a>
+ 
+            <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá,
-              <?=$_SESSION['usuario']['nome']?>!
+              <!-- <?=$_SESSION['usuario']['nome']?>! -->
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
               <li>
@@ -66,28 +63,8 @@ if (!isset($_SESSION['usuario'])) {
               </li>
             </ul>
           </div>
-
-          <!-- botao mobile (aparece só em <lg) -->
-          <button class="navbar-toggler d-lg-none border-0 ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-            <span class="navbar-toggler-icon"></span>
-          </button>
         </div>
-      </div>
-
-      <!-- Linha inferior: menu centralizado -->
-      <div class="bottom-bar border-top">
-        <nav class="py-2">
-          <ul class="nav justify-content-center gap-4 mb-0">
-            <li class="nav-item"><a class="nav-link link-nav px-3" href="#servicos">Serviços</a></li>
-            <li class="nav-item"><a class="nav-link link-nav px-3" href="#portfolio">Portfólio</a></li>
-            <li class="nav-item"><a class="nav-link link-nav px-3" href="#depoimentos">Depoimentos</a></li>
-            <li class="nav-item"><a class="nav-link link-nav px-3" href="#contato">Contato</a></li>
-          </ul>
-        </nav>
-      </div>
-
     </div>
-  </header>
 
   <!-- HERO -->
   <section class="hero position-relative d-flex align-items-center">

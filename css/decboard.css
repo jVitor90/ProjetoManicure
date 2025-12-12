@@ -1,401 +1,493 @@
-/* ===== VARIÁVEIS ===== */
-:root {
-    --cor-rosa: #d4a5a5;
-    --cor-rosa-claro: #f8e8e8;
-    --cor-rosa-escuro: #c48888;
-    --cor-dourado: #d4af37;
-    --cor-verde: #22c55e;
-    --cor-amarelo: #f59e0b;
-    --cor-texto: #1f2937;
-    --cor-texto-claro: #6b7280;
-    --cor-fundo: #faf8f7;
-    --cor-branco: #ffffff;
-    --cor-borda: #e5e7eb;
-    --sombra-leve: 0 1px 3px rgba(0, 0, 0, 0.08);
-    --sombra-media: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --raio-padrao: 12px;
-    --raio-pequeno: 8px;
-    --fonte-titulo: "Playfair Display", serif;
-    --fonte-corpo: "Inter", sans-serif;
+
+  /* ===== HEADER ===== */
+  .header-custom {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
   
-  /* ===== RESET E BASE ===== */
-  * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: var(--fonte-corpo);
-    background-color: var(--cor-fundo);
-    color: var(--cor-texto);
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* ===== PÁGINA ADMIN ===== */
-  .pagina-admin {
-    min-height: 100vh;
-  }
-  
-  /* ===== CABEÇALHO ===== */
-  /* Styling Bootstrap badge component for admin dashboard */
-  .badge-admin {
-    background: linear-gradient(135deg, var(--cor-verde), #16a34a) !important;
-    color: white !important;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 20px;
-  }
-  
-  .titulo-boas-vindas {
-    font-family: var(--fonte-titulo);
-    font-size: 2rem;
+  .logo {
+    font-family: "Playfair Display", serif;
+    font-size: 32px;
     font-weight: 700;
-    color: var(--cor-texto);
-    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, #eb6b9b, #e03e7f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    display: inline-block;
   }
+
   
-  .subtitulo {
-    font-size: 0.95rem;
-    margin-bottom: 0;
-  }
-  
-  /* Styling Bootstrap buttons for header actions */
-  .btn-configuracoes {
+  .header-top {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: var(--cor-branco) !important;
-    border: 1px solid var(--cor-borda) !important;
-    color: var(--cor-texto) !important;
-    font-weight: 500;
-    padding: 10px 18px !important;
-    border-radius: var(--raio-pequeno);
-    transition: all 0.2s ease;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f2d8e0;
   }
   
-  .btn-configuracoes:hover {
-    background: var(--cor-fundo) !important;
-    color: var(--cor-texto) !important;
+  .header-left {
+    flex: 1;
   }
   
-  .btn-novo-servico {
+  .header-right {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, var(--cor-rosa), var(--cor-rosa-escuro)) !important;
-    border: none !important;
-    color: white !important;
-    font-weight: 500;
-    padding: 10px 18px !important;
-    border-radius: var(--raio-pequeno);
-    transition: all 0.2s ease;
+    gap: 12px;
+    flex: 1;
+    justify-content: flex-end;
   }
   
-  .btn-novo-servico:hover {
-    background: linear-gradient(135deg, var(--cor-rosa-escuro), #b87878) !important;
-    color: white !important;
+  .bottom-bar {
+    border-top: 1px solid #f2d8e0;
   }
   
-  /* ===== CARDS ESTATÍSTICAS ===== */
-  .card-estatistica {
-    background: var(--cor-branco);
-    border: 1px solid var(--cor-borda);
-    border-radius: var(--raio-padrao);
-    padding: 20px;
-    transition: box-shadow 0.2s ease;
+  .bottom-bar nav {
+    padding: 8px 0;
   }
   
-  .card-estatistica:hover {
-    box-shadow: var(--sombra-media);
+  /* Dropdown button styling */
+  .dropdown-toggle {
+    background: #eb6b9b ;
+    border: none ;
+    color: white ;
+    border-radius: 30px ;
+    padding: 14px 34px ;
+    font-weight: 600 ;
+    font-size: 15px ;
+    line-height: 1 ;
+    transition: all 0.3s ease ;
+  }
+  .header-right .dropdown-toggle:hover {
+    background: #e03e7f;
   }
   
-  .rotulo-estatistica {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--cor-texto-claro);
-    margin-bottom: 8px;
-  }
-  
-  .valor-estatistica {
-    font-family: var(--fonte-titulo);
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--cor-texto);
-  }
-  
-  .valor-rosa {
-    color: var(--cor-rosa-escuro);
-  }
-  
-  .estrela {
-    color: var(--cor-dourado);
-  }
-  
-  .texto-auxiliar {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--cor-texto-claro);
-    margin-top: 2px;
-  }
-  
-  .icone-estatistica {
-    width: 44px;
-    height: 44px;
+  .header-right .dropdown-menu {
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 8px 0;
   }
   
-  .icone-rosa {
-    background: var(--cor-rosa-claro);
-    color: var(--cor-rosa-escuro);
-  }
-  
-  .icone-cinza {
-    background: #f3f4f6;
-    color: var(--cor-texto-claro);
-  }
-  
-  /* ===== PAINÉIS ===== */
-  .card-painel {
-    background: var(--cor-branco);
-    border: 1px solid var(--cor-borda);
-    border-radius: var(--raio-padrao);
-    padding: 24px;
-  }
-  
-  .titulo-painel {
-    font-family: var(--fonte-titulo);
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--cor-texto);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0;
-  }
-  
-  .titulo-painel-pequeno {
-    font-family: var(--fonte-titulo);
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--cor-texto);
-    margin: 0;
-  }
-  
-  .texto-data {
-    font-size: 0.85rem;
-    color: var(--cor-texto-claro);
-  }
-  
-  .link-ver-tudo {
-    color: var(--cor-texto-claro);
-    text-decoration: none;
-    font-size: 0.9rem;
+  /* Links de navegação */
+  .link-nav {
+    color: #5c3a40;
     font-weight: 500;
-    transition: color 0.2s ease;
+    font-size: 14px;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
+    padding: 4px 0 !important;
   }
   
-  .link-ver-tudo:hover {
-    color: var(--cor-rosa-escuro);
+  .link-nav:hover {
+    color: #eb6b9b;
   }
   
-  /* ===== LISTA DE AGENDAMENTOS ===== */
-  .lista-agendamentos {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 16px;
+  .link-nav::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -8px;
+    left: 50%;
+    background: #eb6b9b;
+    transition: width 0.3s ease;
+    transform: translateX(-50%);
   }
   
-  .item-agendamento {
-    background: var(--cor-fundo);
-    border-radius: var(--raio-pequeno);
-    padding: 16px;
+  .link-nav:hover::after {
+    width: 100%;
   }
   
-  .avatar-cliente {
-    width: 42px;
-    height: 42px;
-    background: linear-gradient(135deg, var(--cor-rosa), var(--cor-rosa-escuro));
+  /* Botões do header */
+  .btn-agendar {
+    background: #eb6b9b;
     color: white;
-    border-radius: 50%;
-    display: flex;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .btn-agendar:hover {
+    background: #e03e7f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(235, 107, 155, 0.3);
+    color: white;
+  }
+  
+  /* ===== CONTEÚDO PRINCIPAL ===== */
+  .badge-admin {
+    background: #f8e2ea;
+    color: #eb6b9b;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    display: inline-block;
+  }
+  
+  .title-welcome {
+    font-size: 48px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  
+  .subtitle {
+    font-size: 16px;
+    color: #999;
+    margin: 0;
+  }
+  
+  /* Botões Principais */
+  /* Changed from outline to filled background style */
+  /* Botões Principais – versão menor e mais arredondada */
+  .btn.btn-primary-custom {
+    background: #eb6b9b;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 25px 26px !important; /* altura mais confortável */
+    height: 42px !important;
+    min-height: 42px !important;
+    line-height: 1 !important;
+    font-size: 15px;
+    
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-  
-  .avatar-roxo {
-    background: linear-gradient(135deg, #a78bfa, #8b5cf6);
-  }
-  
-  .nome-cliente {
-    display: block;
-    font-weight: 600;
-    color: var(--cor-texto);
-    font-size: 0.95rem;
-  }
-  
-  .servico-cliente {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--cor-texto-claro);
-  }
-  
-  .info-agendamento {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .horario {
-    font-weight: 600;
-    color: var(--cor-texto);
-    font-size: 0.95rem;
-  }
-  
-  .preco {
-    color: var(--cor-rosa-escuro);
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-  
-  /* Badges de Status usando Bootstrap badge */
-  .badge-confirmado {
-    background: #dcfce7 !important;
-    color: #16a34a !important;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 20px;
-  }
-  
-  .badge-pendente {
-    background: #f3f4f6 !important;
-    color: var(--cor-texto-claro) !important;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 20px;
-  }
-  
-  /* ===== AÇÕES RÁPIDAS ===== */
-  .lista-acoes {
-    display: flex;
-    flex-direction: column;
     gap: 8px;
+  
+    box-shadow: none;
+    transition: .2s;
   }
   
-  .item-acao {
+  .btn.btn-primary-custom:hover {
+    background: #e03e7f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(235,107,155,0.18);
+  }
+  
+  /* ===== CARDS DE ESTATÍSTICAS ===== */
+  .stat-card {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #eb6b9b;
+    margin: 0;
+    line-height: 1;
+  }
+  
+  .icon-stat-gold,
+  .icon-stat-pink,
+  .icon-stat-gray {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: var(--cor-rosa-claro);
-    border-radius: var(--raio-pequeno);
-    color: var(--cor-rosa-escuro);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
+    justify-content: center;
+    font-size: 24px;
   }
   
-  .item-acao:hover {
-    background: var(--cor-rosa);
-    color: white;
+  .icon-stat-gold {
+    background: #fff3cd;
+    color: #ff9800;
   }
   
-  .item-acao svg {
-    flex-shrink: 0;
+  .icon-stat-pink {
+    background: #f8e2ea;
+    color: #eb6b9b;
   }
   
-  /* ===== ESTE MÊS ===== */
-  .valor-grande {
-    display: block;
-    font-family: var(--fonte-titulo);
-    font-size: 2.25rem;
+  .icon-stat-gray {
+    background: #f5f5f5;
+    color: #999;
+  }
+  
+  /* ===== CARDS PERSONALIZADOS ===== */
+  .card-custom {
+    background: white;
+    border: none;
+    border-radius: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+  }
+  
+  .card-header-custom {
+    background: white;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .card-title {
+    font-size: 20px;
     font-weight: 700;
-    color: var(--cor-texto);
+    color: #1a1a1a;
     margin-bottom: 4px;
   }
   
-  .texto-auxiliar-bloco {
-    font-size: 0.85rem;
-    color: var(--cor-texto-claro);
+  .card-subtitle {
+    font-size: 13px;
+    color: #999;
+    margin: 0;
   }
   
-  /* ===== BOTÃO WHATSAPP ===== */
-  .btn-whatsapp {
-    bottom: 24px;
-    right: 24px;
-    width: 60px;
-    height: 60px;
-    background: #25d366 !important;
-    color: white !important;
-    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    z-index: 1000;
+  .link-view-all {
+    color: #eb6b9b;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
   }
   
-  .btn-whatsapp:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
-    color: white !important;
+  .link-view-all:hover {
+    color: #e03e7f;
   }
   
-  /* ===== RESPONSIVO ===== */
-  @media (max-width: 991px) {
-    .titulo-boas-vindas {
-      font-size: 1.5rem;
-    }
+  .card-body-custom {
+    padding: 24px;
   }
   
-  @media (max-width: 767px) {
-    .titulo-boas-vindas {
-      font-size: 1.25rem;
-    }
-  
-    .valor-estatistica {
-      font-size: 1.4rem;
-    }
-  
-    .item-agendamento {
-      flex-direction: column;
-      align-items: flex-start !important;
-      gap: 12px;
-    }
-  
-    .valor-grande {
-      font-size: 1.75rem;
-    }
+  .card-body-custom-sidebar {
+    padding: 24px;
   }
   
-  @media (max-width: 575px) {
-    .titulo-boas-vindas {
-      font-size: 1.25rem;
-    }
+  /* ===== AGENDAMENTOS ===== */
+  .appointment-card {
+    background: #f8e2ea;
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: all 0.3s ease;
+  }
   
-    .card-estatistica {
-      padding: 16px;
-    }
+  .appointment-card:hover {
+    box-shadow: 0 4px 16px rgba(235, 107, 155, 0.2);
+    transform: translateY(-2px);
+  }
   
-    .valor-estatistica {
-      font-size: 1.2rem;
-    }
+  .avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    flex-shrink: 0;
+  }
   
-    .icone-estatistica {
-      width: 36px;
-      height: 36px;
-    }
+  .avatar-pink {
+    background: #eb6b9b;
+  }
   
-    .icone-estatistica svg {
-      width: 16px;
-      height: 16px;
-    }
+  .avatar-purple {
+    background: #9b6b9c;
+  }
+  
+  .appointment-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 15px;
+  }
+  
+  .appointment-service {
+    font-size: 13px;
+    color: #999;
+    margin-top: 4px;
+  }
+  
+  .appointment-time {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 15px;
+  }
+  
+  .appointment-price {
+    color: #eb6b9b;
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  
+  .badge-status {
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  
+  .badge-status.confirmed {
+    background: #d4edda;
+    color: #155724;
+  }
+  
+  .badge-status.pending {
+    background: #fff3cd;
+    color: #856404;
+  }
+  
+  /* ===== SIDEBAR ===== */
+  .sidebar-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+  
+  .action-button {
+    display: block;
+    padding: 16px 16px;
+    background: #f5f5f5;
+    border-radius: 16px;
+    color: #5c3a40;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+  
+  .action-button i {
+    margin-right: 12px;
+    color: #eb6b9b;
+  }
+  
+  .action-button:hover {
+    background: #eb6b9b;
+    color: white;
+  }
+  
+  .action-button:hover i {
+    color: white;
+  }
+  
+  .month-value {
+    font-size: 42px;
+    font-weight: 700;
+    color: #eb6b9b;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  
+  .month-subtitle {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 20px;
+  }
+  
+  .btn-view-report {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #eb6b9b;
+    border-radius: 12px;
+    color: #eb6b9b;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-view-report:hover {
+    background: #eb6b9b;
+    color: white;
+  }
+  
+  /* ===== FOOTER ===== */
+  .footer-custom {
+    background: #f5f5f5;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 60px;
+  }
+  
+  .footer-logo {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  
+  .footer-text {
+    font-size: 14px;
+    color: #999;
+    line-height: 1.6;
+  }
+  
+  .footer-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+  }
+  
+  .footer-list {
+    list-style: none;
+    font-size: 14px;
+    color: #999;
+  }
+  
+  .footer-list li {
+    margin-bottom: 8px;
+  }
+  
+  .footer-link {
+    display: block;
+    color: #999;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 8px;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-link:hover {
+    color: #eb6b9b;
+  }
+  
+  .footer-bottom {
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 13px;
+    color: #999;
   }
   
