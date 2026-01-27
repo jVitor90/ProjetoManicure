@@ -41,7 +41,7 @@ if (!isset($_SESSION['usuario'])) {
 
         <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown">
-            <!-- <?= $_SESSION['usuario']['nome'] ?>! -->
+            <?= $_SESSION['usuario']['nome'] ?>
           </button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#">Perfil</a></li>
