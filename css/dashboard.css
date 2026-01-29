@@ -73,7 +73,7 @@
   text-decoration: none;
   position: relative;
   transition: color 0.3s ease;
-  padding: 4px 0 !important;
+  padding: 4px 0 t;
 }
 
 .link-nav:hover {
@@ -89,7 +89,7 @@
   left: 50%;
   background: #eb6b9b;
   transition: width 0.3s ease;
-  transform: translateX(-50%);
+  
 }
 
 .link-nav:hover::after {
@@ -149,10 +149,10 @@
   color: #fff;
   border: none;
   border-radius: 999px;
-  padding: 25px 26px !important;
-  height: 42px !important;
-  min-height: 42px !important;
-  line-height: 1 !important;
+  padding: 25px 26px !;
+  height: 42px ;
+  min-height: 42px ;
+  line-height: 1 ;
   font-size: 15px;
   display: inline-flex;
   align-items: center;
@@ -175,7 +175,7 @@
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #f0f0f0;
-  transition: all 0.3s ease;
+
 }
 
 .stat-card:hover {
@@ -195,7 +195,6 @@
 .stat-value {
   font-size: 28px;
   font-weight: 700;
-  color: #eb6b9b;
   margin: 0;
   line-height: 1;
 }
@@ -289,7 +288,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  transition: all 0.3s ease;
 }
 
 .appointment-card:hover {
@@ -711,56 +709,7 @@ textarea.form-control {
   box-shadow: 0 4px 12px rgba(235, 107, 155, 0.3);
 }
 
-/* Gráfico de Barras */
-.grafico-barras {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  height: 200px;
-  padding-top: 20px;
-  gap: 12px;
-}
 
-.barra-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  position: relative;
-}
-
-.barra {
-  width: 100%;
-  max-width: 50px;
-  background: linear-gradient(180deg, #eb6b9b 0%, #f0a0bf 100%);
-  border-radius: 8px 8px 0 0;
-  margin-top: auto;
-  transition: all 0.3s ease;
-  min-height: 20px;
-}
-/* 
-.barra:hover {
-  background: linear-gradient(180deg, #e03e7f 0%, #eb6b9b 100%);
-  transform: scaleY(1.02);
-} */
-
-.barra-destaque {
-  background: linear-gradient(180deg, #e03e7f 0%, #eb6b9b 100%);
-}
-
-.barra-label {
-  font-size: 13px;
-  color: #666;
-  margin-top: 12px;
-  font-weight: 500;
-}
-
-.barra-valor {
-  font-size: 12px;
-  color: #999;
-  margin-top: 4px;
-}
 
 /* Serviços Lista */
 .servicos-lista {
@@ -852,6 +801,3 @@ textarea.form-control {
   font-size: 14px;
   padding: 8px 32px 8px 12px;
 }
-
-
-
