@@ -31,7 +31,7 @@ if (!isset($_SESSION['usuario'])) {
 
       <!-- LOGO centralizado perfeitamente -->
       <div class="text-center py-3">
-        <a href="../index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
+        <a href="./index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
       </div>
 
       <!-- Ações à direita (Agendar + Login) -->

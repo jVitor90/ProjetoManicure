@@ -1,0 +1,165 @@
+body {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fceef5 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.card-form {
+    background: #ffffff;
+    padding: 45px 40px;
+    border-radius: 24px;
+    border: 3px solid #f8b7d0;
+    box-shadow: 0 20px 40px rgba(155, 249, 155, 0.25);
+    max-width: 460px;
+    width: 100%;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#titulo {
+    color: #ba2d65;
+    font-weight: 800;
+    font-size: 2.6rem;
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    color: #ba2d65;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid #e9b8d0;
+    font-size: 1rem;
+}
+
+.form-control:focus {
+    border-color: #f99bb9;
+    box-shadow: none !important;
+}
+
+.input-group-text {
+    background: transparent;
+    border: 1.5px solid #e9b8d0;
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+    color: #ba2d65;
+}
+
+.input-group .form-control {
+    border-left: none;
+    border-radius: 0;
+}
+
+/* Botão do olho */
+.btn-pass {
+    background-color: #f99bb9;
+    border: 1.5px solid #e9b8d0;
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+    color: white;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-pass:hover {
+    background-color: #f970a8;
+    color: white;
+}
+
+/* Sombra rosa no foco do grupo inteiro */
+.input-group:focus-within {
+    box-shadow: 0 0 0 0.25rem rgba(249, 155, 185, 0.4);
+    border-radius: 12px;
+}
+
+.input-group:focus-within .form-control,
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .btn-pass {
+    border-color: #f99bb9;
+}
+
+.btn-custom {
+    background-color: #f99bb9 !important;
+    border-color: #f99bb9 !important;
+    color: #fff !important;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: #f970a8 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(249, 155, 185, 0.4);
+}
+
+.toggle-link {
+    color: #f99bb9;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.02rem;
+}
+
+.toggle-link:hover {
+    color: #f970a8;
+    text-decoration: underline;
+}
+
+.senha-error {
+    color: #dc3545;
+    font-size: 0.9em;
+    margin-top: 6px;
+    display: none;
+}
+
+.form-container {
+    position: relative;
+    min-height: 500px;
+}
+
+.form-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease;
+}
+
+.form-wrapper.active {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+}
+
+@media (max-width: 576px) {
+    .card-form {
+        margin: 15px;
+        padding: 35px 25px;
+    }
+
+    #titulo {
+        font-size: 2.3rem;
+    }
+}
