@@ -3,6 +3,7 @@ body {
   color: #39262b;
   background: #ffffff;
   line-height: 1.6;
+
 }
 
 /* Header */
@@ -15,6 +16,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-decoration: none;
 }
 
 .header-right .dropdown-toggle:hover {

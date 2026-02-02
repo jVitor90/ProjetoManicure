@@ -57,7 +57,7 @@ if (!isset($_SESSION['usuario'])) {
     <div class="bottom-bar border-top">
       <nav class="py-2">
         <ul class="nav justify-content-center gap-4 mb-0">
-          <li class="nav-item"><a class="nav-link link-nav px-3" href="#servicos">Serviços</a></li>
+          <li class="nav-item"><a class="nav-link link-nav px-3" href="./Servicos/index.php">Serviços</a></li>
           <li class="nav-item"><a class="nav-link link-nav px-3" href="./Contato/index.php">Contato</a></li>
         </ul>
       </nav>

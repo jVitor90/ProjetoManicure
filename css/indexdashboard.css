@@ -1,6 +1,13 @@
+body {
+    font-family: "Inter", Arial, sans-serif;
+    color: #39262b;
+    background: #ffffff;
+    line-height: 1.6;
+  }
 /* ===== HEADER ===== */
 .header-custom {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  text-decoration: none;
 }
  
 .logo {

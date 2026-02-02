@@ -4,6 +4,7 @@ body {
   background: #ffffff;
   line-height: 1.6;
 }
+
  
 /* Header */
 .header-custom .logo {
@@ -14,6 +15,7 @@ background: linear-gradient(135deg, #eb6b9b, #e03e7f);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
+text-decoration: none;
 }
 
 /* Custom dropdown button styles */
