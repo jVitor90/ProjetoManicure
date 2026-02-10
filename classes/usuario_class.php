@@ -1,7 +1,8 @@
 <?php
 require_once('banco_class.php');
 
-class Usuario{
+class Usuario
+{
     public $nome;
     public $sobrenome;
     public $email;
@@ -10,7 +11,8 @@ class Usuario{
     public $id_tipo;
     public $id;
 
-    public function Cadastrar(){
+    public function Cadastrar()
+    {
         $sql = "INSERT INTO usuarios (nome, sobrenome, email, telefone, senha, id_tipo)
         VALUES (?, ?, ?, ?, ?, 2)";
         $banco = Banco::conectar();
@@ -26,7 +28,8 @@ class Usuario{
         return $comando->rowCount();
     }
 
-    public function Logar(){
+    public function Logar()
+    {
         $sql = "SELECT * FROM usuarios WHERE email = ? AND senha = ?";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
@@ -37,10 +40,10 @@ class Usuario{
         $resultado = $comando->fetchAll(PDO::FETCH_ASSOC);
         Banco::desconectar();
         return $resultado;
-
     }
 
-    public function TrocarSenha(){
+    public function TrocarSenha()
+    {
         $sql = "UPDATE usuarios SET senha = ? WHERE id = ?";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
@@ -51,5 +54,18 @@ class Usuario{
         Banco::desconectar();
         return $comando->rowCount();
     }
+    // ADICIONAR este método
+    public function ListarClientes()
+    {
+        $sql = "SELECT id, nome, sobrenome, email, telefone 
+            FROM usuarios 
+            WHERE id_tipo = 2 
+            ORDER BY nome, sobrenome";
+        $banco = Banco::conectar();
+        $comando = $banco->prepare($sql);
+        $comando->execute();
+        $resultado = $comando->fetchAll(PDO::FETCH_ASSOC);
+        Banco::desconectar();
+        return $resultado;
+    }
 }
-?>

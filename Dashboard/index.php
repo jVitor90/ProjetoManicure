@@ -1,14 +1,23 @@
-<!-- <?php
-      //Verifica se o usuario esta logado:
-      session_start();
-      if (!isset($_SESSION['usuario'])) {
-        //Caso o usuario esteja logado, retorna ao login.php
-        header("Location: login.php?err=usuario_sessao_invaliada");
-        exit();
-      }
- ?> -->
+<?php
+//Verifica se o usuario esta logado:
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    //Caso o usuario esteja logado, retorna ao login.php
+    header("Location: login.php?err=usuario_sessao_invaliada");
+    exit();
+}
+?>
+<?php
+require_once('../classes/servico_class.php');
+
+// Buscar serviços do banco
+$servicoObj = new Servico();
+$servicos = $servicoObj->ListarTodos();
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,6 +26,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/indexdashboard.css">
 </head>
+
 <body class="bg-white">
     <header class="header-custom sticky-top bg-white">
         <div class="container-fluid px-4">
@@ -63,6 +73,278 @@
 
         </div>
     </header>
+
+    <!-- Modal Lista de Clientes -->
+    <div class="modal fade" id="modalListaClientes" tabindex="-1" aria-labelledby="modalListaClientesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow">
+
+                <!-- Header -->
+                <div class="modal-header border-0">
+                    <div>
+                        <h5 class="modal-title fw-bold" id="modalListaClientesLabel">
+                            <i class="bi bi-people-fill me-2 text-rosa"></i>Lista de Clientes
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            Visualize e gerencie seus clientes cadastrados
+                        </p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body pt-0">
+
+                    <!-- Barra superior -->
+                    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+
+                        <!-- Busca -->
+                        <div class="input-group w-auto flex-grow-1" style="max-width: 320px;">
+                            <span class="input-group-text bg bg-white">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Buscar cliente...">
+                        </div>
+
+
+                    </div>
+
+                    <!-- Tabela -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Telefone</th>
+                                    <th>Email</th>
+                                    <th>Último Atendimento</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td>
+                                        <strong>Ana Paula</strong>
+                                    </td>
+                                    <td>(11) 99999-9999</td>
+                                    <td>ana@email.com</td>
+                                    <td>25/01/2026</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Mariana Souza</strong></td>
+                                    <td>(11) 98888-8888</td>
+                                    <td>mariana@email.com</td>
+                                    <td>20/01/2026</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Fechar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Agendamento -->
+    <div class="modal fade" id="modalNovoAgendamento" tabindex="-1" aria-labelledby="modalNovoAgendamentoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <!-- Header -->
+                <div class="modal-header border-0">
+                    <div>
+                        <h5 class="modal-title fw-bold" id="modalNovoAgendamentoLabel">
+                            <i class="bi bi-calendar-plus me-2 text-rosa"></i>Novo Agendamento
+                        </h5>
+                        <p class="text-muted small mb-0">Preencha os dados para criar um agendamento</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <form action="../admin/agenda_agendar.php" method="POST">
+
+                        <!-- Campo Cliente com Datalist -->
+                        <div class="mb-3">
+                            <label for="clienteNome" class="form-label fw-semibold">
+                                <i class="bi bi-person me-1"></i>Cliente
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg"
+                                id="clienteNome"
+                                name="cliente_nome"
+                                list="listaClientes"
+                                placeholder="Digite o nome do cliente..."
+                                required
+                                autocomplete="off">
+
+                            <!-- Datalist com sugestões -->
+                            <datalist id="listaClientes">
+                                <?php
+                                // Carrega clientes do banco
+                                $sqlClientes = "SELECT id, nome, sobrenome, email, telefone 
+                                           FROM usuarios 
+                                           WHERE id_tipo = 2 
+                                           ORDER BY nome, sobrenome";
+
+                                $banco = Banco::conectar();
+                                $comando = $banco->prepare($sqlClientes);
+                                $comando->execute();
+                                $clientes = $comando->fetchAll(PDO::FETCH_ASSOC);
+                                Banco::desconectar();
+
+                                foreach ($clientes as $cliente) {
+                                    $nomeCompleto = $cliente['nome'] . ' ' . $cliente['sobrenome'];
+                                    echo '<option value="' . htmlspecialchars($nomeCompleto) . '">'
+                                        . htmlspecialchars($info) . '</option>';
+                                }
+                                ?>
+                            </datalist>
+
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Comece a digitar e selecione um cliente da lista
+                            </small>
+                        </div>
+
+                        <!-- Campo Data -->
+                        <div class="mb-3">
+                            <label for="dataAgendamento" class="form-label fw-semibold">
+                                <i class="bi bi-calendar-event me-1"></i>Data
+                            </label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="dataAgendamento"
+                                name="data"
+                                required
+                                min="<?= date('Y-m-d') ?>">
+                        </div>
+
+                        <!-- Campo Serviço -->
+                        <div class="mb-3">
+                            <label for="servicoSelect" class="form-label fw-semibold">
+                                <i class="bi bi-scissors me-1"></i>Serviço
+                            </label>
+                            <select class="form-select" id="servicoSelect" name="servico_id" required>
+                                <option value="">Selecione um serviço</option>
+                                <?php foreach ($servicos as $servico): ?>
+                                    <option value="<?= $servico['id'] ?>">
+                                        <?= htmlspecialchars($servico['nome']) ?> -
+                                        R$ <?= number_format($servico['valor'], 2, ',', '.') ?>
+                                        (<?= $servico['duracao'] ?> min)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Campo Horário -->
+                        <div class="mb-4">
+                            <label for="horarioSelect" class="form-label fw-semibold">
+                                <i class="bi bi-clock me-1"></i>Horário
+                            </label>
+                            <select class="form-select" id="horarioSelect" name="horario" required>
+                                <option value="">Selecione um horário</option>
+                                <!-- Adicionar options dos horários disponíveis -->
+                                <option value="1">09:00</option>
+                                <option value="2">10:00</option>
+                                <option value="3">11:00</option>
+                                <option value="4">13:00</option>
+                                <option value="5">14:00</option>
+                                <option value="6">15:00</option>
+                                <option value="7">16:00</option>
+                                <option value="8">17:00</option>
+                            </select>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-lg me-1"></i>Cancelar
+                            </button>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>Confirmar Agendamento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <script>
+            document.getElementById('dataAgendamento').addEventListener('change', carregarHorariosModal);
+
+            function carregarHorariosModal() {
+                const data = document.getElementById('dataAgendamento').value;
+                const selectHorario = document.getElementById('horarioSelect');
+
+                // Limpa horários antigos
+                selectHorario.innerHTML = '<option value="">Carregando horários...</option>';
+
+                if (!data) {
+                    selectHorario.innerHTML = '<option value="">Selecione uma data</option>';
+                    return;
+                }
+
+                fetch(`../actions/listar_horarios.php?data=${data}`)
+                    .then(response => response.json())
+                    .then(horarios => {
+                        selectHorario.innerHTML = '<option value="">Selecione um horário</option>';
+
+                        if (horarios.length === 0) {
+                            selectHorario.innerHTML = '<option value="">Nenhum horário disponível</option>';
+                            return;
+                        }
+
+                        horarios.forEach(h => {
+                            const option = document.createElement('option');
+                            option.value = h.id; // ID do horário
+                            option.textContent = h.horario.slice(0, 5); // 09:00
+                            selectHorario.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erro ao carregar horários:', error);
+                        selectHorario.innerHTML = '<option value="">Erro ao carregar horários</option>';
+                    });
+            }
+        </script>
+
+    </div>
+
 
     <!-- Modal Novo Serviço -->
     <div class="modal fade" id="modalNovoServico" tabindex="-1" aria-labelledby="modalNovoServicoLabel" aria-hidden="true">
@@ -138,6 +420,7 @@
             </div>
         </div>
     </div>
+
     <!-- Modal Relatórios -->
     <div class="modal fade" id="modalRelatorios" tabindex="-1" aria-labelledby="modalRelatoriosLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
@@ -188,7 +471,7 @@
                                 </div>
                             </div>
                         </div>
-                      
+
                         <div class="col-6 col-lg-3">
                             <div class="card-estatistica">
                                 <p class="stat-label-rel mb-2">CLIENTES NOVOS</p>
@@ -201,61 +484,132 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Gráficos -->
-                    <div class="row g-4 mb-4">
-                        
-
-                        
-                    </div>
-
-                    <!-- Tabela Resumo -->
-                    <div class="card border rounded-4">
-                        <div class="card-body p-4">
-                            <h6 class="fw-bold mb-4">Resumo dos Últimos 6 Meses</h6>
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead>
-                                        <tr class="text-muted small">
-                                            <th class="fw-semibold border-0 pb-3">Mês</th>
-                                            <th class="fw-semibold border-0 pb-3">Receita</th>
-                                            <th class="fw-semibold border-0 pb-3">Atendimentos</th>
-                                            <th class="fw-semibold border-0 pb-3">Variação</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="fw-medium border-0 py-3">Janeiro</td>
-                                            <td class="text-rosa fw-semibold border-0 py-3">R$ 6.450</td>
-                                            <td class="border-0 py-3">87</td>
-                                            <td class="border-0 py-3"><span class="badge badge-variacao-positiva">+5.7%</span></td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <div class="modal-footer border-top">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-rosa rounded-pill px-4">
-                        <i class="bi bi-download me-2"></i>Exportar PDF
-                    </button>
+                <!-- Tabela Resumo -->
+                <div class="card border rounded-4">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold mb-4">Resumo dos Últimos 6 Meses</h6>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr class="text-muted small">
+                                        <th class="fw-semibold border-0 pb-3">Mês</th>
+                                        <th class="fw-semibold border-0 pb-3">Receita</th>
+                                        <th class="fw-semibold border-0 pb-3">Atendimentos</th>
+                                        <th class="fw-semibold border-0 pb-3">Variação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-medium border-0 py-3">Janeiro</td>
+                                        <td class="text-rosa fw-semibold border-0 py-3">R$ 6.450</td>
+                                        <td class="border-0 py-3">87</td>
+                                        <td class="border-0 py-3"><span class="badge badge-variacao-positiva">+5.7%</span></td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 
+    <!-- Modal Ver Agenda Completa -->
+    <div class="modal fade" id="modalAgenda" tabindex="-1" aria-labelledby="modalAgendaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <div>
+                        <h5 class="modal-title fw-bold titulo" id="modalAgendaLabel">
+                            <i class="bi bi-calendar3 me-2 text-rosa"></i>Agenda Completa
+                        </h5>
+                        <p class="text-muted small mb-0">Visualize e gerencie todos os agendamentos</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body pt-4">
+                    <!-- Filtros -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-medium">Data</label>
+                            <input type="date" class="form-control" value="2026-01-30">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-medium">Status</label>
+                            <select class="form-select">
+                                <option value="">Todos</option>
+                                <option value="confirmado">Confirmado</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-medium">Serviço</label>
+                            <select class="form-select">
+                                <option value="">Todos</option>
+                                <option value="manicure">Manicure</option>
+                                <option value="pedicure">Pedicure</option>
+                                <option value="unhas-gel">Unhas em Gel</option>
+                                <option value="combo">Combo</option>
+                                <option value="nail-art">Nail Art</option>
+                            </select>
+                        </div>
+                    </div>
 
+                    <!-- Lista de Agendamentos -->
+                    <div class="list-group list-group-flush">
+                        <!-- Agendamento 1 -->
+                        <div class="list-group-item border rounded-3 mb-2 p-3">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="rounded-circle bg-rosa text-white d-flex align-items-center justify-content-center fw-semibold avatar">MS</span>
+                                    <div>
+                                        <span class="fw-semibold d-block">Mariana Silva</span>
+                                        <span class="text-muted small">Manicure em Gel</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end">
+                                        <span class="d-block fw-medium">10:00 - 11:00</span>
+                                        <span class="text-rosa fw-semibold">R$ 80</span>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success px-3 py-2">Confirmado</span>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#"><i class="bi bi-pencil me-1"></i>Editar</a></li>
+                                            <li><a class="dropdown-item" href="#"><i class="bi bi-check-circle me-1"></i>Finalizar</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-x-circle me-2"></i>Cancelar</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
     <main class="container-fluid px-4 py-5">
 
         <!-- Seção de Título -->
         <div class="row mb-5">
             <div class="col-lg-8">
                 <span class="badge badge-admin">DASHBOARD ADMIN</span>
-                <h1 class="title-welcome mt-3">Bem-vinda, <?= $_SESSION['usuario']['nome'] ?></h1>
+                <h1 class="title-welcome mt-3">Bem-vinda,<?= $_SESSION['usuario']['nome'] ?></h1>
                 <p class="text-muted subtitle">Aqui está o resumo do seu negócio hoje.</p>
             </div>
             <div class="col-lg-4 d-flex gap-2 justify-content-lg-end mt-3 mt-6">
@@ -296,7 +650,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
 
         <!-- Conteúdo Principal: Agenda + Sidebar -->
@@ -310,7 +664,14 @@
                             <h5 class="card-title">Agenda de Hoje</h5>
                             <p class="card-subtitle">quinta-feira, 11 de dezembro</p>
                         </div>
-                        <a href="#" class="link-view-all">Ver tudo</a>
+                        <a
+                            href="#"
+                            class="link-view-all"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalAgenda">
+                            Ver tudo
+                        </a>
+
                     </div>
 
                     <div class="card-body-custom">
@@ -354,15 +715,29 @@
                     <div class="card-body-custom-sidebar">
                         <h6 class="sidebar-title">Ações Rápidas</h6>
                         <div class="d-grid gap-3 mt-4">
-                            <a href="#" class="action-button">
-                                <i class="bi bi-calendar-check"></i> Ver Agenda Completa
-                            </a>
-                            <a href="#" class="action-button">
+                            <a
+                                href="#"
+                                class="action-button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalGerenciarServicos">
                                 <i class="bi bi-briefcase"></i> Gerenciar Serviços
                             </a>
-                            <a href="#" class="action-button">
+                            <a
+                                href="#"
+                                class="action-button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalListaClientes">
                                 <i class="bi bi-people"></i> Lista de Clientes
                             </a>
+
+                            <a
+                                href="#"
+                                class="action-button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalNovoAgendamento">
+                                <i class="bi bi-plus-lg"></i> Novo Agendamento
+                            </a>
+
                             <a href="#" class="action-button d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalRelatorios">
                                 <i class="bi bi-bar-chart"></i>
                                 <span>Relatórios</span>
