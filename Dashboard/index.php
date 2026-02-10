@@ -26,6 +26,7 @@ $servicos = $servicoObj->ListarServicos();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="../css/indexdashboard.css">
+    <link rel="stylesheet" href="../css/indexnovoservico.css">
 </head>
 
 <body class="bg-white">
@@ -175,7 +176,161 @@ $servicos = $servicoObj->ListarServicos();
             </div>
         </div>
     </div>
+ <!-- Modal Servicos -->
+    <div class="modal fade" id="modalServicos" tabindex="-1" aria-labelledby="modalServicosLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
 
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalServicosLabel">Meus Serviços</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body" style="min-height: 300px;">
+
+                    <?php
+                    require_once '../classes/servicos_class.php';
+
+                    $servicoObj = new Servicos();
+                    $lista = $servicoObj->ListarServicos();
+
+                    if (empty($lista)):
+                    ?>
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-briefcase fs-1 mb-3 d-block"></i>
+                            <p class="mb-1">Você ainda não cadastrou nenhum serviço.</p>
+                            <small>Clique em "+ Novo Serviço" para adicionar o primeiro</small>
+                        </div>
+
+                    <?php else: ?>
+
+                        <div class="list-group" id="listaServicos">
+                            <?php foreach ($lista as $item):
+                                $valor_formatado = number_format($item['valor'], 2, ',', '.');
+                                $duracao_txt = $item['duracao'] >= 60
+                                    ? floor($item['duracao'] / 60) . 'h' . ($item['duracao'] % 60 ? ' ' . ($item['duracao'] % 60) . 'min' : '')
+                                    : $item['duracao'] . ' min';
+                            ?>
+
+                                <div class="list-group-item servico-item cursor-pointer"
+                                    data-id="<?= $item['id'] ?>"
+                                    data-nome="<?= htmlspecialchars($item['nome']) ?>"
+                                    data-descricao="<?= htmlspecialchars($item['descricao'] ?? '') ?>"
+                                    data-preco="<?= $item['valor'] ?>"
+                                    data-duracao="<?= $item['duracao'] ?>">
+                                    <div class="d-flex justify-content-between align-items-center gap-3">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1"><?= htmlspecialchars($item['nome']) ?></h6>
+                                            <small class="text-muted d-block">
+                                                R$ <?= $valor_formatado ?> • <?= $duracao_txt ?>
+                                            </small>
+                                            <?php if (!empty($item['descricao'])): ?>
+                                                <p class="mb-0 mt-1 small text-secondary">
+                                                    <?= htmlspecialchars(substr($item['descricao'], 0, 100)) . (strlen($item['descricao']) > 100 ? '...' : '') ?>
+                                                </p>
+                                            <?php endif; ?>
+                                        </div>
+                                        <!-- Radio escondido (só para controle interno) -->
+                                        <input type="radio" name="servicoSelecionado" class="d-none"
+                                            id="radio_<?= $item['id'] ?>" value="<?= $item['id'] ?>">
+                                    </div>
+                                </div>
+
+                            <?php endforeach; ?>
+                        </div>
+
+                    <?php endif; ?>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalNovoServico"
+                        data-action="new">
+                        Adicionar Serviço
+                    </button>
+                    <button type="button" class="btn btn-primary d-none" id="btnEditarSelecionado"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalNovoServico">
+                        Editar Serviço
+                    </button>
+                    <button type="button" class="btn btn-outline-danger d-none" id="btnExcluirSelecionado">
+                        Excluir Serviço
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Novo serviço -->
+    <div class="modal fade" id="modalNovoServico" tabindex="-1" aria-labelledby="modalNovoServicoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="modalNovoServicoLabel">Novo Serviço</h5>
+                        <p class="text-muted mb-0" id="modalSubtitle" style="font-size: 14px;">Adicione um novo serviço ao seu catálogo</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <form id="formNovoServico" method="POST" action="../actions/servicos_cadastrar.php">
+                    <input type="hidden" name="id" id="editId" value="">
+
+                    <div class="modal-body">
+                        <div class="row g-4">
+                            <!-- Nome do Serviço -->
+                            <div class="col-md-8">
+                                <label for="nomeServico" class="form-label">Nome do Serviço <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nomeServico" name="nomeServico" placeholder="Ex: Manicure Francesa" required>
+                            </div>
+
+                            <!-- Descrição -->
+                            <div class="col-12">
+                                <label for="descricao" class="form-label">Descrição</label>
+                                <textarea class="form-control" id="descricao" name="descricao" rows="3" placeholder="Descreva os detalhes do serviço..."></textarea>
+                            </div>
+
+                            <!-- Preço -->
+                            <div class="col-md-6">
+                                <label for="preco" class="form-label">Preço <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" id="preco" name="preco" step="0.01" min="0" required>
+                                </div>
+                            </div>
+
+                            <!-- Duração -->
+                            <div class="col-md-6">
+                                <label for="duracao" class="form-label">Duração aproximada</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="duracao" name="duracao" min="1" required>
+                                    <select class="form-select" id="unidadeDuracao" name="unidadeDuracao" style="max-width: 120px;">
+                                        <option value="minutos" selected>minutos</option>
+                                        <option value="horas">horas</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalServicos"
+                            data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="btnSalvarServico">Salvar Serviço</button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- Modal Novo Agendamento -->
     <div class="modal fade" id="modalNovoAgendamento" tabindex="-1" aria-labelledby="modalNovoAgendamentoLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -581,10 +736,7 @@ $servicos = $servicoObj->ListarServicos();
                 <h1 class="title-welcome mt-3">Bem-vinda,<?= $_SESSION['usuario']['nome'] ?></h1>
                 <p class="text-muted subtitle">Aqui está o resumo do seu negócio hoje.</p>
             </div>
-            <div class="col-lg-4 d-flex gap-2 justify-content-lg-end mt-3 mt-6">
-                <button class="btn btn-primary-custom">Configurações</button>
-                <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalNovoServico">+ Novo Serviço</button>
-            </div>
+            
         </div>
 
         <!-- Cards de Estatísticas -->
@@ -805,11 +957,10 @@ $servicos = $servicoObj->ListarServicos();
                     <div class="card-body-custom-sidebar">
                         <h6 class="sidebar-title">Ações Rápidas</h6>
                         <div class="d-grid gap-3 mt-4">
-                            <a
-                                href="#"
-                                class="action-button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalGerenciarServicos">
+                            <a href="#" 
+                            class="action-button d-flex align-items-center gap-2" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalServicos">
                                 <i class="bi bi-briefcase"></i> Gerenciar Serviços
                             </a>
                             <a
@@ -866,8 +1017,221 @@ $servicos = $servicoObj->ListarServicos();
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   <!--  EDITAR SERVIÇOS -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Variável global para guardar o ID selecionado
+        let servicoSelecionadoId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const lista = document.getElementById('listaServicos');
+            const btnEditar = document.getElementById('btnEditarSelecionado');
+            const btnExcluir = document.getElementById('btnExcluirSelecionado');
+
+
+            if (lista) {
+                lista.addEventListener('click', function(e) {
+                    const item = e.target.closest('.servico-item');
+                    if (!item) return;
+
+                    // Remove seleção anterior
+                    document.querySelectorAll('.servico-item').forEach(el => el.classList.remove('active'));
+                    // Marca o atual
+                    item.classList.add('active');
+
+                    // Pega o ID
+                    servicoSelecionadoId = item.getAttribute('data-id');
+
+                    // Mostra o botão editar
+                    btnEditar.classList.remove('d-none');
+                    // Mostra o botão excluir
+                    btnExcluir.classList.remove('d-none');
+
+                });
+            }
+
+
+            if (btnExcluir) {
+                btnExcluir.addEventListener('click', function() {
+                    if (!servicoSelecionadoId) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Atenção',
+                            text: 'Nenhum serviço selecionado.',
+                            confirmButtonColor: '#0d6efd'
+                        });
+                        return;
+                    }
+
+                    const itemSelecionado = document.querySelector(`.servico-item[data-id="${servicoSelecionadoId}"]`);
+                    const nomeServico = itemSelecionado ? itemSelecionado.dataset.nome : 'este serviço';
+
+                    Swal.fire({
+                        title: 'Excluir Serviço',
+                        html: `Tem certeza que deseja excluir <strong>"${nomeServico}"</strong>?<br><small class="text-muted">Esta ação não pode ser desfeita.</small>`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#eb6b9b',
+                        cancelButtonColor: '#aaaaaaff',
+                        confirmButtonText: 'Sim, excluir',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true,
+                        focusCancel: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '../actions/excluir_servico.php';
+
+                            const inputId = document.createElement('input');
+                            inputId.type = 'hidden';
+                            inputId.name = 'id';
+                            inputId.value = servicoSelecionadoId;
+
+                            form.appendChild(inputId);
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                });
+            }
+            // Quando o modal de edição abrir
+            const modalNovo = document.getElementById('modalNovoServico');
+            modalNovo.addEventListener('show.bs.modal', function(event) {
+                const trigger = event.relatedTarget;
+                const title = document.getElementById('modalNovoServicoLabel');
+                const subtitle = document.getElementById('modalSubtitle');
+                const btnSalvar = document.getElementById('btnSalvarServico');
+                const form = document.getElementById('formNovoServico');
+
+                // Reset padrão (novo serviço)
+                form.reset();
+                document.getElementById('editId').value = '';
+                title.textContent = 'Novo Serviço';
+                subtitle.textContent = 'Adicione um novo serviço ao seu catálogo';
+                btnSalvar.textContent = 'Salvar Serviço';
+
+                // Se veio do botão Editar Selecionado
+                if (trigger && trigger.id === 'btnEditarSelecionado' && servicoSelecionadoId) {
+                    // Encontra o elemento com o ID selecionado
+                    const itemSelecionado = document.querySelector(`.servico-item[data-id="${servicoSelecionadoId}"]`);
+                    if (itemSelecionado) {
+                        title.textContent = 'Editar Serviço';
+                        subtitle.textContent = 'Altere as informações do serviço selecionado';
+                        btnSalvar.textContent = 'Salvar Alterações';
+
+                        document.getElementById('editId').value = servicoSelecionadoId;
+                        document.getElementById('nomeServico').value = itemSelecionado.dataset.nome;
+                        document.getElementById('descricao').value = itemSelecionado.dataset.descricao;
+                        document.getElementById('preco').value = itemSelecionado.dataset.preco;
+
+                        let duracaoMin = parseInt(itemSelecionado.dataset.duracao) || 0;
+                        let valor = duracaoMin;
+                        let unidade = 'minutos';
+
+                        if (duracaoMin >= 60) {
+                            valor = Math.floor(duracaoMin / 60);
+                            unidade = 'horas';
+                        }
+
+                        document.getElementById('duracao').value = valor;
+                        document.getElementById('unidadeDuracao').value = unidade;
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Verificar mensagens de sucesso/erro na URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+
+            // Mensagens de SUCESSO
+            if (success === 'novo_servico') {
+                Swal.fire({
+                    title: 'Serviço Cadastrado!',
+                    text: 'O serviço foi adicionado com sucesso.',
+                    icon: 'success',
+                    buttonsStyling: false,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Remove o parâmetro da URL para não mostrar novamente
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            } else if (success === 'servico_editado') {
+                Swal.fire({
+                    title: 'Serviço Atualizado!',
+                    text: 'As alterações foram salvas com sucesso.',
+                    icon: 'success',
+                    buttonsStyling: false,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            } else if (success === 'servico_excluido') {
+                Swal.fire({
+                    title: 'Serviço Excluído!',
+                    text: 'O serviço foi removido com sucesso.',
+                    icon: 'success',
+                    buttonsStyling: false,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            }
+
+            // Mensagens de ERRO
+            else if (error === 'falha_cadastro') {
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Não foi possível cadastrar o serviço. Tente novamente.',
+                    icon: 'error',
+                    buttonsStyling: false,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            } else if (error === 'falha_edicao') {
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Não foi possível editar o serviço. Tente novamente.',
+                    icon: 'error',
+                    buttonsStyling: false,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            } else if (error === 'id_invalido') {
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'ID do serviço inválido.',
+                    icon: 'error',
+                    buttonsStyling: false,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            } else if (error === 'servico_exclusao_falha') {
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Não foi possível excluir o serviço. Tente novamente.',
+                    icon: 'error',
+                    buttonsStyling: false,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
 
 </html>
