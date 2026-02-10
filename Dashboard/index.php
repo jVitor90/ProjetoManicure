@@ -9,10 +9,15 @@ if (!isset($_SESSION['usuario'])) {
 ?>
 <?php
 require_once('../classes/servicos_class.php');
+require_once('../classes/usuario_class.php');
 
 // Buscar serviços do banco
 $servicoObj = new Servicos();
 $servicos = $servicoObj->ListarServicos();
+
+$usuarios = new Usuario();
+$usuarios_listados = $usuarios->ListarTodosUsuarios();
+
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +80,6 @@ $servicos = $servicoObj->ListarServicos();
 
         </div>
     </header>
-
     <!-- Modal Lista de Clientes -->
     <div class="modal fade" id="modalListaClientes" tabindex="-1" aria-labelledby="modalListaClientesLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
@@ -102,15 +106,11 @@ $servicos = $servicoObj->ListarServicos();
 
                         <!-- Busca -->
                         <div class="input-group w-auto flex-grow-1" style="max-width: 320px;">
-                            <span class="input-group-text bg bg-white">
+                            <span class="input-group-text bg-white">
                                 <i class="bi bi-search text-muted"></i>
                             </span>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Buscar cliente...">
+                            <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar cliente...">
                         </div>
-
 
                     </div>
 
@@ -128,42 +128,58 @@ $servicos = $servicoObj->ListarServicos();
                             </thead>
                             <tbody>
 
-                                <tr>
-                                    <td>
-                                        <strong>Ana Paula</strong>
-                                    </td>
-                                    <td>(11) 99999-9999</td>
-                                    <td>ana@email.com</td>
-                                    <td>25/01/2026</td>
-                                    <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
 
-                                <tr>
-                                    <td><strong>Mariana Souza</strong></td>
-                                    <td>(11) 98888-8888</td>
-                                    <td>mariana@email.com</td>
-                                    <td>20/01/2026</td>
-                                    <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <?php foreach ($usuarios_listados as $usuario): ?>
+                                    <tr
+                                        data-id="<?= htmlspecialchars($usuario['id']) ?>"
+                                        data-nome="<?= htmlspecialchars($usuario['nome']) ?>"
+                                        data-sobrenome="<?= htmlspecialchars($usuario['sobrenome']) ?>"
+                                        data-email="<?= htmlspecialchars($usuario['email']) ?>"
+                                        data-telefone="<?= htmlspecialchars($usuario['telefone'] ?? '') ?>"
+                                        data-id_tipo="<?= htmlspecialchars($usuario['id_tipo']) ?>">
+                                        <td>
+                                            <?= htmlspecialchars($usuario['nome'] . ' ' . $usuario['sobrenome']) ?>
+                                        </td>
+                                        <td><?= htmlspecialchars($usuario['telefone'] ?? '—') ?></td>
+                                        <td><?= htmlspecialchars($usuario['email']) ?></td>
+                                        <td><?= htmlspecialchars($usuario['data_ultimo_agendamento'] ?? '—') ?></td>
+
+                                        <!-- Botões do form(Editar e excluir) -->
+                                        <td class="text-end">
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-light me-2"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEditarCliente"
+                                                data-id="<?= $usuario['id'] ?>"
+                                                data-nome="<?= htmlspecialchars($usuario['nome']) ?>"
+                                                data-sobrenome="<?= htmlspecialchars($usuario['sobrenome']) ?>"
+                                                data-email="<?= htmlspecialchars($usuario['email']) ?>"
+                                                data-telefone="<?= htmlspecialchars($usuario['telefone'] ?? '') ?>">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-danger btnExcluirCliente"
+                                                data-id="<?= $usuario['id'] ?>"
+                                                data-nome="<?= htmlspecialchars($usuario['nome'] . ' ' . $usuario['sobrenome']) ?>">
+                                                <i class="bi bi-trash"></i> Excluir
+                                            </button>
+
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
 
                             </tbody>
                         </table>
                     </div>
 
+                    <!-- PAGINAÇÃO -->
+                    <div class="d-flex justify-content-center mt-3">
+                        <nav>
+                            <ul class="pagination pagination-sm" id="paginacaoClientes"></ul>
+                        </nav>
+                    </div>
                 </div>
 
                 <!-- Footer -->
@@ -176,7 +192,83 @@ $servicos = $servicoObj->ListarServicos();
             </div>
         </div>
     </div>
- <!-- Modal Servicos -->
+
+
+    <!-- Modal editar clientes -->
+    <div class="modal fade" id="modalEditarCliente" tabindex="-1" aria-labelledby="modalEditarClienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header border-0">
+                    <div>
+                        <h5 class="modal-title fw-bold" id="modalEditarClienteLabel">
+                            <i class="bi bi-pencil-square me-2 text-rosa"></i>Editar Cliente
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            Altere as informações do cliente selecionado
+                        </p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarCliente" method="POST" action="../actions/usuario_editar.php">
+
+                        <input type="hidden" name="id" id="edit-id">
+
+                        <div class="row g-4">
+
+                            <div class="col-md-6">
+                                <label for="edit-nome" class="form-label fw-medium">
+                                    Nome <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="edit-nome" name="nome" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="edit-sobrenome" class="form-label fw-medium">
+                                    Sobrenome <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="edit-sobrenome" name="sobrenome" required>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label for="edit-email" class="form-label fw-medium">
+                                    E-mail <span class="text-danger">*</span>
+                                </label>
+                                <input type="email" class="form-control" id="edit-email" name="email" required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="edit-telefone" class="form-label fw-medium">Telefone</label>
+                                <input type="text" class="form-control" id="edit-telefone" name="telefone"
+                                    placeholder="(00) 00000-0000">
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="edit-senha" class="form-label fw-medium">Nova senha</label>
+                                <input type="password" class="form-control" id="edit-senha" name="senha"
+                                    placeholder="Deixe em branco para não alterar" autocomplete="new-password">
+                                <div class="form-text text-muted small mt-1">
+                                    Mínimo 8 caracteres. Deixe vazio se não quiser alterar a senha atual.
+                                </div>
+                            </div>
+
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                                    Cancelar
+                                </button>
+                                <button type="submit" form="formEditarCliente" class="btn btn-rosa px-4">
+                                    <i class="bi bi-save me-2"></i> Salvar Alterações
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Servicos -->
     <div class="modal fade" id="modalServicos" tabindex="-1" aria-labelledby="modalServicosLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -736,7 +828,7 @@ $servicos = $servicoObj->ListarServicos();
                 <h1 class="title-welcome mt-3">Bem-vinda,<?= $_SESSION['usuario']['nome'] ?></h1>
                 <p class="text-muted subtitle">Aqui está o resumo do seu negócio hoje.</p>
             </div>
-            
+
         </div>
 
         <!-- Cards de Estatísticas -->
@@ -957,10 +1049,10 @@ $servicos = $servicoObj->ListarServicos();
                     <div class="card-body-custom-sidebar">
                         <h6 class="sidebar-title">Ações Rápidas</h6>
                         <div class="d-grid gap-3 mt-4">
-                            <a href="#" 
-                            class="action-button d-flex align-items-center gap-2" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#modalServicos">
+                            <a href="#"
+                                class="action-button d-flex align-items-center gap-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalServicos">
                                 <i class="bi bi-briefcase"></i> Gerenciar Serviços
                             </a>
                             <a
@@ -1017,9 +1109,10 @@ $servicos = $servicoObj->ListarServicos();
         </div>
     </footer>
 
-   <!--  EDITAR SERVIÇOS -->
+    <!--  EDITAR SERVIÇOS -->
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Variável global para guardar o ID selecionado
         let servicoSelecionadoId = null;
@@ -1227,9 +1320,196 @@ $servicos = $servicoObj->ListarServicos();
                 });
             }
         });
+
+        // ===== SCRIPT PARA ABRIR MODAL DE EDIÇÃO =====
+        const modalEditCliente = document.getElementById('modalEditarCliente')
+        if (modalEditCliente) {
+            modalEditCliente.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget
+                const idcliente = button.getAttribute('data-id')
+                const nome = button.getAttribute('data-nome')
+                const sobrenome = button.getAttribute('data-sobrenome')
+                const email = button.getAttribute('data-email')
+                const telefone = button.getAttribute('data-telefone')
+
+                // Preenche os campos do formulário
+                modalEditCliente.querySelector('#edit-nome').value = nome
+                modalEditCliente.querySelector('#edit-sobrenome').value = sobrenome
+                modalEditCliente.querySelector('#edit-email').value = email
+                modalEditCliente.querySelector('#edit-telefone').value = telefone
+                modalEditCliente.querySelector('#edit-id').value = idcliente
+            })
+        }
+
+        // ===== SWEETALERT NO BOTÃO DE SALVAR ALTERAÇÕES =====
+        const formEditarCliente = document.getElementById('formEditarCliente');
+
+        if (formEditarCliente) {
+            formEditarCliente.addEventListener('submit', function(e) {
+                e.preventDefault(); // Impede o envio automático do formulário
+
+                // Mostra o SweetAlert de confirmação
+                Swal.fire({
+                    title: "Deseja salvar as alterações?",
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: "Sim, salvar",
+                    denyButtonText: "Não salvar",
+                    cancelButtonText: "Cancelar",
+                    confirmButtonColor: "#EB6B9C",
+                    denyButtonColor: "#6c757d",
+                    cancelButtonColor: "#adb5bd"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Se confirmou, mostra loading e envia o formulário
+                        Swal.fire({
+                            title: "Salvando...",
+                            text: "Aguarde um momento",
+                            icon: "info",
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Envia o formulário
+                        formEditarCliente.submit();
+
+                    } else if (result.isDenied) {
+                        // Se negou, mostra mensagem
+                        Swal.fire({
+                            title: "Alterações não salvas",
+                            text: "Os dados não foram modificados",
+                            icon: "info",
+                            confirmButtonColor: "#EB6B9C"
+                        });
+                    }
+                    // Se cancelou, não faz nada
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Usa delegação de eventos no elemento pai (tbody) 
+            const tbody = document.querySelector('#modalListaClientes tbody');
+
+            if (tbody) {
+                tbody.addEventListener('click', function(e) {
+                    // Verifica se o clique foi no botão de excluir 
+                    const botaoExcluir = e.target.closest('.btnExcluirCliente');
+
+                    if (botaoExcluir) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const id = botaoExcluir.getAttribute('data-id');
+                        const nome = botaoExcluir.getAttribute('data-nome');
+
+                        // SweetAlert de confirmação de exclusão
+                        Swal.fire({
+                            title: "Tem certeza?",
+                            text: `Deseja realmente excluir ${nome}? Esta ação não pode ser desfeita!`,
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#d33",
+                            cancelButtonColor: "#6c757d",
+                            confirmButtonText: "Sim, excluir!",
+                            cancelButtonText: "Cancelar"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Cria formulário para enviar via POST
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = '../actions/usuario_excluir.php';
+
+                                const inputId = document.createElement('input');
+                                inputId.type = 'hidden';
+                                inputId.name = 'id';
+                                inputId.value = id;
+
+                                form.appendChild(inputId);
+                                document.body.appendChild(form);
+                                form.submit();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+
+        // ===== SCRIPT PARA FILTRAR CLIENTES E PAGINAÇÃO =====
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputBusca = document.getElementById('buscarCliente');
+            const linhas = Array.from(document.querySelectorAll('#modalListaClientes tbody tr'));
+            const paginacao = document.getElementById('paginacaoClientes');
+
+            const itensPorPagina = 10;
+            let paginaAtual = 1;
+            let linhasFiltradas = [...linhas];
+
+            function renderizarTabela() {
+                const inicio = (paginaAtual - 1) * itensPorPagina;
+                const fim = inicio + itensPorPagina;
+
+                linhas.forEach(linha => linha.style.display = 'none');
+
+                linhasFiltradas.slice(inicio, fim).forEach(linha => {
+                    linha.style.display = '';
+                });
+            }
+
+            function renderizarPaginacao() {
+                paginacao.innerHTML = '';
+                const totalPaginas = Math.ceil(linhasFiltradas.length / itensPorPagina);
+
+                for (let i = 1; i <= totalPaginas; i++) {
+                    const li = document.createElement('li');
+                    li.className = `page-item ${i === paginaAtual ? 'active' : ''}`;
+
+                    const a = document.createElement('a');
+                    a.className = 'page-link';
+                    a.href = '#';
+                    a.textContent = i;
+
+                    a.addEventListener('click', e => {
+                        e.preventDefault();
+                        paginaAtual = i;
+                        renderizarTabela();
+                        renderizarPaginacao();
+                    });
+
+                    li.appendChild(a);
+                    paginacao.appendChild(li);
+                }
+            }
+
+            function filtrarClientes() {
+                const termo = inputBusca.value.toLowerCase().trim();
+
+                linhasFiltradas = linhas.filter(linha => {
+                    const nome = linha.dataset.nome.toLowerCase();
+                    const sobrenome = linha.dataset.sobrenome.toLowerCase();
+                    const nomeCompleto = `${nome} ${sobrenome}`;
+
+                    return nomeCompleto.includes(termo);
+                });
+
+                paginaAtual = 1;
+                renderizarTabela();
+                renderizarPaginacao();
+            }
+
+            inputBusca.addEventListener('input', filtrarClientes);
+
+            // inicial
+            renderizarTabela();
+            renderizarPaginacao();
+        });
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 
 
 </body>

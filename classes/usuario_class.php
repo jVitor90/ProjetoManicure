@@ -14,7 +14,7 @@ class Usuario
     public function Cadastrar()
     {
         $sql = "INSERT INTO usuarios (nome, sobrenome, email, telefone, senha, id_tipo)
-        VALUES (?, ?, ?, ?, ?, 2)";
+        VALUES (?, ?, ?, ?, ?, 1)";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
         $comando->execute([
@@ -42,30 +42,86 @@ class Usuario
         return $resultado;
     }
 
-    public function TrocarSenha()
+
+    public function EditarUsuario()
     {
-        $sql = "UPDATE usuarios SET senha = ? WHERE id = ?";
+        $campos = [];
+        $valores = [];
+
+        if (!empty($this->nome)) {
+            $campos[] = "nome = ?";
+            $valores[] = $this->nome;
+        }
+
+        if (!empty($this->email)) {
+            $campos[] = "email = ?";
+            $valores[] = $this->email;
+        }
+
+        if (!empty($this->senha)) {
+            $campos[] = "senha = ?";
+            $valores[] = hash('sha256', $this->senha);
+        }
+
+        if (!empty($this->telefone)) {
+            $campos[] = "telefone = ?";
+            $valores[] = $this->telefone;
+        }
+
+        if (empty($campos)) {
+            return 0; // nada para atualizar
+        }
+
+        $sql = "UPDATE usuarios SET " . implode(', ', $campos) . " WHERE id = ?";
+        $valores[] = $this->id;
+
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
-        $comando->execute([
-            hash('sha256', $this->senha),
-            $this->id
-        ]);
+        $comando->execute($valores);
+
         Banco::desconectar();
         return $comando->rowCount();
     }
-    // ADICIONAR este método
-    public function ListarClientes()
+
+    //listar todos os usuarios
+    public function ListarTodosUsuarios()
     {
-        $sql = "SELECT id, nome, sobrenome, email, telefone 
-            FROM usuarios 
-            WHERE id_tipo = 2 
-            ORDER BY nome, sobrenome";
+        $sql = "SELECT 
+        u.id,
+        u.nome,
+        u.sobrenome,
+        u.email,
+        u.telefone,
+        u.senha,
+        u.id_tipo,
+        MAX(c.data) AS data_ultimo_agendamento
+        FROM 
+        usuarios u
+        LEFT JOIN 
+        agendamento a ON u.id = a.id_usuario_agenda
+        LEFT JOIN 
+        calendario c ON a.id_calendario = c.id
+        GROUP BY 
+        u.id, u.nome, u.sobrenome, u.email, u.telefone, u.senha, u.id_tipo
+        ORDER BY 
+        u.id;";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
         $comando->execute();
-        $resultado = $comando->fetchAll(PDO::FETCH_ASSOC);
+        $usuarios = $comando->fetchAll(PDO::FETCH_ASSOC);
         Banco::desconectar();
-        return $resultado;
+        return $usuarios;
+    }
+
+    public function ExcluirUsuario($id_usuario)
+    {
+        $sql = "DELETE FROM usuarios WHERE id = ?";
+        $banco = Banco::conectar();
+        $comando = $banco->prepare($sql);
+        $comando->execute([
+            $id_usuario
+        ]);
+        Banco::desconectar();
+        return $comando->rowCount();
     }
 }
