@@ -1,22 +1,23 @@
 <?php
-//faça o adicionar serviço
 require_once('banco_class.php');
-
-class Servicos{
+ 
+class Servicos {
     public $nome;
+    public $categoria;
     public $valor;
     public $duracao;
     public $descricao;
     public $id;
  
-    //adicionar serviço
-    public function AdicionarServico(){
-        $sql = "INSERT INTO servicos (nome, preco, duracao, descricao)
+    // Adicionar serviço
+    public function AdicionarServico() {
+        $sql = "INSERT INTO servicos (nome, valor, duracao, descricao)
         VALUES (?, ?, ?, ?)";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
         $comando->execute([
             $this->nome,
+         
             $this->valor,
             $this->duracao,
             $this->descricao
@@ -24,9 +25,10 @@ class Servicos{
         Banco::desconectar();
         return $comando->rowCount();
     }
-    //listar serviços
-    public function ListarServicos(){
-        $sql = "SELECT * FROM servicos";
+   
+    // Listar serviços
+    public function ListarServicos() {
+        $sql = "SELECT * FROM servicos ORDER BY nome ASC";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
         $comando->execute();
@@ -34,8 +36,9 @@ class Servicos{
         Banco::desconectar();
         return $result;
     }
-    //remover serviço
-    public function RemoverServico(){
+   
+    // Remover serviço
+    public function RemoverServico() {
         $sql = "DELETE FROM servicos WHERE id = ?";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
@@ -43,13 +46,15 @@ class Servicos{
         Banco::desconectar();
         return $comando->rowCount();
     }
-    //editar serviço
-    public function EditarServico(){
-        $sql = "UPDATE servicos SET nome = ?, preco = ?, duracao = ?, descricao = ? WHERE id = ?";
+   
+    // Editar serviço
+    public function EditarServico() {
+        $sql = "UPDATE servicos SET nome = ?, valor = ?, duracao = ?, descricao = ? WHERE id = ?";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
         $comando->execute([
             $this->nome,
+ 
             $this->valor,
             $this->duracao,
             $this->descricao,
@@ -58,5 +63,15 @@ class Servicos{
         Banco::desconectar();
         return $comando->rowCount();
     }
- 
+   
+    // Buscar serviço por ID (útil para o modal de edição)
+    public function BuscarServicoPorId() {
+        $sql = "SELECT * FROM servicos WHERE id = ?";
+        $banco = Banco::conectar();
+        $comando = $banco->prepare($sql);
+        $comando->execute([$this->id]);
+        $result = $comando->fetch(PDO::FETCH_ASSOC);
+        Banco::desconectar();
+        return $result;
+    }
 }

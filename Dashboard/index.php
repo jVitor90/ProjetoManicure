@@ -8,11 +8,11 @@ if (!isset($_SESSION['usuario'])) {
 }
 ?>
 <?php
-require_once('../classes/servico_class.php');
+require_once('../classes/servicos_class.php');
 
 // Buscar serviços do banco
-$servicoObj = new Servico();
-$servicos = $servicoObj->ListarTodos();
+$servicoObj = new Servicos();
+$servicos = $servicoObj->ListarServicos();
 ?>
 
 <!DOCTYPE html>
@@ -24,6 +24,7 @@ $servicos = $servicoObj->ListarTodos();
     <title>Dashboard Admin - Nail Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="../css/indexdashboard.css">
 </head>
 
@@ -193,7 +194,7 @@ $servicos = $servicoObj->ListarTodos();
 
                 <!-- Body -->
                 <div class="modal-body">
-                    <form action="../admin/agenda_agendar.php" method="POST">
+                    <form id="formNovoAgendamento" action="../admin/agenda_agendar.php" method="POST">
 
                         <!-- Campo Cliente com Datalist -->
                         <div class="mb-3">
@@ -215,9 +216,9 @@ $servicos = $servicoObj->ListarTodos();
                                 <?php
                                 // Carrega clientes do banco
                                 $sqlClientes = "SELECT id, nome, sobrenome, email, telefone 
-                                           FROM usuarios 
-                                           WHERE id_tipo = 2 
-                                           ORDER BY nome, sobrenome";
+                                       FROM usuarios 
+                                       WHERE id_tipo = 2 
+                                       ORDER BY nome, sobrenome";
 
                                 $banco = Banco::conectar();
                                 $comando = $banco->prepare($sqlClientes);
@@ -228,7 +229,7 @@ $servicos = $servicoObj->ListarTodos();
                                 foreach ($clientes as $cliente) {
                                     $nomeCompleto = $cliente['nome'] . ' ' . $cliente['sobrenome'];
                                     echo '<option value="' . htmlspecialchars($nomeCompleto) . '">'
-                                        . htmlspecialchars($info) . '</option>';
+                                        . htmlspecialchars($nomeCompleto) . '</option>';
                                 }
                                 ?>
                             </datalist>
@@ -277,15 +278,6 @@ $servicos = $servicoObj->ListarTodos();
                             </label>
                             <select class="form-select" id="horarioSelect" name="horario" required>
                                 <option value="">Selecione um horário</option>
-                                <!-- Adicionar options dos horários disponíveis -->
-                                <option value="1">09:00</option>
-                                <option value="2">10:00</option>
-                                <option value="3">11:00</option>
-                                <option value="4">13:00</option>
-                                <option value="5">14:00</option>
-                                <option value="6">15:00</option>
-                                <option value="7">16:00</option>
-                                <option value="8">17:00</option>
                             </select>
                         </div>
 
@@ -295,7 +287,7 @@ $servicos = $servicoObj->ListarTodos();
                                 <i class="bi bi-x-lg me-1"></i>Cancelar
                             </button>
 
-                            <button type="submit" class="btn btn-primary">
+                            <button type="button" id="btnConfirmarAgendamento" class="btn btn-primary">
                                 <i class="bi bi-check-lg me-1"></i>Confirmar Agendamento
                             </button>
                         </div>
@@ -304,6 +296,7 @@ $servicos = $servicoObj->ListarTodos();
 
             </div>
         </div>
+
         <script>
             document.getElementById('dataAgendamento').addEventListener('change', carregarHorariosModal);
 
@@ -341,84 +334,61 @@ $servicos = $servicoObj->ListarTodos();
                         selectHorario.innerHTML = '<option value="">Erro ao carregar horários</option>';
                     });
             }
+
+            // SweetAlert no botão Confirmar Agendamento
+            document.getElementById('btnConfirmarAgendamento').addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const form = document.getElementById('formNovoAgendamento');
+
+                // Valida se o formulário está preenchido
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                // Pega os valores do formulário
+                const clienteNome = document.getElementById('clienteNome').value;
+                const data = document.getElementById('dataAgendamento').value;
+                const servicoSelect = document.getElementById('servicoSelect');
+                const servicoNome = servicoSelect.options[servicoSelect.selectedIndex].text;
+                const horarioSelect = document.getElementById('horarioSelect');
+                const horario = horarioSelect.options[horarioSelect.selectedIndex].text;
+
+                // Formata a data
+                const dataFormatada = new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+
+                Swal.fire({
+                    title: 'Confirmar Agendamento?',
+                    html: `
+                    <div class="text-start p-3">
+                        <p class="mb-2"><strong><i class="bi bi-person me-2"></i>Cliente:</strong> ${clienteNome}</p>
+                        <p class="mb-2"><strong><i class="bi bi-calendar-event me-2"></i>Data:</strong> ${dataFormatada}</p>
+                        <p class="mb-2"><strong><i class="bi bi-clock me-2"></i>Horário:</strong> ${horario}</p>
+                        <p class="mb-0"><strong><i class="bi bi-scissors me-2"></i>Serviço:</strong> ${servicoNome}</p>
+                    </div>
+                `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e91e63',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="bi bi-check-lg me-1"></i> Sim, confirmar',
+                    cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Cancelar',
+                    reverseButtons: true,
+                    customClass: {
+                        confirmButton: 'btn btn-primary px-4',
+                        cancelButton: 'btn btn-secondary px-4'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Envia o formulário
+                        form.submit();
+                    }
+                });
+            });
         </script>
 
-    </div>
-
-
-    <!-- Modal Novo Serviço -->
-    <div class="modal fade" id="modalNovoServico" tabindex="-1" aria-labelledby="modalNovoServicoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div>
-                        <h5 class="modal-title" id="modalNovoServicoLabel">Novo Serviço</h5>
-                        <p class="text-muted mb-0" style="font-size: 14px;">Adicione um novo serviço ao seu catálogo</p>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="formNovoServico">
-                        <div class="row g-4">
-
-                            <!-- Nome do Serviço -->
-                            <div class="col-md-8">
-                                <label for="nomeServico" class="form-label">Nome do Serviço <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="nomeServico" placeholder="Ex: Manicure Francesa" required>
-                            </div>
-
-                            <!-- Categoria -->
-                            <div class="col-md-4">
-                                <label for="categoria" class="form-label">Categoria</label>
-                                <select class="form-select" id="categoria" required>
-                                    <option value="" selected disabled>Selecione</option>
-                                    <option value="Unhas posticas">Unhas Posticas</option>
-                                    <option value="manicure">Manicure</option>
-                                    <option value="pedicure">Pedicure</option>
-                                    <option value="combo">Combo</option>
-                                    <option value="unhas-gel">Unhas em Gel</option>
-                                    <option value="design">Design Personalizado</option>
-                                    <option value="outros">Outros</option>
-                                </select>
-                            </div>
-
-                            <!-- Descrição -->
-                            <div class="col-12">
-                                <label for="descricao" class="form-label">Descrição</label>
-                                <textarea class="form-control" id="descricao" rows="3" placeholder="Descreva os detalhes do serviço..."></textarea>
-                            </div>
-
-                            <!-- Preço -->
-                            <div class="col-md-6">
-                                <label for="preco" class="form-label">Preço <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control" id="preco" placeholder="0,00" step="0.01" min="0" required>
-                                </div>
-                            </div>
-
-                            <!-- Duração -->
-                            <div class="col-md-6">
-                                <label for="duracao" class="form-label">Duração aproximada</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="duracao" placeholder="60" min="1">
-                                    <select class="form-select" id="unidadeDuracao" style="max-width: 120px;">
-                                        <option value="minutos" selected>minutos</option>
-                                        <option value="horas">horas</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="formNovoServico" class="btn btn-primary">Salvar Serviço</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Modal Relatórios -->
@@ -515,7 +485,6 @@ $servicos = $servicoObj->ListarTodos();
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Modal Ver Agenda Completa -->
@@ -677,33 +646,154 @@ $servicos = $servicoObj->ListarTodos();
                     <div class="card-body-custom">
                         <!-- Agendamento 1 -->
                         <div class="appointment-card">
-                            <div class="d-flex align-items-center gap-4">
+                            <div class="d-flex align-items-center gap-4 w-100">
+
                                 <div class="avatar avatar-pink">MS</div>
+
                                 <div class="flex-grow-1">
                                     <div class="appointment-name">Mariana Silva</div>
                                     <div class="appointment-service">Manicure em Gel</div>
                                 </div>
-                                <div class="text-end">
+
+                                <div class="text-end me-3">
                                     <div class="appointment-time">10:00</div>
                                     <div class="appointment-price">R$ 80</div>
                                 </div>
+
+                                <!-- AÇÕES -->
+                                <div class="appointment-actions">
+                                    <button class="btn-action confirm" title="Confirmar">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+
+                                    <button
+                                        class="btn-action cancel btn-cancelar-agenda"
+                                        data-id="1">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+
+                                </div>
+
                             </div>
                         </div>
+                        <script>
+                            // BOTÃO CANCELAR
+                            document.querySelectorAll('.btn-cancelar-agenda').forEach(button => {
+                                button.addEventListener('click', function() {
+                                    const agendamentoId = this.getAttribute('data-id');
+                                    const appointmentCard = this.closest('.appointment-card');
+                                    const nomeCliente = appointmentCard.querySelector('.appointment-name').textContent;
+
+                                    Swal.fire({
+                                        title: 'Cancelar Agendamento?',
+                                        html: `Deseja realmente cancelar o agendamento de <strong>${nomeCliente}</strong>?`,
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#dc3545',
+                                        cancelButtonColor: '#6c757d',
+                                        confirmButtonText: '<i class="bi bi-check-lg"></i> Sim, cancelar',
+                                        cancelButtonText: '<i class="bi bi-x-lg"></i> Não',
+                                        reverseButtons: true
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            Swal.fire({
+                                                title: 'Cancelado!',
+                                                text: 'O agendamento foi cancelado com sucesso.',
+                                                icon: 'success',
+                                                confirmButtonColor: '#28a745',
+                                                timer: 1500,
+                                                showConfirmButton: false
+                                            }).then(() => {
+                                                appointmentCard.remove();
+                                            });
+                                        }
+                                    });
+                                });
+                            });
+
+                            // BOTÃO CONFIRMAR
+                            document.querySelectorAll('.btn-action.confirm').forEach(button => {
+                                button.addEventListener('click', function() {
+                                    const appointmentCard = this.closest('.appointment-card');
+                                    const nomeCliente = appointmentCard.querySelector('.appointment-name').textContent;
+                                    const servicoCliente = appointmentCard.querySelector('.appointment-service').textContent;
+                                    const horarioCliente = appointmentCard.querySelector('.appointment-time').textContent;
+
+                                    Swal.fire({
+                                        title: 'Confirmar Agendamento?',
+                                        html: `
+                        <div class="text-start">
+                            <p class="mb-2"><strong>Cliente:</strong> ${nomeCliente}</p>
+                            <p class="mb-2"><strong>Serviço:</strong> ${servicoCliente}</p>
+                            <p class="mb-0"><strong>Horário:</strong> ${horarioCliente}</p>
+                        </div>
+                    `,
+                                        icon: 'question',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#28a745',
+                                        cancelButtonColor: '#6c757d',
+                                        confirmButtonText: '<i class="bi bi-check-lg"></i> Sim, confirmar',
+                                        cancelButtonText: '<i class="bi bi-x-lg"></i> Cancelar',
+                                        reverseButtons: true
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+
+
+                                            Swal.fire({
+                                                title: 'Confirmado!',
+                                                text: 'O agendamento foi confirmado com sucesso.',
+                                                icon: 'success',
+                                                confirmButtonColor: '#28a745',
+                                                timer: 1500,
+                                                showConfirmButton: false
+                                            }).then(() => {
+                                                // Adiciona badge de confirmado ou muda o estilo do card
+                                                appointmentCard.style.borderLeft = '4px solid #28a745';
+                                                appointmentCard.style.backgroundColor = '#f8f9fa';
+
+                                                // Remove os botões de ação
+                                                const actionsDiv = appointmentCard.querySelector('.appointment-actions');
+                                                actionsDiv.innerHTML = '<span class="badge bg-success">Confirmado</span>';
+                                            });
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
 
                         <!-- Agendamento 2 -->
                         <div class="appointment-card">
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center gap-3 w-100">
+
                                 <div class="avatar avatar-purple">CS</div>
+
                                 <div class="flex-grow-1">
                                     <div class="appointment-name">Camila Santos</div>
                                     <div class="appointment-service">Combo Mani + Pedi</div>
                                 </div>
-                                <div class="text-end">
+
+                                <div class="text-end me-3">
                                     <div class="appointment-time">14:00</div>
                                     <div class="appointment-price">R$ 90</div>
                                 </div>
+
+                                <!-- AÇÕES -->
+                                <div class="appointment-actions">
+                                    <button class="btn-action confirm">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+
+                                    <button
+                                        class="btn-action cancel btn-cancelar-agenda"
+                                        data-id="1">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+
+                                </div>
+
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -777,6 +867,7 @@ $servicos = $servicoObj->ListarTodos();
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

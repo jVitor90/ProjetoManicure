@@ -441,6 +441,47 @@ body {
   border-top: 1px solid #e0e0e0;
   margin-top: 60px;
 }
+.appointment-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Botão base */
+.btn-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Confirmar */
+.btn-action.confirm {
+  background: #d4edda;
+  color: #155724;
+}
+
+.btn-action.confirm:hover {
+  background: #28a745;
+  color: #fff;
+}
+
+/* Cancelar */
+.btn-action.cancel {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.btn-action.cancel:hover {
+  background: #dc3545;
+  color: #fff;
+}
+
  
 .footer-logo {
   font-size: 28px;
