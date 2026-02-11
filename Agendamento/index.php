@@ -4,36 +4,9 @@ require_once('../classes/servicos_class.php');
 $servicosObj = new Servicos();
 $servicos = $servicosObj->listarServicos();
 
-
-// Mensagens de feedback
-$mensagem = '';
-$tipo_alerta = '';
-
-if (isset($_GET['err'])) {
-    $tipo_alerta = 'error';
-    if ($_GET['err'] == 'servico_nao_selecionado') {
-        $mensagem = 'Por favor, selecione um serviço!';
-    } else if ($_GET['err'] == 'horario_nao_selecionado') {
-        $mensagem = 'Por favor, selecione um horário!';
-    } else if ($_GET['err'] == 'usuario_nao_logado') {
-        $mensagem = 'Você precisa estar logado para agendar!';
-    } else if ($_GET['err'] == 'horario_ja_agendado') {
-        $mensagem = 'Este horário já foi agendado. Por favor, escolha outro.';
-    } else if ($_GET['err'] == 'agendamento_falhou') {
-        $mensagem = 'Erro ao realizar agendamento. Tente novamente!';
-    }
-} else if (isset($_GET['msg'])) {
-    $tipo_alerta = 'success';
-    if ($_GET['msg'] == 'agendamento_realizado') {
-        $mensagem = 'Agendamento realizado com sucesso!';
-    }
-}
 ?>
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,9 +16,9 @@ if (isset($_GET['err'])) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap%22 rel=" stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 <body>
 
+    <!-- HEADER -->
     <header class="header-custom sticky-top bg-white border-bottom">
         <div class="container-fluid px-4 position-relative">
 
@@ -82,9 +55,11 @@ if (isset($_GET['err'])) {
                 </ul>
             </nav>
         </div>
-
     </header>
 
+
+
+    <!-- SEÇÃO DE AGENDAMENTO -->
     <section>
         <form action="../actions/agenda_agendar.php" method="POST" id="form-agendamento" class="container my-5">
 
@@ -192,175 +167,138 @@ if (isset($_GET['err'])) {
         </div>
     </footer>
 
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"></script>
 
-    <!-- SweetAlert -->
-    <?php if (!empty($mensagem)): ?>
-        <script>
-            <?php if ($tipo_alerta == 'success'): ?>
-                Swal.fire({
-                    icon: "success",
-                    title: "Agendamento Confirmado!",
-                    text: "<?php echo $mensagem; ?>",
-                    confirmButtonColor: "#EB6B9C",
-                    confirmButtonText: "OK",
-                    iconColor: "#28a745"
-                });
-                const url1 = new URL(window.location.href);
-                url1.searchParams.delete('msg');
-                window.history.replaceState({}, '', url1);
-            <?php else: ?>
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "<?php echo $mensagem; ?>",
-                    confirmButtonColor: "#EB6B9C",
-                    confirmButtonText: "Tentar novamente"
-                });
-                const url2 = new URL(window.location.href);
-                url2.searchParams.delete('err');
-                window.history.replaceState({}, '', url2);
-            <?php endif; ?>
-        </script>
-    <?php endif; ?>
 
-
-    <script>
-        // ***** SEÇÃO DE SELECIONAR SERVIÇO *****
-
-        // Script para selecionar serviço
+   <script>  
+        //  SELEÇÃO DE SERVIÇO      
         document.querySelectorAll('.card-servico.selecionavel').forEach(card => {
             card.addEventListener('click', function() {
-                // Remove seleção anterior
-                document.querySelectorAll('.card-servico.selecionavel').forEach(c => {
-                    c.classList.remove('selecionado');
-                });
-
-                // Adiciona seleção ao card clicado
+                document.querySelectorAll('.card-servico.selecionavel').forEach(c => c.classList.remove('selecionado'));
                 this.classList.add('selecionado');
 
-                // Pega os dados do serviço
-                const servico = this.dataset.servico;
-                const preco = this.dataset.preco;
-                const tempo = this.dataset.tempo;
-                const id = this.dataset.id;
-
-                // Atualiza os campos hidden do formulário
-                document.getElementById('servico_id').value = id;
-                document.getElementById('servico_nome').value = servico;
-                document.getElementById('preco').value = preco;
-                document.getElementById('duracao').value = tempo;
-
-                console.log('Serviço selecionado:', {
-                    servico,
-                    preco,
-                    tempo,
-                    id
-                });
+                document.getElementById('servico_id').value   = this.dataset.id;
+                document.getElementById('servico_nome').value = this.dataset.servico;
+                document.getElementById('preco').value        = this.dataset.preco;
+                document.getElementById('duracao').value      = this.dataset.tempo;
             });
         });
 
-        // ***** SECÃO DE SELECIONAR HORÁRIO *****
-
-        // Script para selecionar horário
-        document.querySelectorAll('.horario-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // OPCIONAL: permitir apenas um horário selecionado
-                document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
-
-                // adiciona a classe selecionado
-                this.classList.add('selected');
-
-                // Atualiza o campo hidden do horário
-                document.getElementById('horario_hidden').value = this.textContent;
-            });
-        });
-
-        // função para obter os horários disponíveis do servidor:
+        //  CARREGAR HORÁRIOS DISPONÍVEIS
         function obterHorarios() {
-            const horariosDiv = document.getElementById('horarios');
-            horariosDiv.innerHTML = ''; // Limpa os horários anteriores
-
-            // obter os horários do servidor joao-uc10/actions/listar_horarios.php?data=<data>
             const dataSelecionada = document.getElementById('data-agendamento').value;
+            const horariosDiv = document.getElementById('horarios');
+            horariosDiv.innerHTML = '';
 
-            // Atualiza o campo hidden da data
+            if (!dataSelecionada) return;
+
             document.getElementById('data_hidden').value = dataSelecionada;
 
             fetch(`../actions/listar_horarios.php?data=${dataSelecionada}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.length === 0) {
-                        horariosDiv.innerHTML = '<p>Nenhum horário disponível para esta data.</p>';
+                    if (data.length === 0 || data.error) {
+                        horariosDiv.innerHTML = '<p class="text-muted">Nenhum horário disponível para esta data.</p>';
                         return;
                     }
-                    data.forEach(horario => {
-                        const btn = document.createElement('div');
-                        btn.classList.add('horario-btn');
-                        btn.textContent = horario.horario.slice(0, 5);
-                        btn.setAttribute("id-horario", horario.id);
-                        btn.addEventListener('click', function() {
-                            document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
-                            this.classList.add('selected');
 
-                            // Atualiza o campo hidden do horário
-                            document.getElementById('horario_hidden').value = this.getAttribute("id-horario");
+                    data.forEach(horario => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.classList.add('horario-btn', 'btn', 'btn-outline-secondary');
+                        btn.textContent = horario.horario.slice(0, 5);
+                        btn.dataset.id = horario.id;
+
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
+                            btn.classList.add('selected');
+                            document.getElementById('horario_hidden').value = btn.dataset.id;
                         });
+
                         horariosDiv.appendChild(btn);
                     });
                 })
-                .catch(error => {
-                    console.error('Erro ao obter horários:', error);
+                .catch(() => {
+                    horariosDiv.innerHTML = '<p class="text-danger">Erro ao carregar horários.</p>';
                 });
         }
 
-        // ***** VALIDAÇÃO DO FORMULÁRIO ANTES DE ENVIAR *****
-        document.getElementById('form-agendamento').addEventListener('submit', function(e) {
-            // Pega os valores dos campos hidden
-            const servicoId = document.getElementById('servico_id').value;
-            const data = document.getElementById('data_hidden').value;
-            const horario = document.getElementById('horario_hidden').value;
 
-            // Validações
+        //  VALIDAÇÃO + CONFIRMAÇÃO + ENVIO COM SWEETALERT
+        document.getElementById('form-agendamento').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const servicoId   = document.getElementById('servico_id').value.trim();
+            const data        = document.getElementById('data_hidden').value.trim();
+            const horarioId   = document.getElementById('horario_hidden').value.trim();
+            const servicoNome = document.getElementById('servico_nome').value.trim();
+            const horarioText = document.querySelector('.horario-btn.selected')?.textContent || '';
+
             if (!servicoId) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: "warning",
-                    title: "Atenção!",
-                    text: "Por favor, selecione um serviço!",
-                    confirmButtonColor: "#EB6B9C"
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'Atenção',
+                    text: 'Selecione um serviço antes de continuar.',
+                    confirmButtonColor: '#EB6B9C'
                 });
-                return false;
             }
 
             if (!data) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: "warning",
-                    title: "Atenção!",
-                    text: "Por favor, selecione uma data!",
-                    confirmButtonColor: "#EB6B9C"
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'Atenção',
+                    text: 'Escolha uma data válida.',
+                    confirmButtonColor: '#EB6B9C'
                 });
-                return false;
             }
 
-            if (!horario) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: "warning",
-                    title: "Atenção!",
-                    text: "Por favor, selecione um horário!",
-                    confirmButtonColor: "#EB6B9C"
+            if (!horarioId) {
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'Atenção',
+                    text: 'Selecione um horário disponível.',
+                    confirmButtonColor: '#EB6B9C'
                 });
-                return false;
             }
 
-            // Se tudo estiver OK, o formulário será enviado
-            return true;
+            // Confirmação final
+            Swal.fire({
+                title: 'Confirmar agendamento?',
+                html: `
+                    <div style="text-align:left; line-height:1.6;">
+                        <strong>Serviço:</strong> ${servicoNome}<br>
+                        <strong>Data:</strong> ${data.split('-').reverse().join('/')}<br>
+                        <strong>Horário:</strong> ${horarioText}
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#EB6B9C',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sim, agendar!',
+                cancelButtonText: 'Cancelar'
+            }).then(result => {
+                if (!result.isConfirmed) return;
+
+                Swal.fire({
+                    title: 'Processando...',
+                    text: 'Aguarde enquanto confirmamos seu agendamento',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                this.submit();
+            });
         });
+
+            // Limpa parâmetros da URL
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('msg');
+            cleanUrl.searchParams.delete('err');
+            window.history.replaceState({}, '', cleanUrl);
+        
     </script>
 </body>
-
 </html>
