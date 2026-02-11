@@ -12,6 +12,8 @@ $err = [
     "usuario_cadastro_falha" => "Erro ao cadastrar usuário. Tente novamente.",
     'usuario_sessao_invaliada' => 'Sessão inválida. Por favor, faça login novamente.',
     "usuario_login_falha" => "E-mail e/ou senha inválidos. Verifique suas credenciais.",  
+    "email_vazio" => "O e-mail não foi informado.",
+    "senha_vazia" => "A senha não foi informada."
 ];
 ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

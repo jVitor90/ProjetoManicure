@@ -7,10 +7,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
 
     if(empty($usuario->email)){
-        echo "O Usuario/Email não foi informado";
+       header('Location: ../login.php?err=email_vazio');
     }
     else if(empty($usuario->senha)){
-        echo "A senha não foi informada";
+       header('Location: ../login.php?err=senha_vazia');
     }
     else{
         $resultado = $usuario->Logar();
