@@ -17,7 +17,13 @@ $servicos = $servicoObj->ListarServicos();
 
 $usuarios = new Usuario();
 $usuarios_listados = $usuarios->ListarTodosUsuarios();
+?>
+<?php
+require_once "../classes/relatorios.php";
 
+$relatorio = new Relatorios();
+$faturamento = $relatorio->TotalHoje();
+$faturamentoSemanal = $relatorio->FaturamentoSemanal();
 ?>
 
 <!DOCTYPE html>
@@ -837,7 +843,7 @@ $usuarios_listados = $usuarios->ListarTodosUsuarios();
                 <div class="stat-card">
                     <p class="stat-label">Hoje</p>
                     <div class="d-flex align-items-center justify-content-between">
-                        <h3 class="stat-value">R$ 120</h3>
+                        <h3 class="stat-value">R$ <?= $faturamento ?></h3>
                         <div class="icon-stat-gold"><i class="bi bi-currency-dollar"></i></div>
                     </div>
                 </div>
@@ -846,7 +852,7 @@ $usuarios_listados = $usuarios->ListarTodosUsuarios();
                 <div class="stat-card">
                     <p class="stat-label">Esta semana</p>
                     <div class="d-flex align-items-center justify-content-between">
-                        <h3 class="stat-value">R$ 1580</h3>
+                        <h3 class="stat-value">R$ <?=  $faturamentoSemanal ?></h3>
                         <div class="icon-stat-pink"><i class="bi bi-graph-up-arrow"></i></div>
                     </div>
                 </div>
