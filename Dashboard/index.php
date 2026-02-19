@@ -72,7 +72,7 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item d-flex align-items-center" href="./admin/sair.php">Sair</a>
+                                <a class="dropdown-item d-flex align-items-center" href="../admin/sair.php">Sair</a>
                             </li>
                         </ul>
 

@@ -37,7 +37,9 @@ $servicos = $servicosObj->listarServicos();
 
             <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
                 <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
-                <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+               <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
+                    <a href="./Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+                <?php endif; ?>
 
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá, <?= $_SESSION['usuario']['nome'] ?>!
@@ -58,7 +60,7 @@ $servicos = $servicosObj->listarServicos();
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="./admin/sair.php">Sair</a>
+                            <a class="dropdown-item d-flex align-items-center" href="../admin/sair.php">Sair</a>
                         </li>
                     </ul>
 
