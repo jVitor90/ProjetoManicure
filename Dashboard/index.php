@@ -6,8 +6,7 @@ if (!isset($_SESSION['usuario'])) {
     header("Location: login.php?err=usuario_sessao_invaliada");
     exit();
 }
-?>
-<?php
+
 require_once('../classes/servicos_class.php');
 require_once('../classes/usuario_class.php');
 
@@ -17,8 +16,8 @@ $servicos = $servicoObj->ListarServicos();
 
 $usuarios = new Usuario();
 $usuarios_listados = $usuarios->ListarTodosUsuarios();
-?>
-<?php
+
+
 require_once "../classes/relatorios.php";
 
 $relatorio = new Relatorios();
@@ -40,7 +39,7 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
 </head>
 
 <body class="bg-white">
-    <header class="header-custom sticky-top bg-white">
+   <header class="header-custom sticky-top bg-white">
         <div class="container-fluid px-4">
 
             <!-- Linha superior: left spacer / logo central / right actions -->
@@ -58,13 +57,25 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá, <?= $_SESSION['usuario']['nome'] ?>!
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" href="#">Perfil</a></li>
-                            <li><a class="dropdown-item" href="#">Configurações</a></li>
-                            <hr>
+                            <li>
+                                <a class="dropdown-item" href="#"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#perfilModal"
+                                    data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                    data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                    data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                    data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                    data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                    data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                    data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                    Perfil
+                                </a>
+                            </li>
                             <li>
                                 <a class="dropdown-item d-flex align-items-center" href="./admin/sair.php">Sair</a>
                             </li>
                         </ul>
+
                     </div>
 
                     <!-- botao mobile (aparece só em <lg) -->
@@ -73,6 +84,7 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
                     </button>
                 </div>
             </div>
+
         </div>
     </header>
     <!-- Modal Lista de Clientes -->
@@ -1104,6 +1116,28 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
         </div>
     </footer>
 
+       <!-- Modal de Perfil -->
+    <div class="modal fade" id="perfilModal" tabindex="-1" aria-labelledby="perfilModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="perfilModalLabel">Meu Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nome:</strong> <span id="modal-nome"></span></p>
+                    <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                    <p><strong>Telefone:</strong> <span id="modal-telefone"></span></p>
+                    <p><strong>Último Agendamento:</strong> <span id="modal-ultimo-agendamento"></span></p>
+                    <p><strong>Cadastro Criado em:</strong> <span id="modal-criado-em"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--  EDITAR SERVIÇOS -->
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1501,6 +1535,28 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
             // inicial
             renderizarTabela();
             renderizarPaginacao();
+        });
+
+         // Script para preencher o modal de perfil com os dados do usuário
+        document.addEventListener('DOMContentLoaded', function() {
+            const perfilModal = document.getElementById('perfilModal');
+
+            perfilModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+
+                const nome = button.getAttribute('data-nome');
+                const sobrenome = button.getAttribute('data-sobrenome');
+                const email = button.getAttribute('data-email');
+                const telefone = button.getAttribute('data-telefone');
+                const ultimoAgendamento = button.getAttribute('data-ultimo-agendamento');
+                const criadoEm = button.getAttribute('data-criado-em');
+
+                document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
+                document.getElementById('modal-email').textContent = email || '—';
+                document.getElementById('modal-telefone').textContent = telefone || '—';
+                document.getElementById('modal-ultimo-agendamento').textContent = ultimoAgendamento || 'Nenhum agendamento';
+                document.getElementById('modal-criado-em').textContent = criadoEm ? new Date(criadoEm).toLocaleDateString('pt-BR') : '—';
+            });
         });
     </script>
 

@@ -1,4 +1,11 @@
 <?php
+//Verifica se o usuario esta logado:
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    //Caso o usuario esteja logado, retorna ao login.php
+    header("Location: login.php?err=usuario_sessao_invaliada");
+    exit();
+}
 require_once('../classes/servicos_class.php');
 
 $servicosObj = new Servicos();
@@ -6,6 +13,7 @@ $servicos = $servicosObj->listarServicos();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,27 +24,44 @@ $servicos = $servicosObj->listarServicos();
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
 
     <!-- HEADER -->
     <header class="header-custom sticky-top bg-white border-bottom">
+
         <div class="container-fluid px-4 position-relative">
             <div class="text-center py-3">
                 <a href="../index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
             </div>
+
             <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
                 <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
                 <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown">
-                        Login
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá, <?= $_SESSION['usuario']['nome'] ?>!
                     </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Perfil</a></li>
-                        <li><a class="dropdown-item" href="#">Configurações</a></li>
-                        <hr>
-                        <li><a class="dropdown-item" href="#">Sair</a></li>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li>
+                            <a class="dropdown-item" href="#"
+                                data-bs-toggle="modal"
+                                data-bs-target="#perfilModal"
+                                data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="./admin/sair.php">Sair</a>
+                        </li>
                     </ul>
+
                 </div>
             </div>
         </div>
@@ -151,17 +176,75 @@ $servicos = $servicosObj->listarServicos();
         </div>
     </footer>
 
+    <!-- Modal de Perfil -->
+    <div class="modal fade" id="perfilModal" tabindex="-1" aria-labelledby="perfilModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="perfilModalLabel">Meu Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nome:</strong> <span id="modal-nome"></span></p>
+                    <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                    <p><strong>Telefone:</strong> <span id="modal-telefone"></span></p>
+                    <p><strong>Último Agendamento:</strong> <span id="modal-ultimo-agendamento"></span></p>
+                    <p><strong>Cadastro Criado em:</strong> <span id="modal-criado-em"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        document.querySelectorAll('.horario-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+
+                // OPCIONAL: permitir apenas um horário selecionado
+                document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
+
+                // adiciona a classe selecionado
+                this.classList.add('selected');
+            });
+        });
+
+
+        // Script para preencher o modal de perfil com os dados do usuário
+        document.addEventListener('DOMContentLoaded', function() {
+            const perfilModal = document.getElementById('perfilModal');
+
+            perfilModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+
+                const nome = button.getAttribute('data-nome');
+                const sobrenome = button.getAttribute('data-sobrenome');
+                const email = button.getAttribute('data-email');
+                const telefone = button.getAttribute('data-telefone');
+                const ultimoAgendamento = button.getAttribute('data-ultimo-agendamento');
+                const criadoEm = button.getAttribute('data-criado-em');
+
+                document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
+                document.getElementById('modal-email').textContent = email || '—';
+                document.getElementById('modal-telefone').textContent = telefone || '—';
+                document.getElementById('modal-ultimo-agendamento').textContent = ultimoAgendamento || 'Nenhum agendamento';
+                document.getElementById('modal-criado-em').textContent = criadoEm ? new Date(criadoEm).toLocaleDateString('pt-BR') : '—';
+            });
+        });
+
+
+
         // SELEÇÃO DE SERVIÇO
         document.querySelectorAll('.card-servico.selecionavel').forEach(card => {
             card.addEventListener('click', function() {
                 document.querySelectorAll('.card-servico.selecionavel').forEach(c => c.classList.remove('selecionado'));
                 this.classList.add('selecionado');
-                document.getElementById('servico_id').value   = this.dataset.id;
+                document.getElementById('servico_id').value = this.dataset.id;
                 document.getElementById('servico_nome').value = this.dataset.servico;
-                document.getElementById('preco').value        = this.dataset.preco;
-                document.getElementById('duracao').value      = this.dataset.tempo;
+                document.getElementById('preco').value = this.dataset.preco;
+                document.getElementById('duracao').value = this.dataset.tempo;
             });
         });
 
@@ -202,15 +285,30 @@ $servicos = $servicosObj->listarServicos();
         // VALIDAÇÃO + CONFIRMAÇÃO + ENVIO COM SWEETALERT
         document.getElementById('form-agendamento').addEventListener('submit', function(e) {
             e.preventDefault();
-            const servicoId   = document.getElementById('servico_id').value.trim();
-            const data        = document.getElementById('data_hidden').value.trim();
-            const horarioId   = document.getElementById('horario_hidden').value.trim();
+            const servicoId = document.getElementById('servico_id').value.trim();
+            const data = document.getElementById('data_hidden').value.trim();
+            const horarioId = document.getElementById('horario_hidden').value.trim();
             const servicoNome = document.getElementById('servico_nome').value.trim();
             const horarioText = document.querySelector('.horario-btn.selected')?.textContent || '';
 
-            if (!servicoId) return Swal.fire({ icon: 'warning', title: 'Atenção', text: 'Selecione um serviço antes de continuar.', confirmButtonColor: '#EB6B9C' });
-            if (!data)      return Swal.fire({ icon: 'warning', title: 'Atenção', text: 'Escolha uma data válida.', confirmButtonColor: '#EB6B9C' });
-            if (!horarioId) return Swal.fire({ icon: 'warning', title: 'Atenção', text: 'Selecione um horário disponível.', confirmButtonColor: '#EB6B9C' });
+            if (!servicoId) return Swal.fire({
+                icon: 'warning',
+                title: 'Atenção',
+                text: 'Selecione um serviço antes de continuar.',
+                confirmButtonColor: '#EB6B9C'
+            });
+            if (!data) return Swal.fire({
+                icon: 'warning',
+                title: 'Atenção',
+                text: 'Escolha uma data válida.',
+                confirmButtonColor: '#EB6B9C'
+            });
+            if (!horarioId) return Swal.fire({
+                icon: 'warning',
+                title: 'Atenção',
+                text: 'Selecione um horário disponível.',
+                confirmButtonColor: '#EB6B9C'
+            });
 
             Swal.fire({
                 title: 'Confirmar agendamento?',
@@ -227,7 +325,13 @@ $servicos = $servicosObj->listarServicos();
                 cancelButtonText: 'Cancelar'
             }).then(result => {
                 if (!result.isConfirmed) return;
-                Swal.fire({ title: 'Processando...', text: 'Aguarde enquanto confirmamos seu agendamento', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() });
+                Swal.fire({
+                    title: 'Processando...',
+                    text: 'Aguarde enquanto confirmamos seu agendamento',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
                 this.submit();
             });
         });
@@ -239,4 +343,5 @@ $servicos = $servicosObj->listarServicos();
         window.history.replaceState({}, '', cleanUrl);
     </script>
 </body>
+
 </html>
