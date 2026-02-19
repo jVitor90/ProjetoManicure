@@ -831,7 +831,7 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
         <div class="row mb-5">
             <div class="col-lg-8">
                 <span class="badge badge-admin">DASHBOARD ADMIN</span>
-                <h1 class="title-welcome mt-3">Bem-vinda,<?= $_SESSION['usuario']['nome'] ?></h1>
+                <h1 class="title-welcome mt-3">Olá,<?= $_SESSION['usuario']['nome'] ?></h1>
                 <p class="text-muted subtitle">Aqui está o resumo do seu negócio hoje.</p>
             </div>
 
@@ -852,7 +852,7 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
                 <div class="stat-card">
                     <p class="stat-label">Esta semana</p>
                     <div class="d-flex align-items-center justify-content-between">
-                        <h3 class="stat-value">R$ <?=  $faturamentoSemanal ?></h3>
+                        <h3 class="stat-value">R$ <?= $faturamentoSemanal ?></h3>
                         <div class="icon-stat-pink"><i class="bi bi-graph-up-arrow"></i></div>
                     </div>
                 </div>

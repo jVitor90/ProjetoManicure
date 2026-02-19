@@ -35,33 +35,57 @@ if (!isset($_SESSION['usuario'])) {
       </div>
 
       <!-- Ações à direita (Agendar + Login) -->
-      <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
-        <a href="./Agendamento/index.php" class="btn btn-agendar">Agendar</a>
-        <a href="./Dashboard/index.php" class="btn btn-agendar">Deshboard</a>
+      <?php
+      if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1) {
+      ?>
+        <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
+          <a href="./Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+          <a href="./Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
 
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown">
-            <?= $_SESSION['usuario']['nome'] ?>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Perfil</a></li>
-            <li><a class="dropdown-item" href="#">Configurações</a></li>
-            <hr>
-            <li><a class="dropdown-item" href="#">Sair</a></li>
-          </ul>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown">
+              <?= $_SESSION['usuario']['nome'] ?>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Perfil</a></li>
+              <li><a class="dropdown-item" href="#">Configurações</a></li>
+              <hr>
+              <li><a class="dropdown-item" href="./admin/sair.php">Sair</a></li>
+            </ul>
+          </div>
         </div>
-      </div>
-    </div>
+      <?php
+      } else {
+      ?>
+        <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
+          <a href="./Agendamento/index.php" class="btn btn-agendar">Agendar</a>
 
-    <!-- MENU inferior 100% centralizado -->
-    <div class="bottom-bar border-top">
-      <nav class="py-2">
-        <ul class="nav justify-content-center gap-4 mb-0">
-          <li class="nav-item"><a class="nav-link link-nav px-3" href="./Servicos/index.php">Serviços</a></li>
-          <li class="nav-item"><a class="nav-link link-nav px-3" href="./Contato/index.php">Contato</a></li>
-        </ul>
-      </nav>
-    </div>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown">
+              <?= $_SESSION['usuario']['nome'] ?>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Perfil</a></li>
+              <li><a class="dropdown-item" href="#">Configurações</a></li>
+              <hr>
+              <li><a class="dropdown-item" href="./admin/sair.php">Sair</a></li>
+            </ul>
+          </div>
+        </div>
+      <?php
+      }
+      ?>
+
+
+      <!-- MENU inferior 100% centralizado -->
+      <div class="bottom-bar border-top">
+        <nav class="py-2">
+          <ul class="nav justify-content-center gap-4 mb-0">
+            <li class="nav-item"><a class="nav-link link-nav px-3" href="./Servicos/index.php">Serviços</a></li>
+            <li class="nav-item"><a class="nav-link link-nav px-3" href="./Contato/index.php">Contato</a></li>
+          </ul>
+        </nav>
+      </div>
 
   </header>
 
