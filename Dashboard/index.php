@@ -36,8 +36,7 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="../css/indexdashboard.css">
-    <link rel="stylesheet" href="../css/indexnovoservico.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body class="bg-white">
@@ -49,7 +48,7 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
                 <div class="header-left"></div>
 
                 <div class="text-center">
-                    <a href="./index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
+                    <a href="../index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
                 </div>
 
                 <div class="header-right d-flex align-items-center gap-2">
@@ -74,16 +73,6 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
                     </button>
                 </div>
             </div>
-
-            <!-- Linha inferior: menu centralizado -->
-            <div class="bottom-bar border-top">
-                <nav class="py-2">
-                    <ul class="nav justify-content-center gap-4 mb-0">
-                        <li class="nav-item"><a class="nav-link link-nav px-3" href="#servicos">Serviços</a></li>
-                    </ul>
-                </nav>
-            </div>
-
         </div>
     </header>
     <!-- Modal Lista de Clientes -->
@@ -354,7 +343,7 @@ $faturamentoSemanal = $relatorio->FaturamentoSemanal();
                         data-bs-target="#modalNovoServico">
                         Editar Serviço
                     </button>
-                    <button type="button" class="btn btn-outline-danger d-none" id="btnExcluirSelecionado">
+                    <button type="button" class="btn btn-primary d-none" id="btnExcluirSelecionado">
                         Excluir Serviço
                     </button>
 

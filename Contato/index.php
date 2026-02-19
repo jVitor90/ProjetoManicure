@@ -1,3 +1,13 @@
+<?php
+//Verifica se o usuario esta logado:
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    //Caso o usuario esteja logado, retorna ao login.php
+    header("Location: login.php?err=usuario_sessao_invaliada");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -6,64 +16,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Transforme suas unhas em obras de arte. Manicure profissional em São Paulo com atendimento personalizado e produtos premium.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/indexcontato.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        .text-rosa {
-            color: #EB6B9C;
-        }
-    </style>
 </head>
 
 <body>
-    
-<header class="header-custom sticky-top bg-white border-bottom">
-    <div class="container-fluid px-4 position-relative">
-
-        <!-- LOGO centralizado perfeitamente -->
-        <div class="text-center py-3">
-            <a href="../index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
-        </div>
-
-        <!-- Ações à direita (Agendar + Login) -->
-        <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
-            <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
-            <a href="../Dashboard/index.php" class="btn btn-agendar">Deshboard</a>
-
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown">
-                    Login
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Perfil</a></li>
-                    <li><a class="dropdown-item" href="#">Configurações</a></li>
-                    <hr>
-                    <li><a class="dropdown-item" href="#">Sair</a></li>
-                </ul>
+    <!-- HEADER -->
+    <header class="header-custom sticky-top bg-white border-bottom">
+        <div class="container-fluid px-4 position-relative">
+            <div class="text-center py-3">
+                <a href="../index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
+            </div>
+            <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
+                <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá, <?= $_SESSION['usuario']['nome'] ?>!
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li>
+                            <a class="dropdown-item" href="#"
+                                data-bs-toggle="modal"
+                                data-bs-target="#perfilModal"
+                                data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="../admin/sair.php">Sair</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+        <div class="bottom-bar border-top">
+            <nav class="py-2">
+                <ul class="nav justify-content-center gap-4 mb-0">
+                    <li class="nav-item"><a class="nav-link link-nav px-3" href="../Servicos/index.php">Serviços</a></li>
+                    <li class="nav-item"><a class="nav-link link-nav px-3" href="../Contato/index.php">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-    <!-- MENU inferior 100% centralizado -->
-    <div class="bottom-bar border-top">
-        <nav class="py-2">
-            <ul class="nav justify-content-center gap-4 mb-0">
-                <li class="nav-item"><a class="nav-link link-nav px-3" href="#servicos">Serviços</a></li>      
-                <li class="nav-item"><a class="nav-link link-nav px-3" href="../Contato/index.php">Contato</a></li>
-            </ul>
-        </nav>
-    </div>
-
-</header>
-    <!-- ===== SEÇÃO CONTATO  ===== -->
+    <!-- SEÇÃO CONTATO -->
     <section class="py-5 bg-light" id="localizacao-contato">
         <div class="container">
             <h3 class="text-center mb-5 fw-bold">
                 <span class="text-dark">Meus</span> <span style="color:#EB6B9C;">Contatos</span>
             </h3>
-
             <div class="row g-5 align-items-start">
-                <!-- MAPA À ESQUERDA -->
+                <!-- MAPA -->
                 <div class="col-lg-7">
                     <div class="ratio ratio-16x9 rounded shadow-lg overflow-hidden">
                         <iframe
@@ -72,12 +81,9 @@
                         </iframe>
                     </div>
                 </div>
-
-                <!-- COLUNA DIREITA: CARDS + BOTÕES EMBAIXO -->
+                <!-- CARDS + BOTÕES -->
                 <div class="col-lg-5">
                     <div class="row g-4">
-
-                        <!-- Card Endereço -->
                         <div class="col-12">
                             <div class="info-card text-center text-md-start">
                                 <div class="icon mx-auto mx-md-0">
@@ -90,8 +96,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- Card Telefone -->
                         <div class="col-12">
                             <div class="info-card text-center text-md-start">
                                 <div class="icon mx-auto mx-md-0">
@@ -103,8 +107,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- Card Horário -->
                         <div class="col-12">
                             <div class="info-card text-center text-md-start">
                                 <div class="icon mx-auto mx-md-0">
@@ -117,10 +119,7 @@
                                 </p>
                             </div>
                         </div>
-
                     </div>
-
-                    <!-- Botões logo abaixo dos cards -->
                     <div class="mt-4 d-flex flex-column flex-sm-row gap-3 justify-content-center">
                         <a href="https://wa.me/5512999999999" target="_blank" class="btn-contato-wa">
                             <i class="bi bi-whatsapp"></i> WhatsApp
@@ -134,10 +133,8 @@
         </div>
     </section>
 
-
-
     <!-- FOOTER -->
-    <footer class=" bg-light border-top py-5">
+    <footer class="bg-light border-top py-5">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
@@ -164,20 +161,41 @@
         </div>
     </footer>
 
+    <!-- Modal de Perfil -->
+    <div class="modal fade" id="perfilModal" tabindex="-1" aria-labelledby="perfilModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="perfilModalLabel">Meu Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nome:</strong> <span id="modal-nome"></span></p>
+                    <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                    <p><strong>Telefone:</strong> <span id="modal-telefone"></span></p>
+                    <p><strong>Último Agendamento:</strong> <span id="modal-ultimo-agendamento"></span></p>
+                    <p><strong>Cadastro Criado em:</strong> <span id="modal-criado-em"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"></script>
     <script>
-        document.querySelectorAll('.horario-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-
-                // OPCIONAL: permitir apenas um horário selecionado
-                document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
-
-                // adiciona a classe selecionado
-                this.classList.add('selected');
+        document.addEventListener('DOMContentLoaded', function() {
+            const perfilModal = document.getElementById('perfilModal');
+            perfilModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                document.getElementById('modal-nome').textContent = button.getAttribute('data-nome') + ' ' + button.getAttribute('data-sobrenome');
+                document.getElementById('modal-email').textContent = button.getAttribute('data-email') || '—';
+                document.getElementById('modal-telefone').textContent = button.getAttribute('data-telefone') || '—';
+                document.getElementById('modal-ultimo-agendamento').textContent = button.getAttribute('data-ultimo-agendamento') || 'Nenhum agendamento';
+                document.getElementById('modal-criado-em').textContent = button.getAttribute('data-criado-em') ? new Date(button.getAttribute('data-criado-em')).toLocaleDateString('pt-BR') : '—';
             });
         });
     </script>
 </body>
-
 </html>

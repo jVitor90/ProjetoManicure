@@ -1,0 +1,1609 @@
+/* ============================================================
+   STYLES.CSS — CSS UNIFICADO DO PROJETO
+   Organização:
+   1. Variáveis CSS (Design Tokens)
+   2. Reset & Base
+   3. Header (compartilhado)
+   4. Navegação (compartilhado)
+   5. Botões (compartilhado)
+   6. Footer (compartilhado)
+   7. Hero — index.html
+   8. Serviços — indexservicos.html
+   9. Agendamento — indexagendamento.html
+   10. Contato — indexcontato.html
+   11. Dashboard — indexdashboard.html
+   12. Login — login.html
+   13. Utilitários
+============================================================ */
+
+
+/* ============================================================
+   1. VARIÁVEIS CSS (DESIGN TOKENS)
+============================================================ */
+:root {
+  /* Cores principais */
+  --color-primary:        #eb6b9b;
+  --color-primary-dark:   #e03e7f;
+  --color-primary-darker: #d13570;
+  --color-primary-light:  #f8e2ea;
+  --color-primary-xlight: #fdf2f8;
+
+  /* Cores de texto */
+  --color-text-dark:      #1a1a1a;
+  --color-text-base:      #39262b;
+  --color-text-mid:       #5c3a40;
+  --color-text-muted:     #999;
+  --color-text-light:     #666;
+
+  /* Bordas e fundos */
+  --color-border:         #f0f0f0;
+  --color-border-pink:    #f2d8e0;
+  --color-border-pink2:   #fce4f0;
+  --color-bg:             #ffffff;
+  --color-bg-light:       #f5f5f5;
+  --color-bg-pink:        #fdf2f8;
+
+  /* Gradiente principal */
+  --gradient-primary: linear-gradient(135deg, #eb6b9b, #e03e7f);
+
+  /* Bordas arredondadas */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 999px;
+
+  /* Sombras */
+  --shadow-sm:   0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md:   0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-pink: 0 6px 20px rgba(235, 107, 155, 0.3);
+
+  /* Transição padrão */
+  --transition: all 0.3s ease;
+
+  /* Tipografia */
+  --font-base:    "Inter", Arial, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+}
+
+
+/* ============================================================
+   2. RESET & BASE
+============================================================ */
+body {
+  font-family: var(--font-base);
+  color: var(--color-text-base);
+  background: var(--color-bg);
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   3. HEADER (compartilhado)
+============================================================ */
+.header-custom {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.header-custom .logo {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+  display: inline-block;
+  z-index: 1050;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border-pink);
+}
+
+.header-left  { flex: 1; }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.bottom-bar {
+  border-top: 1px solid var(--color-border-pink);
+}
+
+.bottom-bar nav {
+  padding: 8px 0;
+}
+
+/* Dropdown do header — sobrescreve btn-secondary do Bootstrap */
+.header-right .dropdown-toggle,
+.dropdown-toggle {
+  background: var(--color-primary) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 30px;
+  padding: 14px 34px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.header-right .dropdown-toggle:hover {
+  background: var(--color-primary-dark);
+}
+
+.header-right .dropdown-menu {
+  border-radius: 10px;
+  padding: 8px 0;
+}
+
+
+/* ============================================================
+   4. NAVEGAÇÃO — links do menu (compartilhado)
+============================================================ */
+.link-nav {
+  color: var(--color-text-mid);
+  font-weight: 500;
+  font-size: 15px;
+  position: relative;
+  padding: 8px 12px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link-nav:hover,
+.link-nav.active {
+  color: var(--color-primary);
+}
+
+.link-nav::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -8px;
+  left: 50%;
+  background: var(--color-primary);
+  transition: width 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.link-nav:hover::after,
+.link-nav.active::after {
+  width: 100%;
+}
+
+
+/* ============================================================
+   5. BOTÕES (compartilhado)
+============================================================ */
+
+/* Botão primário — agendar / schedule */
+.btn-agendar,
+.btn-schedule {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 14px 34px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+  transition: var(--transition);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-agendar:hover,
+.btn-schedule:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-pink);
+  color: white;
+}
+
+/* Botão secundário — serviços */
+.btn-services {
+  background: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-border-pink);
+  border-radius: var(--radius-full);
+  padding: 16px 32px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: var(--transition);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-services:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: transparent;
+}
+
+/* Botão primário Bootstrap override */
+.btn.btn-primary,
+.btn-primary {
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: var(--transition);
+  color: white;
+}
+
+.btn.btn-primary:hover,
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(235, 107, 155, 0.18);
+}
+
+/* Botão secundário Bootstrap override */
+.btn.btn-secondary,
+.btn-secondary {
+  border: 2px solid #e0e0e0;
+  border-radius: var(--radius-full);
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text-mid);
+  background: white;
+  transition: var(--transition);
+}
+
+.btn.btn-secondary:hover,
+.btn-secondary:hover {
+  background: var(--color-bg-light);
+  border-color: #d0d0d0;
+  color: var(--color-text-dark);
+}
+
+/* Botão gradiente rosa */
+.btn-rosa {
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  padding: 12px 28px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.btn-rosa:hover {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-darker));
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(235, 107, 155, 0.3);
+}
+
+
+/* ============================================================
+   6. FOOTER (compartilhado)
+============================================================ */
+footer,
+.footer-custom {
+  background: #faf2f5;
+  border-top: 1px solid var(--color-border-pink);
+  margin-top: 60px;
+}
+
+footer a:hover { color: var(--color-primary); }
+
+.footer-logo    { font-size: 28px; margin-bottom: 16px; }
+.footer-text    { font-size: 14px; color: var(--color-text-muted); line-height: 1.6; }
+.footer-title   { font-size: 16px; font-weight: 700; color: var(--color-text-dark); margin-bottom: 16px; }
+
+.footer-list {
+  list-style: none;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  padding: 0;
+}
+.footer-list li { margin-bottom: 8px; }
+
+.footer-link {
+  display: block;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+.footer-link:hover { color: var(--color-primary); }
+
+.footer-bottom {
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid #e0e0e0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+
+/* ============================================================
+   7. HERO — index.php (sem escopo de página)
+============================================================ */
+.hero {
+  min-height: 90vh;
+  position: relative;
+}
+
+.hero-img {
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0.95),
+    rgba(255,255,255,0.8),
+    rgba(255,255,255,0.4)
+  );
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+}
+
+.hero-content h1 {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1.1;
+}
+
+.badge-hero {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.indicator .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #00ff22;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Utilitário de gradiente de texto */
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Layout helper do menu central do footer */
+.menu-center {
+  position: absolute;
+  right: 60%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Grid de cards — 4 por linha em telas grandes */
+@media (min-width: 1400px) {
+  .row-cols-lg-4 > .col {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+
+/* ============================================================
+   8. SERVIÇOS — indexservicos.html
+   SEM escopo — funciona sem classe no body
+============================================================ */
+.card-unha {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-unha:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  transform: translateY(-4px);
+}
+
+.card-unha img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.card-unha:hover img {
+  transform: scale(1.06);
+}
+
+.legenda {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 16px 16px;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 60%, transparent 100%);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.4s ease, transform 0.45s ease;
+  pointer-events: none;
+}
+
+.card-unha:hover .legenda {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.legenda .tag {
+  background-color: #f1c27d;
+  color: #000;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.legenda h3 {
+  font-size: 1.05rem;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.portfolio-section h2 { letter-spacing: -0.5px; }
+
+.portfolio-section p {
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+
+.text-rosa { color: var(--color-primary); }
+
+/* Mobile: legenda sempre visível */
+@media (max-width: 768px) {
+  .legenda {
+    opacity: 1;
+    transform: translateY(0);
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.45));
+    padding: 16px 12px 12px;
+  }
+  .card-unha:hover img { transform: scale(1.04); }
+  .legenda h3 { font-size: 0.98rem; }
+}
+
+
+/* ============================================================
+   9. AGENDAMENTO — indexagendamento.html
+   SEM escopo — funciona sem classe no body
+============================================================ */
+
+/* Steps */
+.step-done {
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step-current {
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  border: 3px solid var(--color-primary);
+  color: var(--color-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step-future {
+  width: 40px;
+  height: 40px;
+  background-color: #f1f1f1;
+  color: #999;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step-line {
+  width: 50px;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+/* Passo header / pill */
+.passo-header {
+  background-color: #fce9f0;
+  color: var(--color-primary);
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 16px;
+  width: 100%;
+  text-align: center;
+}
+
+.passo-pill {
+  background-color: #fce9f0;
+  color: var(--color-primary);
+  padding: 6px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 16px;
+  display: inline-block;
+}
+
+/* Caixa de seção */
+.section-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  max-width: 1000px;
+  margin: 40px auto;
+  box-shadow: 0 3px 18px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title i {
+  background: var(--color-primary);
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+/* Cards de serviço */
+.card-servico {
+  border: 2px solid #f1f1f1;
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card-servico:hover {
+  border-color: var(--color-primary);
+  background: #fff8fb;
+}
+
+.card-servico span.preco {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.card-servico small { color: #666; }
+
+/* Selecionável */
+.card-servico.selecionavel { cursor: pointer; transition: all 0.2s; }
+
+.card-servico.selecionavel.selecionado {
+  border-color: var(--color-primary);
+  background-color: #fff0f5;
+  box-shadow: 0 0 0 4px rgba(235, 107, 156, 0.2);
+}
+
+.card-servico.selecionavel.selecionado strong,
+.card-servico.selecionavel.selecionado .preco {
+  color: var(--color-primary);
+}
+
+/* Horários */
+.horario-btn {
+  border: 2px solid #e8e8e8;
+  padding: 12px 20px;
+  border-radius: 10px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.horario-btn.selected {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.horario-btn:hover {
+  background: #fff0f5;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Botão confirmar */
+.btn-confirmar {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 14px 34px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.btn-confirmar:hover {
+  background: #d55a87;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(235, 107, 156, 0.3);
+}
+
+
+/* ============================================================
+   10. CONTATO — indexcontato.html
+   SEM escopo — funciona sem classe no body
+============================================================ */
+.info-card {
+  background: var(--color-bg-pink);
+  padding: 1.5rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(236, 140, 192, 0.15);
+  border: 1px solid var(--color-border-pink2);
+  transition: var(--transition);
+  text-align: center;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(236, 140, 192, 0.25);
+}
+
+.info-card .icon {
+  width: 52px;
+  height: 52px;
+  background: #ffb6d9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px auto;
+  box-shadow: 0 3px 10px rgba(255, 182, 217, 0.4);
+}
+
+.info-card .icon i {
+  font-size: 1.5rem;
+  color: var(--color-primary-dark);
+}
+
+.info-card h5 {
+  color: #d81b60;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.info-card p {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+/* No desktop: alinhar à esquerda */
+@media (min-width: 992px) {
+  .info-card        { text-align: left; }
+  .info-card .icon  { margin: 0 0 14px 0; }
+}
+
+/* Botão WhatsApp */
+.btn-contato-wa {
+  background: #25D366;
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 14px 32px;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.btn-contato-wa:hover {
+  background: #1da851;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+  color: white;
+}
+
+/* Botão Instagram */
+.btn-contato-ig {
+  background: white;
+  color: var(--color-primary-dark);
+  border: 2.5px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  padding: 14px 32px;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 6px 20px rgba(235, 107, 155, 0.15);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.btn-contato-ig:hover {
+  background: var(--color-bg-pink);
+  border-color: var(--color-primary-dark);
+  color: #d81b60;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(235, 107, 155, 0.25);
+}
+
+
+/* ============================================================
+   11. DASHBOARD — indexdashboard.html
+   SEM escopo — classes aplicadas diretamente no HTML.
+============================================================ */
+
+/* Badge admin */
+.badge-admin,
+.badge-admin {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.title-welcome,
+.title-welcome {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.subtitle,
+.subtitle {
+  font-size: 16px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* Botão primário customizado do dashboard */
+.btn.btn-primary-custom,
+.btn.btn-primary-custom {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 10px 26px;
+  height: 42px;
+  min-height: 42px;
+  line-height: 1;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.btn.btn-primary-custom:hover,
+.btn.btn-primary-custom:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(235, 107, 155, 0.18);
+}
+
+/* ===== CARDS DE ESTATÍSTICAS ===== */
+.stat-card,
+.stat-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  transition: var(--transition);
+}
+
+.stat-card:hover,
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-label,
+.stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.stat-value,
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1;
+}
+
+.icon-stat-gold,
+.icon-stat-pink,
+.icon-stat-gray,
+.icon-stat-gold,
+.icon-stat-pink,
+.icon-stat-gray {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.icon-stat-gold,  .icon-stat-gold  { background: #fff3cd; color: #ff9800; }
+.icon-stat-pink,  .icon-stat-pink  { background: var(--color-primary-light); color: var(--color-primary); }
+.icon-stat-gray,  .icon-stat-gray  { background: #f5f5f5; color: #999; }
+
+/* ===== CARDS CUSTOMIZADOS ===== */
+.card-custom,
+.card-custom {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.card-header-custom,
+.card-header-custom {
+  background: white;
+  border-bottom: 1px solid var(--color-border);
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.card-title,
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 4px;
+}
+
+.card-subtitle,
+.card-subtitle {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.link-view-all,
+.link-view-all {
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link-view-all:hover,
+.link-view-all:hover { color: var(--color-primary-dark); }
+
+.card-body-custom,
+.card-body-custom-sidebar,
+.card-body-custom,
+.card-body-custom-sidebar { padding: 24px; }
+
+/* ===== CARDS DE AGENDAMENTO ===== */
+.appointment-card,
+.appointment-card {
+  background: var(--color-primary-light);
+  border-radius: 20px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: var(--transition);
+}
+
+.appointment-card:hover,
+.appointment-card:hover {
+  box-shadow: 0 4px 16px rgba(235, 107, 155, 0.2);
+  transform: translateY(-2px);
+}
+
+.avatar,
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.avatar-pink,   .avatar-pink   { background: var(--color-primary); }
+.avatar-purple, .avatar-purple { background: #9b6b9c; }
+
+.appointment-name,    .appointment-name    { font-weight: 600; color: var(--color-text-dark); font-size: 15px; }
+.appointment-service, .appointment-service { font-size: 13px; color: var(--color-text-muted); margin-top: 4px; }
+.appointment-time,    .appointment-time    { font-weight: 600; color: var(--color-text-dark); font-size: 15px; }
+.appointment-price,   .appointment-price   { color: var(--color-primary); font-weight: 700; font-size: 14px; margin-top: 4px; }
+
+.badge-status,
+.badge-status {
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.badge-status.confirmed, .badge-status.confirmed { background: #d4edda; color: #155724; }
+.badge-status.pending,   .badge-status.pending   { background: #fff3cd; color: #856404; }
+
+/* ===== SIDEBAR ===== */
+.sidebar-title,
+.sidebar-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 8px;
+}
+
+.action-button,
+.action-button {
+  display: block;
+  padding: 16px;
+  background: var(--color-bg-light);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-mid);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: var(--transition);
+  text-align: left;
+}
+
+.action-button i,         .action-button i         { margin-right: 12px; color: var(--color-primary); }
+.action-button:hover,     .action-button:hover     { background: var(--color-primary); color: white; }
+.action-button:hover i,   .action-button:hover i   { color: white; }
+
+.month-value,
+.month-value {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.month-subtitle,
+.month-subtitle { font-size: 14px; color: var(--color-text-muted); margin-bottom: 20px; }
+
+.btn-view-report,
+.btn-view-report {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.btn-view-report:hover,
+.btn-view-report:hover { background: var(--color-primary); color: white; }
+
+/* ===== MODAL ===== */
+.modal-content,
+.modal-content {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header,
+.modal-header {
+  padding: 28px 32px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-title,
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.modal-body,   .modal-body   { padding: 24px 32px; }
+.modal-footer, .modal-footer { padding: 16px 32px 28px; border-top: none; }
+
+/* Forms */
+.form-label,
+.form-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text-mid);
+  margin-bottom: 8px;
+}
+
+.form-control,
+.form-select,
+.form-control,
+.form-select {
+  border: 1.5px solid #e8e8e8;
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--color-text-dark);
+  transition: var(--transition);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(235, 107, 155, 0.1);
+  outline: none;
+}
+
+.form-control::placeholder,
+.form-control::placeholder { color: #bbb; }
+
+textarea.form-control,
+textarea.form-control { resize: vertical; }
+
+.input-group-text,
+.input-group-text {
+  background: var(--color-primary-light);
+  border: 1.5px solid #e8e8e8;
+  border-right: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  color: var(--color-primary);
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+.input-group > .form-control,
+.input-group > .form-select,
+.input-group > .form-control,
+.input-group > .form-select { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+
+.input-group .form-select,
+.input-group .form-select { border-left: 1.5px solid #e8e8e8; }
+
+/* ===== CARDS DE RELATÓRIO ===== */
+.card-estatistica,
+.card-estatistica {
+  border: 1px solid #e8e8e8;
+  border-radius: var(--radius-lg);
+  background: white;
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+  height: 100%;
+}
+
+.card-estatistica:hover,
+.card-estatistica:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(235, 107, 155, 0.1);
+}
+
+.stat-label-rel,
+.stat-label-rel {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #999;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.icone-card,
+.icone-card {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.icone-rosa,  .icone-rosa  { background-color: var(--color-primary-light); color: var(--color-primary); }
+.icone-cinza, .icone-cinza { background-color: #f5f5f5; color: #999; }
+
+.valor-grande, .valor-grande { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+.valor-cinza,  .valor-cinza  { color: var(--color-text-dark); }
+
+/* Cores utilitárias */
+.bg-rosa,       .bg-rosa       { background-color: var(--color-primary); }
+.bg-rosa-light, .bg-rosa-light { background-color: var(--color-primary-light); }
+
+/* ===== GRÁFICO DE BARRAS ===== */
+.grafico-barras,
+.grafico-barras {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 200px;
+  padding-top: 20px;
+  gap: 12px;
+}
+
+.barra-container,
+.barra-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.barra,
+.barra {
+  width: 100%;
+  max-width: 50px;
+  background: linear-gradient(180deg, var(--color-primary) 0%, #f0a0bf 100%);
+  border-radius: 8px 8px 0 0;
+  margin-top: auto;
+  transition: var(--transition);
+  min-height: 20px;
+}
+
+.barra-destaque,
+.barra-destaque {
+  background: linear-gradient(180deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+}
+
+.barra-label, .barra-label { font-size: 13px; color: #666; margin-top: 12px; font-weight: 500; }
+.barra-valor, .barra-valor { font-size: 12px; color: #999; margin-top: 4px; }
+
+/* ===== LISTA DE SERVIÇOS ===== */
+.servicos-lista, .servicos-lista { display: flex; flex-direction: column; gap: 16px; }
+.servico-item,   .servico-item   { padding: 0; }
+.servico-nome,   .servico-nome   { font-size: 14px; font-weight: 500; color: var(--color-text-dark); }
+.servico-percent,.servico-percent { font-size: 14px; font-weight: 600; }
+
+
+/* ===== MODAL "MEUS SERVIÇOS" (#modalServicos) ===== */
+#modalServicos .list-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+#modalServicos .list-group-item.servico-item {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.progress,
+.progress {
+  background-color: #f5e3eb;
+  border-radius: 4px;
+  height: 8px;
+}
+
+.progress-bar,
+.progress-bar.bg-rosa,
+.progress-bar,
+.progress-bar.bg-rosa {
+  background: linear-gradient(90deg, var(--color-primary), #f0a0bf);
+  border-radius: 4px;
+}
+
+/* Badges de variação */
+.badge-variacao-positiva,
+.badge-variacao-positiva {
+  background-color: #d4edda;
+  color: #155724;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.badge-variacao-negativa,
+.badge-variacao-negativa {
+  background-color: #f8d7da;
+  color: #721c24;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.badge-variacao-neutra,
+.badge-variacao-neutra {
+  background-color: #e9ecef;
+  color: #6c757d;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Tabela */
+.table,           .table           { margin-bottom: 0; }
+.table th,        .table th        { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.table td,        .table td        { font-size: 14px; }
+.table tbody tr:hover, .table tbody tr:hover { background-color: #fdf5f8; }
+
+.form-select,
+.form-select {
+  border: 1.5px solid #e8e8e8;
+  border-radius: 10px;
+  font-size: 14px;
+  padding: 8px 32px 8px 12px;
+}
+
+
+/* ============================================================
+   12. LOGIN — login.html
+   SEM escopo — usa body.page-login apenas para background
+============================================================ */
+.page-login body,
+body.page-login {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fceef5 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.card-form {
+  background: #ffffff;
+  padding: 45px 40px;
+  border-radius: var(--radius-xl);
+  border: 3px solid #f8b7d0;
+  box-shadow: 0 20px 40px rgba(155, 249, 155, 0.25);
+  max-width: 460px;
+  width: 100%;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#titulo {
+  color: #ba2d65;
+  font-weight: 800;
+  font-size: 2.6rem;
+  margin-bottom: 2rem;
+}
+
+.form-label {
+  color: #ba2d65;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.form-control {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid #e9b8d0;
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  border-color: #f99bb9;
+  box-shadow: none !important;
+}
+
+.input-group-text {
+  background: transparent;
+  border: 1.5px solid #e9b8d0;
+  border-right: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  color: #ba2d65;
+}
+
+.input-group .form-control {
+  border-left: none;
+  border-radius: 0;
+}
+
+.btn-pass {
+  background-color: #f99bb9;
+  border: 1.5px solid #e9b8d0;
+  border-left: none;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: white;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-pass:hover {
+  background-color: #f970a8;
+  color: white;
+}
+
+.input-group:focus-within {
+  box-shadow: 0 0 0 0.25rem rgba(249, 155, 185, 0.4);
+  border-radius: var(--radius-md);
+}
+
+.input-group:focus-within .form-control,
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .btn-pass {
+  border-color: #f99bb9;
+}
+
+.btn-custom {
+  background-color: #f99bb9;
+  border-color: #f99bb9;
+  color: #fff;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+  width: 100%;
+}
+
+.btn-custom:hover {
+  background-color: #f970a8;
+  border-color: #f970a8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(249, 155, 185, 0.4);
+}
+
+.toggle-link {
+  color: #f99bb9;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 1.02rem;
+}
+
+.toggle-link:hover {
+  color: #f970a8;
+  text-decoration: underline;
+}
+
+.senha-error {
+  color: #dc3545;
+  font-size: 0.9em;
+  margin-top: 6px;
+  display: none;
+}
+
+.form-container {
+  position: relative;
+  min-height: 500px;
+}
+
+.form-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease;
+}
+
+.form-wrapper.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+}
+
+@media (max-width: 576px) {
+  .card-form {
+    margin: 15px;
+    padding: 35px 25px;
+  }
+  #titulo { font-size: 2.3rem; }
+}
+
+
+/* ============================================================
+   13. UTILITÁRIOS GLOBAIS
+============================================================ */
+
+/* Cores de fundo e texto */
+.bg-rosa       { background-color: var(--color-primary); }
+.bg-rosa-light { background-color: var(--color-primary-light); }
+.text-rosa     { color: var(--color-primary); }
+
+
+/* ============================================================
+   14. DASHBOARD EXTRA — classes específicas do indexdashboard
+============================================================ */
+
+/* Ações nos cards de agendamento (confirmar/cancelar) */
+.appointment-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.btn-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-action.confirm {
+  background: #d4edda;
+  color: #155724;
+}
+
+.btn-action.confirm:hover {
+  background: #28a745;
+  color: white;
+  transform: scale(1.1);
+}
+
+.btn-action.cancel,
+.btn-cancelar-agenda {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.btn-action.cancel:hover,
+.btn-cancelar-agenda:hover {
+  background: #dc3545;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Card estatística variante rosa (destaque) */
+.card-estatistica-rosa {
+  border-color: var(--color-primary) !important;
+  background: linear-gradient(135deg, #fff0f5, #fdf2f8) !important;
+}
+
+.card-estatistica-rosa .stat-value,
+.card-estatistica-rosa .valor-grande {
+  color: var(--color-primary);
+}
+
+/* Cursor pointer utilitário */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Select compacto */
+.form-select-g {
+  border: 1.5px solid #e8e8e8;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  padding: 6px 28px 6px 10px;
+  min-width: 120px;
+  transition: var(--transition);
+}
+
+.form-select-g:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(235, 107, 155, 0.1);
+  outline: none;
+}
+
+/* Título de modal */
+.titulo {
+  font-family: var(--font-display);
+  color: var(--color-text-dark);
+  font-size: 1.3rem;
+}
+
+/* Item de serviço clicável na lista */
+.servico-item {
+  transition: var(--transition);
+  border-radius: var(--radius-md) !important;
+  border-color: var(--color-border) !important;
+}
+
+.servico-item:hover {
+  background: var(--color-primary-light) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.servico-item.active,
+.servico-item:focus {
+  background: var(--color-primary-light) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text-dark) !important;
+}
