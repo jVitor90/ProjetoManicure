@@ -43,6 +43,11 @@ $dadosPeriodo      = $relatorios->getDadosPeriodo($periodoSelecionado);
 $resumoMeses       = $relatorios->getResumoMeses();
 $servicosPopulares = $relatorios->getServicosPopulares($periodoSelecionado);
 $nomePeriodo       = $relatorios->getNomePeriodo($periodoSelecionado);
+
+require_once('../classes/agendamento_class.php');
+$listarPordata = new Agendamento();
+$data = date('Y-m-d');
+$listar = $listarPordata->ListarPorData($data)
 ?>
 
 <!DOCTYPE html>
@@ -203,8 +208,8 @@ $nomePeriodo       = $relatorios->getNomePeriodo($periodoSelecionado);
                         Ver tudo
                     </a>
                 </div>
-
-                <div class="card-body-custom">
+                
+                 <?php foreach($listar as $l) {?>
 
                     <!-- Agendamento 1 -->
                     <div class="appointment-card">
@@ -213,13 +218,13 @@ $nomePeriodo       = $relatorios->getNomePeriodo($periodoSelecionado);
                             <div class="avatar avatar-pink">MS</div>
 
                             <div class="flex-grow-1">
-                                <div class="appointment-name">Mariana Silva</div>
-                                <div class="appointment-service">Manicure em Gel</div>
+                                <div class="appointment-name"><?= $l['usuario_nome'] ?></div>
+                                <div class="appointment-service"><?= $l['servico_nome'] ?></div>
                             </div>
 
                             <div class="text-end me-3">
-                                <div class="appointment-time">10:00</div>
-                                <div class="appointment-price">R$ 80</div>
+                                <div class="appointment-time"><?= $l['horario'] ?></div>
+                                <div class="appointment-price"><?= $l['valor'] ?></div>
                             </div>
 
                             <!-- Ações do agendamento -->
@@ -234,39 +239,8 @@ $nomePeriodo       = $relatorios->getNomePeriodo($periodoSelecionado);
 
                         </div>
                     </div>
-                    <!-- /Agendamento 1 -->
-
-                    <!-- Agendamento 2 -->
-                    <div class="appointment-card">
-                        <div class="d-flex align-items-center gap-3 w-100">
-
-                            <div class="avatar avatar-purple">CS</div>
-
-                            <div class="flex-grow-1">
-                                <div class="appointment-name">Camila Santos</div>
-                                <div class="appointment-service">Combo Mani + Pedi</div>
-                            </div>
-
-                            <div class="text-end me-3">
-                                <div class="appointment-time">14:00</div>
-                                <div class="appointment-price">R$ 90</div>
-                            </div>
-
-                            <!-- Ações do agendamento -->
-                            <div class="appointment-actions">
-                                <button class="btn-action confirm">
-                                    <i class="bi bi-check-lg"></i>
-                                </button>
-                                <button class="btn-action cancel btn-cancelar-agenda" data-id="1">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!-- /Agendamento 2 -->
-
-                </div>
+                    <?php } ?>
+                
             </div>
         </div>
         <!-- /Coluna Esquerda -->
