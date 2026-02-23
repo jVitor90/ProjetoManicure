@@ -19,7 +19,7 @@ if (!isset($_SESSION['usuario'])) {
     <meta name="description" content="Transforme suas unhas em obras de arte. Manicure profissional em São Paulo com atendimento personalizado e produtos premium.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="./css/style.css">   
+    <link rel="stylesheet" href="./css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 </head>
 
@@ -42,7 +42,7 @@ if (!isset($_SESSION['usuario'])) {
                     <a href="./Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
                 <?php endif; ?>
 
-               
+
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá, <?= $_SESSION['usuario']['nome'] ?>!
                     </button>
@@ -86,7 +86,7 @@ if (!isset($_SESSION['usuario'])) {
     </header>
 
     <!-- HERO -->
-    <section class="hero position-relative d-flex align-items-center">
+    <hero class="hero position-relative d-flex align-items-center">
         <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1920" alt="Manicure" class="hero-img">
         <div class="hero-overlay"></div>
 
@@ -106,7 +106,7 @@ if (!isset($_SESSION['usuario'])) {
 
                     <div class="d-flex flex-wrap gap-3 mb-5">
                         <a href="./Agendamento/index.php" class="btn btn-lg btn-primary btn-schedule">Agendar Horário</a>
-                        <a href="#servicos" class="btn btn-lg btn-services">Ver Serviços</a>
+                        <a href="./Servicos/index.php" class="btn btn-lg btn-services">Ver Serviços</a>
                     </div>
 
                     <div class="d-flex gap-4 flex-wrap text-muted small">
@@ -116,7 +116,7 @@ if (!isset($_SESSION['usuario'])) {
                 </div>
             </div>
         </div>
-    </section>
+    </hero>
 
     <!-- FOOTER -->
     <footer class="bg-light border-top py-5">
@@ -146,7 +146,7 @@ if (!isset($_SESSION['usuario'])) {
         </div>
     </footer>
 
-       <!-- Modal de Perfil -->
+    <!-- Modal de Perfil -->
     <div class="modal fade" id="perfilModal" tabindex="-1" aria-labelledby="perfilModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -172,7 +172,7 @@ if (!isset($_SESSION['usuario'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-         // Script para preencher o modal de perfil com os dados do usuário
+        // Script para preencher o modal de perfil com os dados do usuário
         document.addEventListener('DOMContentLoaded', function() {
             const perfilModal = document.getElementById('perfilModal');
 
