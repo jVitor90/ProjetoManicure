@@ -37,7 +37,7 @@ $servicos    = $servicosObj->listarServicos();
     <!-- Estilos customizados -->
     <link rel="stylesheet" href="../css/style.css">
 
-    <!-- SweetAlert2 (carregado no head para disponibilidade imediata) -->
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
@@ -278,6 +278,43 @@ $servicos    = $servicosObj->listarServicos();
 
 <script>
 /* =============================================================
+ *  URL — Lê os parâmetros de retorno ANTES de limpar a URL
+ * ============================================================= */
+const cleanUrl = new URL(window.location.href);
+const msgParam = cleanUrl.searchParams.get('msg');
+const errParam = cleanUrl.searchParams.get('err');
+
+// Limpa os parâmetros da URL sem recarregar a página
+cleanUrl.searchParams.delete('msg');
+cleanUrl.searchParams.delete('err');
+window.history.replaceState({}, '', cleanUrl);
+
+// Mapeamento de mensagens de erro
+const erros = {
+    servico_nao_selecionado: 'Nenhum serviço foi selecionado.',
+    horario_nao_selecionado: 'Nenhum horário foi selecionado.',
+    erro_ao_agendar:         'Ocorreu um erro ao realizar o agendamento. Tente novamente.',
+};
+
+// Dispara o SweetAlert conforme o parâmetro recebido
+if (msgParam === 'sucesso') {
+    Swal.fire({
+        icon: 'success',
+        title: 'Agendamento confirmado!',
+        text: 'Seu horário foi reservado com sucesso.',
+        confirmButtonColor: '#EB6B9C'
+    });
+} else if (errParam && erros[errParam]) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Atenção',
+        text: erros[errParam],
+        confirmButtonColor: '#EB6B9C'
+    });
+}
+
+
+/* =============================================================
  *  PERFIL — Preenche o modal com dados do usuário logado
  * ============================================================= */
 document.addEventListener('DOMContentLoaded', function () {
@@ -370,9 +407,9 @@ function obterHorarios() {
 document.getElementById('form-agendamento').addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const servicoId  = document.getElementById('servico_id').value.trim();
-    const data       = document.getElementById('data_hidden').value.trim();
-    const horarioId  = document.getElementById('horario_hidden').value.trim();
+    const servicoId   = document.getElementById('servico_id').value.trim();
+    const data        = document.getElementById('data_hidden').value.trim();
+    const horarioId   = document.getElementById('horario_hidden').value.trim();
     const servicoNome = document.getElementById('servico_nome').value.trim();
     const horarioText = document.querySelector('.horario-btn.selected')?.textContent || '';
 
@@ -418,15 +455,6 @@ document.getElementById('form-agendamento').addEventListener('submit', function 
         this.submit();
     });
 });
-
-
-/* =============================================================
- *  URL — Remove parâmetros de mensagem da URL ao carregar
- * ============================================================= */
-const cleanUrl = new URL(window.location.href);
-cleanUrl.searchParams.delete('msg');
-cleanUrl.searchParams.delete('err');
-window.history.replaceState({}, '', cleanUrl);
 </script>
 
 </body>

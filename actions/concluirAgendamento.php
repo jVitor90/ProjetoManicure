@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['concluir_id'])){
     $id = (int)$_POST['concluir_id'];
 
     $agendamento = new Agendamento();
-    $sucesso = $agendamento->ConcluirAgendamento($id);
+    $sucesso = $agendamento->Agendar($id);
 
     header("Location: " .$_SERVER['PHP_SELF']);
     exit;
