@@ -6,29 +6,12 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
-require_once('../classes/banco_class.php');
+require_once('../classes/calendario_class.php');
 header('Content-Type: application/json');
 
 try {
-    $banco = Banco::conectar();
-    // Busca todos os horários a partir de hoje, agrupados por data
-    $sql = "SELECT data, horario FROM calendario WHERE data >= CURDATE() ORDER BY data ASC, horario ASC";
-    $cmd = $banco->prepare($sql);
-    $cmd->execute();
-    $rows = $cmd->fetchAll(PDO::FETCH_ASSOC);
-    Banco::desconectar();
-
-    $result = [];
-    foreach ($rows as $row) {
-        $data   = $row['data'];
-        $horario = substr($row['horario'], 0, 5); // Garante formato HH:MM
-        if (!isset($result[$data])) {
-            $result[$data] = [];
-        }
-        $result[$data][] = $horario;
-    }
-
-    echo json_encode($result);
+    $calendario = new Calendario();
+    echo json_encode($calendario->ListarTodosHorariosAdmin());
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['erro' => 'Erro ao buscar horários']);

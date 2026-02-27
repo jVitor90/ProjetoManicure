@@ -60,7 +60,7 @@ $servicos    = $servicosObj->listarServicos();
 
             <!-- Botão Dashboard visível apenas para administradores -->
             <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
-                <a href="./Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+                <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
             <?php endif; ?>
 
             <!-- Dropdown do usuário logado -->
