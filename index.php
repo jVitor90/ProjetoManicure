@@ -1,12 +1,6 @@
 <?php
 // Inicia a sessão
 session_start();
-
-// Verifica se o usuário está logado
-if (!isset($_SESSION['usuario'])) {
-    header("Location: login.php?err=usuario_sessao_invalida");
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +36,9 @@ if (!isset($_SESSION['usuario'])) {
                     <a href="./Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
                 <?php endif; ?>
 
-
+                <?php
+                if (isset($_SESSION['usuario'])) {
+                ?>
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá, <?= $_SESSION['usuario']['nome'] ?>!
                     </button>
@@ -65,8 +61,14 @@ if (!isset($_SESSION['usuario'])) {
                             <a class="dropdown-item d-flex align-items-center" href="./admin/sair.php">Sair</a>
                         </li>
                     </ul>
-
                 </div>
+                 <?php
+                } else {
+                ?>
+                    <a href="./login.php" class="btn btn-agendar">Login/Cadastre-se</a>
+                <?php
+                }
+                ?>
             </div>
         </div>
 
