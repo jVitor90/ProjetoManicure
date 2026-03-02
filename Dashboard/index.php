@@ -1752,6 +1752,7 @@ document.querySelectorAll('.btn-action.confirm').forEach(button => {
             if (result.isConfirmed) {
                 Swal.fire({ title: 'Confirmado!', text: 'O agendamento foi confirmado com sucesso.', icon: 'success', confirmButtonColor: '#28a745', timer: 1500, showConfirmButton: false })
                     .then(() => {
+                        
                         appointmentCard.style.borderLeft      = '4px solid #28a745';
                         appointmentCard.style.backgroundColor = '#f8f9fa';
                         const actionsDiv = appointmentCard.querySelector('.appointment-actions');

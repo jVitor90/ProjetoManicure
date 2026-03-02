@@ -13,6 +13,10 @@ class Usuario
 
     public function Cadastrar()
     {
+        $telefone_limpo = preg_replace('/[^0-9]/', '', $this->telefone ?? '');
+
+        $telefone_limpo = substr($telefone_limpo, 0, 15);
+
         $sql = "INSERT INTO usuarios (nome, sobrenome, email, telefone, senha, id_tipo)
         VALUES (?, ?, ?, ?, ?, 2)";
         $banco = Banco::conectar();
@@ -21,7 +25,7 @@ class Usuario
             $this->nome,
             $this->sobrenome,
             $this->email,
-            $this->telefone,
+            $telefone_limpo,
             hash('sha256', $this->senha)
         ]);
         Banco::desconectar();

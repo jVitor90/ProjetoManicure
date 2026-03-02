@@ -1,4 +1,7 @@
 <?php
+
+use function PHPSTORM_META\sql_injection_subst;
+
 require_once('banco_class.php');
 
 class Agendamento
@@ -7,6 +10,7 @@ class Agendamento
     public $id_usuario_agenda;
     public $id_servico;
     public $status;
+    public $id;
 
     public function Agendar()
     {
@@ -73,5 +77,13 @@ class Agendamento
         Banco::desconectar();
 
         return $agendamentos;
+    }
+    public function AtualizarAgendamento(){
+        $sql = "UPDATE agendamento SET status = 0 WHERE id = ?";
+        $banco = Banco::conectar();
+        $comando = $banco->prepare($sql);
+        $comando->execute([
+            $this->id
+        ]);
     }
 }
