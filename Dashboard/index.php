@@ -1855,17 +1855,17 @@ $listar = $listarPordata->ListarPorData($data)
                                             actionsDiv.innerHTML = '<span class="badge bg-success">Confirmado</span>';
                                         }).then(() => {
                                             // Opcional: recarregar a página para refletir as mudanças no banco
-                                             location.reload();
+                                            location.reload();
                                         });
                                 } else {
-                                     Swal.fire({
-                                            title: 'Erro!',
-                                            text: 'Falha ao confirmar o agendamento.',
-                                            icon: 'error',
-                                            confirmButtonColor: '#dc3545',
-                                            timer: 1500,
-                                            showConfirmButton: false
-                                        })
+                                    Swal.fire({
+                                        title: 'Erro!',
+                                        text: 'Falha ao confirmar o agendamento.',
+                                        icon: 'error',
+                                        confirmButtonColor: '#dc3545',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    })
                                 }
                             });
 
@@ -2061,14 +2061,36 @@ $listar = $listarPordata->ListarPorData($data)
 
             modalHorariosEl.addEventListener('show.bs.modal', function() {
                 fetch('../actions/listar_todos_horarios_admin.php')
-                    .then(r => r.json())
+                    .then(r => {
+                        if (!r.ok) throw new Error('HTTP ' + r.status);
+                        return r.json();
+                    })
                     .then(dados => {
-                        if (dados.erro) return;
+                        if (dados.erro) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro ao carregar',
+                                text: 'Não foi possível carregar os horários cadastrados.',
+                                confirmButtonColor: '#EB6B9C'
+                            });
+                            return;
+                        }
                         modalHorariosEl.dispatchEvent(new CustomEvent('horariosCarregados', {
                             detail: dados
                         }));
                     })
-                    .catch(err => console.error('Erro ao carregar horários do banco:', err));
+                    .catch(() => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro de conexão',
+                            text: 'Verifique sua conexão e reabra o modal.',
+                            confirmButtonColor: '#EB6B9C'
+                        });
+                    });
+            });
+
+            modalHorariosEl.addEventListener('hidden.bs.modal', function() {
+                modalHorariosEl.dispatchEvent(new CustomEvent('resetarHorarios'));
             });
         });
 
@@ -2081,19 +2103,45 @@ $listar = $listarPordata->ListarPorData($data)
             let anoAtual = new Date().getFullYear();
             let dataSelecionada = null;
             let horariosDB = {};
+            let horariosOriginais = {};
 
-            const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-            ];
+            const LIMITE_HORARIOS_POR_DIA = 50;
+            const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-            // Formata uma data como string YYYY-MM-DD
             function formatarData(ano, mes, dia) {
                 return `${ano}-${String(mes + 1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
             }
 
-            // Renderiza o calendário do mês atual
+            function ehNovo(data, horario) {
+                return !(horariosOriginais[data] || []).includes(horario);
+            }
+
+            function resetarEstado() {
+                horariosDB = {};
+                horariosOriginais = {};
+                dataSelecionada = null;
+                mesAtual = new Date().getMonth();
+                anoAtual = new Date().getFullYear();
+
+                const areaBloq = document.getElementById('areaBloqueioDia');
+                const areaCad = document.getElementById('areaCadastroDia');
+                const btnLimpar = document.getElementById('btnLimparDia');
+                const titulo = document.getElementById('tituloDiaSelecionado');
+                const subtitulo = document.getElementById('subtituloDiaSelecionado');
+
+                if (areaBloq) areaBloq.style.display = 'block';
+                if (areaCad) areaCad.style.display = 'none';
+                if (btnLimpar) btnLimpar.style.display = 'none';
+                if (titulo) titulo.innerHTML = '<i class="bi bi-calendar-event me-2 text-rosa"></i>Selecione uma data';
+                if (subtitulo) subtitulo.textContent = 'Clique em um dia no calendário para gerenciar os horários';
+
+                renderizarCalendario();
+                atualizarResumo();
+            }
+
             function renderizarCalendario() {
                 const grade = document.getElementById('gradeCalendario');
+                if (!grade) return;
                 const headers = Array.from(grade.children).slice(0, 7);
                 grade.innerHTML = '';
                 headers.forEach(h => grade.appendChild(h));
@@ -2105,14 +2153,12 @@ $listar = $listarPordata->ListarPorData($data)
                 const primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
                 const totalDias = new Date(anoAtual, mesAtual + 1, 0).getDate();
 
-                // Células vazias antes do primeiro dia
                 for (let i = 0; i < primeiroDia; i++) {
                     const v = document.createElement('div');
                     v.className = 'dia-cal dia-vazio';
                     grade.appendChild(v);
                 }
 
-                // Células dos dias do mês
                 for (let d = 1; d <= totalDias; d++) {
                     const dataStr = formatarData(anoAtual, mesAtual, d);
                     const cel = document.createElement('div');
@@ -2130,7 +2176,18 @@ $listar = $listarPordata->ListarPorData($data)
                     if (dataSelecionada === dataStr) cel.classList.add('dia-selecionado');
 
                     cel.addEventListener('click', function() {
-                        if (cel.classList.contains('dia-passado')) return;
+                        // [T1] Clique em data passada dá feedback em vez de silenciosamente ignorar
+                        if (cel.classList.contains('dia-passado')) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Data inválida',
+                                text: 'Não é possível configurar horários em datas passadas.',
+                                confirmButtonColor: '#EB6B9C',
+                                timer: 2200,
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
                         selecionarDia(dataStr);
                     });
 
@@ -2138,10 +2195,8 @@ $listar = $listarPordata->ListarPorData($data)
                 }
             }
 
-            // Seleciona um dia no calendário e exibe a área de cadastro
             function selecionarDia(dataStr) {
                 dataSelecionada = dataStr;
-
                 document.querySelectorAll('.dia-cal').forEach(c => c.classList.remove('dia-selecionado'));
                 const cel = document.querySelector(`.dia-cal[data-data="${dataStr}"]`);
                 if (cel) cel.classList.add('dia-selecionado');
@@ -2158,28 +2213,38 @@ $listar = $listarPordata->ListarPorData($data)
 
                 document.getElementById('areaBloqueioDia').style.display = 'none';
                 document.getElementById('areaCadastroDia').style.display = 'block';
-                document.getElementById('btnLimparDia').style.display = 'inline-flex';
 
                 if (!horariosDB[dataStr]) horariosDB[dataStr] = [];
+                atualizarBotaoLimpar();
                 renderizarTagsHorarios();
             }
 
-            // Renderiza as tags (chips) de horários do dia selecionado
+            // [T2] Botão limpar só aparece se o dia tiver horários
+            function atualizarBotaoLimpar() {
+                const btn = document.getElementById('btnLimparDia');
+                if (!btn) return;
+                btn.style.display = (dataSelecionada && (horariosDB[dataSelecionada] || []).length > 0) ?
+                    'inline-flex' : 'none';
+            }
+
             function renderizarTagsHorarios() {
                 if (!dataSelecionada) return;
                 const lista = document.getElementById('listaHorariosCadastro');
                 const horarios = (horariosDB[dataSelecionada] || []).slice().sort();
-
                 lista.innerHTML = '';
 
                 if (horarios.length === 0) {
-                    lista.innerHTML = `<div class="text-muted small w-100 text-center py-3">
-                <i class="bi bi-clock me-1"></i>Nenhum horário adicionado</div>`;
+                    lista.innerHTML = `<div class="text-muted small w-100 text-center py-3"><i class="bi bi-clock me-1"></i>Nenhum horário adicionado</div>`;
                 } else {
                     horarios.forEach(h => {
+                        // [T3] Badge "novo" diferencia horários ainda não salvos dos que vieram do banco
+                        const isNovo = ehNovo(dataSelecionada, h);
                         const tag = document.createElement('div');
-                        tag.className = 'tag-horario';
-                        tag.innerHTML = `<i class="bi bi-clock-fill" style="font-size:0.7rem;"></i>${h}
+                        tag.className = 'tag-horario' + (isNovo ? ' tag-horario-novo' : '');
+                        tag.title = isNovo ? 'Novo — ainda não salvo' : 'Já salvo no banco';
+                        tag.innerHTML = `
+                    <i class="bi bi-clock-fill" style="font-size:0.7rem;"></i>${h}
+                    ${isNovo ? `<span class="badge rounded-pill ms-1" style="background:#fff3e0;color:#e65100;font-size:0.55rem;">novo</span>` : ''}
                     <button class="btn-remover-horario" onclick="removerHorario('${h}')" title="Remover">
                         <i class="bi bi-x-lg"></i>
                     </button>`;
@@ -2196,32 +2261,88 @@ $listar = $listarPordata->ListarPorData($data)
                     else cel.classList.remove('dia-com-horarios');
                 }
 
+                atualizarBotaoLimpar();
                 atualizarResumo();
             }
 
-            // Adiciona um horário digitado manualmente
             window.adicionarHorarioManual = function() {
-                if (!dataSelecionada) return;
+                // [T4] Sem data selecionada
+                if (!dataSelecionada) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Nenhuma data selecionada',
+                        text: 'Clique em um dia no calendário antes de adicionar horários.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
                 const input = document.getElementById('inputNovoHorario');
-                const valor = input.value;
+                const valor = input.value.trim();
 
+                // [T5] Campo vazio
                 if (!valor) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Atenção',
-                        text: 'Informe um horário válido.',
+                        title: 'Campo vazio',
+                        text: 'Informe um horário antes de adicionar.',
                         confirmButtonColor: '#EB6B9C',
                         timer: 2000,
                         showConfirmButton: false
                     });
                     return;
                 }
+
+                // [T6] Formato inválido
+                if (!/^\d{2}:\d{2}$/.test(valor)) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Formato inválido',
+                        text: 'Use o formato HH:MM (ex: 09:00).',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
+                const [h, m] = valor.split(':').map(Number);
+
+                // [T7] Hora/minuto fora do range
+                if (h < 0 || h > 23 || m < 0 || m > 59) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Horário inválido',
+                        text: 'Informe um horário entre 00:00 e 23:59.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
                 if (!horariosDB[dataSelecionada]) horariosDB[dataSelecionada] = [];
+
+                // [T8] Limite de horários por dia
+                if (horariosDB[dataSelecionada].length >= LIMITE_HORARIOS_POR_DIA) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Limite atingido',
+                        text: `Máximo de ${LIMITE_HORARIOS_POR_DIA} horários por dia permitido.`,
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
+                // [T9] Horário duplicado
                 if (horariosDB[dataSelecionada].includes(valor)) {
                     Swal.fire({
                         icon: 'info',
-                        title: 'Duplicado',
-                        text: 'Este horário já foi adicionado.',
+                        title: 'Horário duplicado',
+                        text: 'Este horário já está cadastrado para este dia.',
                         confirmButtonColor: '#EB6B9C',
                         timer: 2000,
                         showConfirmButton: false
@@ -2234,50 +2355,92 @@ $listar = $listarPordata->ListarPorData($data)
                 renderizarTagsHorarios();
             };
 
-            // Remove um horário específico (chamada ao banco + atualiza UI)
             window.removerHorario = function(horario) {
                 if (!dataSelecionada) return;
-                fetch('../actions/remover_horario.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            acao: 'remover_um',
-                            data: dataSelecionada,
-                            horario: horario
+
+                // [T10] Horário não existe localmente
+                if (!horariosDB[dataSelecionada]?.includes(horario)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Horário não encontrado',
+                        text: 'Este horário não existe mais. Recarregue o modal.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
+                const estaNoOriginal = (horariosOriginais[dataSelecionada] || []).includes(horario);
+
+                if (estaNoOriginal) {
+                    // [T11] Veio do banco — chama o servidor
+                    fetch('../actions/remover_horario.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                acao: 'remover_um',
+                                data: dataSelecionada,
+                                horario: horario
+                            })
                         })
-                    })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.sucesso) {
-                            horariosDB[dataSelecionada] = horariosDB[dataSelecionada].filter(h => h !== horario);
-                            renderizarTagsHorarios();
-                        } else {
+                        .then(r => {
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                            return r.json();
+                        })
+                        .then(data => {
+                            if (data.sucesso) {
+                                horariosDB[dataSelecionada] = horariosDB[dataSelecionada].filter(h => h !== horario);
+                                horariosOriginais[dataSelecionada] = (horariosOriginais[dataSelecionada] || []).filter(h => h !== horario);
+                                renderizarTagsHorarios();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Erro ao remover',
+                                    text: data.mensagem || 'Não foi possível remover o horário.',
+                                    confirmButtonColor: '#EB6B9C'
+                                });
+                            }
+                        })
+                        .catch(() => {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Erro',
-                                text: data.mensagem || 'Não foi possível remover.',
+                                title: 'Erro de conexão',
+                                text: 'Verifique sua conexão e tente novamente.',
                                 confirmButtonColor: '#EB6B9C'
                             });
-                        }
-                    })
-                    .catch(() => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro de conexão',
-                            text: 'Verifique sua conexão e tente novamente.',
-                            confirmButtonColor: '#EB6B9C'
                         });
-                    });
+                } else {
+                    // [T12] Horário novo (só local) — remove sem chamar o banco
+                    horariosDB[dataSelecionada] = horariosDB[dataSelecionada].filter(h => h !== horario);
+                    renderizarTagsHorarios();
+                }
             };
 
-            // Remove todos os horários do dia selecionado
             window.limparTodosHorarios = function() {
                 if (!dataSelecionada) return;
+                const horarios = horariosDB[dataSelecionada] || [];
+
+                // [T13] Dia sem horários
+                if (horarios.length === 0) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Nenhum horário',
+                        text: 'Este dia não possui horários para remover.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
+                const temNoOriginal = (horariosOriginais[dataSelecionada] || []).length > 0;
+
                 Swal.fire({
                     title: 'Limpar horários?',
-                    text: 'Todos os horários deste dia serão removidos.',
+                    text: `Todos os ${horarios.length} horário(s) deste dia serão removidos.`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#EB6B9C',
@@ -2285,7 +2448,9 @@ $listar = $listarPordata->ListarPorData($data)
                     confirmButtonText: 'Sim, limpar',
                     cancelButtonText: 'Cancelar'
                 }).then(r => {
-                    if (r.isConfirmed) {
+                    if (!r.isConfirmed) return;
+
+                    if (temNoOriginal) {
                         fetch('../actions/remover_horario.php', {
                                 method: 'POST',
                                 headers: {
@@ -2296,16 +2461,20 @@ $listar = $listarPordata->ListarPorData($data)
                                     data: dataSelecionada
                                 })
                             })
-                            .then(r => r.json())
+                            .then(r => {
+                                if (!r.ok) throw new Error('HTTP ' + r.status);
+                                return r.json();
+                            })
                             .then(data => {
                                 if (data.sucesso) {
                                     horariosDB[dataSelecionada] = [];
+                                    horariosOriginais[dataSelecionada] = [];
                                     renderizarTagsHorarios();
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Erro',
-                                        text: data.mensagem || 'Não foi possível limpar.',
+                                        title: 'Erro ao limpar',
+                                        text: data.mensagem || 'Não foi possível limpar os horários.',
                                         confirmButtonColor: '#EB6B9C'
                                     });
                                 }
@@ -2318,32 +2487,66 @@ $listar = $listarPordata->ListarPorData($data)
                                     confirmButtonColor: '#EB6B9C'
                                 });
                             });
+                    } else {
+                        // [T14] Só tem horários locais — limpa sem chamar banco
+                        horariosDB[dataSelecionada] = [];
+                        renderizarTagsHorarios();
                     }
                 });
             };
 
-            // Gera horários em série entre dois horários com intervalo definido
             window.gerarHorariosEmSerie = function() {
-                if (!dataSelecionada) return;
+                // [T15] Sem data selecionada
+                if (!dataSelecionada) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Nenhuma data selecionada',
+                        text: 'Clique em um dia no calendário antes de gerar horários.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
                 const inicio = document.getElementById('geradorInicio').value;
                 const fim = document.getElementById('geradorFim').value;
                 const intervalo = parseInt(document.getElementById('geradorIntervalo').value);
 
+                // [T16] Campos vazios
                 if (!inicio || !fim) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Atenção',
-                        text: 'Preencha o início e fim.',
-                        confirmButtonColor: '#EB6B9C'
+                        title: 'Campos incompletos',
+                        text: 'Preencha os horários de início e fim.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2000,
+                        showConfirmButton: false
                     });
                     return;
                 }
+
+                // [T17] Intervalo inválido (NaN ou <= 0)
+                if (isNaN(intervalo) || intervalo <= 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Intervalo inválido',
+                        text: 'Selecione um intervalo válido.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
+                // [T18] Início igual ou depois do fim
                 if (inicio >= fim) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Atenção',
-                        text: 'O início deve ser antes do fim.',
-                        confirmButtonColor: '#EB6B9C'
+                        title: 'Horário inválido',
+                        text: 'O horário de início deve ser anterior ao de fim.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2000,
+                        showConfirmButton: false
                     });
                     return;
                 }
@@ -2352,10 +2555,28 @@ $listar = $listarPordata->ListarPorData($data)
                 const [hF, mF] = fim.split(':').map(Number);
                 let minAtual = hI * 60 + mI;
                 const minFim = hF * 60 + mF;
-
                 if (!horariosDB[dataSelecionada]) horariosDB[dataSelecionada] = [];
-                let adicionados = 0;
 
+                // [T19] Pré-checa o limite antes de inserir
+                const jaExistentes = horariosDB[dataSelecionada].length;
+                let novos = 0,
+                    tmpMin = minAtual;
+                while (tmpMin <= minFim) {
+                    const h = `${String(Math.floor(tmpMin/60)).padStart(2,'0')}:${String(tmpMin%60).padStart(2,'0')}`;
+                    if (!horariosDB[dataSelecionada].includes(h)) novos++;
+                    tmpMin += intervalo;
+                }
+                if (jaExistentes + novos > LIMITE_HORARIOS_POR_DIA) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Limite excedido',
+                        text: `Essa geração adicionaria ${novos} horário(s), ultrapassando o limite de ${LIMITE_HORARIOS_POR_DIA} por dia (você já tem ${jaExistentes}).`,
+                        confirmButtonColor: '#EB6B9C'
+                    });
+                    return;
+                }
+
+                let adicionados = 0;
                 while (minAtual <= minFim) {
                     const h = `${String(Math.floor(minAtual/60)).padStart(2,'0')}:${String(minAtual%60).padStart(2,'0')}`;
                     if (!horariosDB[dataSelecionada].includes(h)) {
@@ -2369,29 +2590,23 @@ $listar = $listarPordata->ListarPorData($data)
                 Swal.fire({
                     icon: adicionados > 0 ? 'success' : 'info',
                     title: adicionados > 0 ? 'Pronto!' : 'Sem novidades',
-                    text: adicionados > 0 ? `${adicionados} horário(s) adicionado(s).` : 'Todos já estavam adicionados.',
+                    text: adicionados > 0 ? `${adicionados} horário(s) adicionado(s).` : 'Todos esses horários já estavam adicionados.',
                     confirmButtonColor: '#EB6B9C',
                     timer: 2000,
                     showConfirmButton: false
                 });
             };
 
-            // Atualiza o resumo de dias configurados no rodapé do modal
             function atualizarResumo() {
                 const resumo = document.getElementById('resumoDiasConfigurados');
                 const contador = document.getElementById('totalDiasConfigurados');
-                const diasComHorarios = Object.entries(horariosDB)
-                    .filter(([, h]) => h.length > 0)
-                    .sort(([a], [b]) => a.localeCompare(b));
-
+                const diasComHorarios = Object.entries(horariosDB).filter(([, h]) => h.length > 0).sort(([a], [b]) => a.localeCompare(b));
                 resumo.innerHTML = '';
-
                 if (diasComHorarios.length === 0) {
                     resumo.innerHTML = '<small class="text-muted">Nenhum dia configurado ainda.</small>';
                     contador.textContent = '0 dias';
                     return;
                 }
-
                 const nomesMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
                 diasComHorarios.forEach(([data, horas]) => {
                     const [ano, mes, dia] = data.split('-').map(Number);
@@ -2409,34 +2624,42 @@ $listar = $listarPordata->ListarPorData($data)
                     });
                     resumo.appendChild(tag);
                 });
-
                 contador.textContent = diasComHorarios.length + (diasComHorarios.length === 1 ? ' dia' : ' dias');
             }
 
-            // Salva todos os horários configurados no banco via AJAX
             window.salvarTodosHorarios = function() {
-                // Inclui TODAS as entradas (inclusive arrays vazios para limpar datas no banco)
-                const payload = Object.entries(horariosDB);
-                const payloadComHorarios = payload.filter(([, h]) => h.length > 0);
+                const payloadComHorarios = Object.entries(horariosDB).filter(([, h]) => h.length > 0);
 
-                if (payload.length === 0) {
+                // [T20] Nenhum dia configurado
+                if (payloadComHorarios.length === 0) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Nada para salvar',
-                        text: 'Configure pelo menos um horário antes de salvar.',
+                        title: 'Nenhum horário configurado',
+                        text: 'Selecione uma data e adicione pelo menos um horário antes de salvar.',
                         confirmButtonColor: '#EB6B9C'
+                    });
+                    return;
+                }
+
+                // [T21] Nenhuma alteração real em relação ao banco
+                const temNovos = payloadComHorarios.some(([data, horas]) => horas.some(h => ehNovo(data, h)));
+                if (!temNovos) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Nenhuma alteração',
+                        text: 'Você não adicionou nenhum horário novo desde a última vez que salvou.',
+                        confirmButtonColor: '#EB6B9C',
+                        timer: 2500,
+                        showConfirmButton: false
                     });
                     return;
                 }
 
                 const nomesMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
                 const resumoHtml = payloadComHorarios.slice(0, 5).map(([data, horas]) => {
-                        const [, mes, dia] = data.split('-').map(Number);
-                        return `<li><strong>${dia}/${nomesMes[mes-1]}:</strong> ${horas.sort().join(', ')}</li>`;
-                    }).join('') +
-                    (payloadComHorarios.length > 5 ? `<li>... e mais ${payloadComHorarios.length - 5} dia(s)</li>` : '') +
-                    (payload.length > payloadComHorarios.length ?
-                        `<li class="text-danger"><i class="bi bi-trash me-1"></i>${payload.length - payloadComHorarios.length} dia(s) serão limpos</li>` : '');
+                    const [, mes, dia] = data.split('-').map(Number);
+                    return `<li><strong>${dia}/${nomesMes[mes-1]}:</strong> ${horas.sort().join(', ')}</li>`;
+                }).join('') + (payloadComHorarios.length > 5 ? `<li>... e mais ${payloadComHorarios.length - 5} dia(s)</li>` : '');
 
                 Swal.fire({
                     title: 'Confirmar horários?',
@@ -2450,7 +2673,6 @@ $listar = $listarPordata->ListarPorData($data)
                     reverseButtons: true
                 }).then(r => {
                     if (!r.isConfirmed) return;
-
                     Swal.fire({
                         title: 'Salvando...',
                         allowOutsideClick: false,
@@ -2464,12 +2686,20 @@ $listar = $listarPordata->ListarPorData($data)
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                horarios: Object.fromEntries(payload)
+                                horarios: Object.fromEntries(payloadComHorarios)
                             })
                         })
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error('HTTP ' + res.status);
+                            return res.json();
+                        })
                         .then(data => {
                             if (data.sucesso) {
+                                // Sincroniza originais com o estado salvo — remove badges "novo"
+                                payloadComHorarios.forEach(([d, horas]) => {
+                                    horariosOriginais[d] = [...horas];
+                                });
+                                renderizarTagsHorarios();
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Salvo!',
@@ -2478,15 +2708,11 @@ $listar = $listarPordata->ListarPorData($data)
                                     timer: 2500,
                                     showConfirmButton: false
                                 });
-                                setTimeout(() => {
-                                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalCadastrarHorarios'));
-                                    if (modal) modal.hide();
-                                }, 2600);
                             } else {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Erro',
-                                    text: data.mensagem || 'Não foi possível salvar.',
+                                    title: 'Erro ao salvar',
+                                    text: data.mensagem || 'Não foi possível salvar os horários.',
                                     confirmButtonColor: '#EB6B9C'
                                 });
                             }
@@ -2502,55 +2728,64 @@ $listar = $listarPordata->ListarPorData($data)
                 });
             };
 
-            // Inicializa o calendário e eventos ao abrir o modal de horários
+            // ─── inicialização — listeners definidos UMA vez (fora do show.bs.modal) ──
+
             document.addEventListener('DOMContentLoaded', function() {
                 const modalEl = document.getElementById('modalCadastrarHorarios');
-                if (modalEl) {
-                    modalEl.addEventListener('show.bs.modal', function() {
-                        mesAtual = new Date().getMonth();
-                        anoAtual = new Date().getFullYear();
-                        renderizarCalendario();
+                if (!modalEl) return;
 
-                        document.getElementById('btnMesAnterior').addEventListener('click', () => {
-                            if (mesAtual === 0) {
-                                mesAtual = 11;
-                                anoAtual--;
-                            } else mesAtual--;
-                            renderizarCalendario();
-                        });
-                        document.getElementById('btnProximoMes').addEventListener('click', () => {
-                            if (mesAtual === 11) {
-                                mesAtual = 0;
-                                anoAtual++;
-                            } else mesAtual++;
-                            renderizarCalendario();
-                        });
+                // [FIX listeners duplicados] Botões de mês e Enter registrados uma única vez
+                const btnAnterior = document.getElementById('btnMesAnterior');
+                const btnProximo = document.getElementById('btnProximoMes');
+                const inputHorario = document.getElementById('inputNovoHorario');
 
-                        // Tecla Enter no campo de horário manual
-                        document.getElementById('inputNovoHorario').addEventListener('keydown', function(e) {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                adicionarHorarioManual();
-                            }
-                        });
-                    });
+                if (btnAnterior) btnAnterior.addEventListener('click', () => {
+                    if (mesAtual === 0) {
+                        mesAtual = 11;
+                        anoAtual--;
+                    } else mesAtual--;
+                    renderizarCalendario();
+                });
+                if (btnProximo) btnProximo.addEventListener('click', () => {
+                    if (mesAtual === 11) {
+                        mesAtual = 0;
+                        anoAtual++;
+                    } else mesAtual++;
+                    renderizarCalendario();
+                });
+                if (inputHorario) inputHorario.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        adicionarHorarioManual();
+                    }
+                });
 
-                    // Recebe horários do banco e mescla com os da sessão atual
-                    modalEl.addEventListener('horariosCarregados', function(e) {
-                        const dadosBanco = e.detail;
-                        for (const [data, horas] of Object.entries(dadosBanco)) {
-                            if (!horariosDB[data]) {
-                                horariosDB[data] = horas;
-                            } else {
-                                horas.forEach(h => {
-                                    if (!horariosDB[data].includes(h)) horariosDB[data].push(h);
-                                });
-                            }
+                // Ao abrir: restaura mês/ano atual e re-renderiza
+                modalEl.addEventListener('show.bs.modal', function() {
+                    mesAtual = new Date().getMonth();
+                    anoAtual = new Date().getFullYear();
+                    renderizarCalendario();
+                });
+
+                // Popula horariosDB + horariosOriginais com dados do banco
+                modalEl.addEventListener('horariosCarregados', function(e) {
+                    const dadosBanco = e.detail;
+                    for (const [data, horas] of Object.entries(dadosBanco)) {
+                        if (!horariosDB[data]) {
+                            horariosDB[data] = [...horas];
+                        } else {
+                            horas.forEach(h => {
+                                if (!horariosDB[data].includes(h)) horariosDB[data].push(h);
+                            });
                         }
-                        renderizarCalendario();
-                        atualizarResumo();
-                    });
-                }
+                        horariosOriginais[data] = [...horariosDB[data]];
+                    }
+                    renderizarCalendario();
+                    atualizarResumo();
+                });
+
+                // [FIX reset] Limpa estado ao fechar o modal
+                modalEl.addEventListener('resetarHorarios', resetarEstado);
             });
 
         })();
