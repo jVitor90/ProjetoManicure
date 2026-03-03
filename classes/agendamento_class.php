@@ -78,12 +78,14 @@ class Agendamento
 
         return $agendamentos;
     }
-    public function AtualizarAgendamento(){
+    public function AtualizarAgendamento($id_agendamento){
         $sql = "UPDATE agendamento SET status = 0 WHERE id = ?";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
         $comando->execute([
-            $this->id
+            $id_agendamento
         ]);
+        Banco::desconectar();
+        return $comando->rowCount();
     }
 }
