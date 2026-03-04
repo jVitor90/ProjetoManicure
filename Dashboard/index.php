@@ -49,7 +49,10 @@ $nomePeriodo       = $relatorios->getNomePeriodo($periodoSelecionado);
 require_once('../classes/agendamento_class.php');
 $listarPordata = new Agendamento();
 $data = date('Y-m-d');
-$listar = $listarPordata->ListarPorData($data)
+$listar = $listarPordata->ListarPorData($data);
+
+$totalDoDia = new Agendamento();
+$totalAgendamentos = $totalDoDia->TotalAgendamentos();
 ?>
 
 <!DOCTYPE html>
@@ -184,7 +187,7 @@ $listar = $listarPordata->ListarPorData($data)
                     <p class="stat-label">Agendamentos</p>
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h3 class="stat-value">4</h3>
+                            <h3 class="stat-value"><?= $totalAgendamentos ?></h3>
                             <small class="text-muted">hoje</small>
                         </div>
                         <div class="icon-stat-gray"><i class="bi bi-calendar3"></i></div>
@@ -235,7 +238,7 @@ $listar = $listarPordata->ListarPorData($data)
                                     <button class="btn-action confirm btnConfirmarAgendamento" data-id="<?= $l['id'] ?>" title="Confirmar">
                                         <i class="bi bi-check-lg"></i>
                                     </button>
-                                    <button class="btn-action cancel btn-cancelar-agenda" data-id="<?= $l['id'] ?>">
+                                    <button class="btn-action cancel btnExcluirAgendamento" data-id="<?= $l['id'] ?>" title="Excluir">
                                         <i class="bi bi-x-lg"></i>
                                     </button>
                                 </div>
@@ -1767,34 +1770,73 @@ $listar = $listarPordata->ListarPorData($data)
          * ============================================================= */
 
         // Botão Cancelar
-        document.querySelectorAll('.btn-cancelar-agenda').forEach(button => {
+        document.querySelectorAll('.btnExcluirAgendamento').forEach(button => {
             button.addEventListener('click', function() {
                 const appointmentCard = this.closest('.appointment-card');
                 const nomeCliente = appointmentCard.querySelector('.appointment-name').textContent;
+                const servicoCliente = appointmentCard.querySelector('.appointment-service').textContent;
+                const horarioCliente = appointmentCard.querySelector('.appointment-time').textContent;
+                const idAgendamento = appointmentCard.querySelector('.btnExcluirAgendamento').getAttribute('data-id');
+                // console.log('ID do agendamento a excluir:', idAgendamento);
 
                 Swal.fire({
-                    title: 'Cancelar Agendamento?',
-                    html: `Deseja realmente cancelar o agendamento de <strong>${nomeCliente}</strong>?`,
-                    icon: 'warning',
+                    title: 'Excluir Agendamento?',
+                    html: `
+                <div class="text-start"> oioioi
+                    <p class="mb-2"><strong>Cliente:</strong> ${nomeCliente}</p>
+                    <p class="mb-2"><strong>Serviço:</strong> ${servicoCliente}</p>
+                    <p class="mb-0"><strong>Horário:</strong> ${horarioCliente}</p>
+                </div>
+            `,
+                    icon: 'question',
                     showCancelButton: true,
-                    confirmButtonColor: '#dc3545',
+                    confirmButtonColor: '#28a745',
                     cancelButtonColor: '#6c757d',
-                    confirmButtonText: '<i class="bi bi-check-lg"></i> Sim, cancelar',
-                    cancelButtonText: '<i class="bi bi-x-lg"></i> Não',
+                    confirmButtonText: '<i class="bi bi-check-lg"></i> Sim, confirmar',
+                    cancelButtonText: '<i class="bi bi-x-lg"></i> Cancelar',
                     reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        Swal.fire({
-                                title: 'Cancelado!',
-                                text: 'O agendamento foi cancelado com sucesso.',
-                                icon: 'success',
-                                confirmButtonColor: '#28a745',
-                                timer: 1500,
-                                showConfirmButton: false
-                            })
-                            .then(() => {
-                                appointmentCard.remove();
+                        fetch('../actions/excluir_agendamento.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    exclui_id: idAgendamento
+                                })
+                            }).then(response => response.json())
+                            .then(data => {
+                                if (data.sucesso) {
+                                    Swal.fire({
+                                            title: 'Excluído!',
+                                            text: 'O agendamento foi excluído com sucesso.',
+                                            icon: 'success',
+                                            confirmButtonColor: '#28a745',
+                                            timer: 1500,
+                                            showConfirmButton: false
+                                        })
+                                        .then(() => {
+
+                                            appointmentCard.style.borderLeft = '4px solid #28a745';
+                                            appointmentCard.style.backgroundColor = '#f8f9fa';
+                                            const actionsDiv = appointmentCard.querySelector('.appointment-actions');
+                                            actionsDiv.innerHTML = '<span class="badge bg-success">Confirmado</span>';
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Erro!',
+                                        text: 'Falha ao excluir o agendamento.',
+                                        icon: 'error',
+                                        confirmButtonColor: '#dc3545',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    })
+                                }
                             });
+
                     }
                 });
             });
@@ -1854,7 +1896,6 @@ $listar = $listarPordata->ListarPorData($data)
                                             const actionsDiv = appointmentCard.querySelector('.appointment-actions');
                                             actionsDiv.innerHTML = '<span class="badge bg-success">Confirmado</span>';
                                         }).then(() => {
-                                            // Opcional: recarregar a página para refletir as mudanças no banco
                                             location.reload();
                                         });
                                 } else {

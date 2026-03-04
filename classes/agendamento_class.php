@@ -88,4 +88,19 @@ class Agendamento
         Banco::desconectar();
         return $comando->rowCount();
     }
+    public function TotalAgendamentos()
+    {
+        $sql = "SELECT COUNT(*) as total FROM agendamento a
+                INNER JOIN calendario c ON a.id_calendario = c.id
+                WHERE a.status = 1 and DATE(c.data) = CURDATE() ";
+ 
+        $banco = Banco::conectar();
+        $comando = $banco->prepare($sql);
+        $comando->execute();
+        $total = $comando->fetch(PDO::FETCH_ASSOC)['total'];
+        Banco::desconectar();
+ 
+        return $total;
+    }
+
 }
