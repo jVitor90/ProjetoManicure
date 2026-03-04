@@ -10,19 +10,19 @@
         $usuario->senha = strip_tags($_POST['senha']);
 
         if(empty($usuario->nome)){
-            echo "O nome não foi informado";
+           header('Location: ../login.php?err=nome_vazio');
         }
         else if(empty($usuario->sobrenome)){
-            echo "O Sobrenome não foi informado";
+            header('Location: ../login.php?err=sobrenome_vazio');
         }
         else if(empty($usuario->email)){
-            echo "O Email não foi informado";
+            header('Location: ../login.php?err=email_vazio');
         }
         else if(empty($usuario->telefone)){
-            echo "O Telefone não foi informado";
+            header('Location: ../login.php?err=telefone_vazio');
         }
         else if(empty($usuario->senha)){
-            echo "A senha não foi informado";
+            header('Location: ../login.php?err=senha_vazia');
         }
         else{
             if($usuario->Cadastrar() == 1){

@@ -13,7 +13,11 @@ $err = [
     'usuario_sessao_invaliada' => 'Sessão inválida. Por favor, faça login novamente.',
     "usuario_login_falha" => "E-mail e/ou senha inválidos. Verifique suas credenciais.",  
     "email_vazio" => "O e-mail não foi informado.",
-    "senha_vazia" => "A senha não foi informada."
+    "senha_vazia" => "A senha não foi informada.",
+    "nome_vazio" => "O nome não foi informado.",
+    "sobrenome_vazio" => "O sobrenome não foi informado.",
+    "telefone_vazio" => "O telefone não foi informado."
+    
 ];
 ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
