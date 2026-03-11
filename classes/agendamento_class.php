@@ -92,7 +92,7 @@ class Agendamento
     {
         $sql = "SELECT COUNT(*) as total FROM agendamento a
                 INNER JOIN calendario c ON a.id_calendario = c.id
-                WHERE a.status = 1 and DATE(c.data) = CURDATE() ";
+                WHERE DATE(c.data) = CURDATE() ";
  
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);

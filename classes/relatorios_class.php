@@ -11,7 +11,6 @@ class relatorios{
             INNER JOIN servicos   ON agendamento.id_servico    = servicos.id
             INNER JOIN calendario ON agendamento.id_calendario = calendario.id
             WHERE calendario.data = CURRENT_DATE
-              AND agendamento.status = 1
         ";
 
         $banco = Banco::conectar();
@@ -44,7 +43,6 @@ class relatorios{
         INNER JOIN calendario ON agendamento.id_calendario = calendario.id
         WHERE calendario.data >= DATE_SUB(CURRENT_DATE, INTERVAL WEEKDAY(CURRENT_DATE) DAY)
           AND calendario.data <= CURRENT_DATE
-          AND agendamento.status = 1
         ";
 
        $banco = Banco::conectar();
