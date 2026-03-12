@@ -48,60 +48,95 @@ $servicos    = $servicosObj->listarServicos();
      HEADER — Barra de navegação superior fixa
 ============================================================ -->
     <header class="header-custom sticky-top bg-white border-bottom">
-        <div class="container-fluid px-4 position-relative">
+        <div class="container-fluid px-4">
 
-            <!-- Logo centralizado -->
-            <div class="text-center py-3">
-                <a href="../index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
-            </div>
+            <div class="d-flex align-items-center justify-content-between py-3 position-relative">
 
-            <!-- Ações à direita: Agendar, Dashboard (admin) e dropdown do usuário -->
-            <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
-                <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <!-- Botão Dashboard visível apenas para administradores -->
-                <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
-                    <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
-                <?php endif; ?>
+                <a href="../index.php" class="logo fw-bold position-absolute start-50 translate-middle-x">Nail Pro</a>
 
-                <!-- Dropdown do usuário logado -->
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button"
-                        id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                        Olá, <?= $_SESSION['usuario']['nome'] ?>!
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li>
-                            <!-- Abre o modal de perfil com dados da sessão via data-attributes -->
-                            <a class="dropdown-item" href="#"
-                                data-bs-toggle="modal"
-                                data-bs-target="#perfilModal"
-                                data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
-                                data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
-                                data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
-                                data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
-                                data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
-                                data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
-                                data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
-                                Perfil
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="../admin/sair.php">Sair</a>
-                        </li>
-                    </ul>
+                <div class="ms-auto d-none d-lg-flex align-items-center gap-2">
+
+                    <?php if (isset($_SESSION['usuario'])): ?>
+                        <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                    <?php else: ?>
+                        <a href="#" class="btn btn-agendar" id="btn-agendar-header">Agendar</a>
+                    <?php endif; ?>
+
+                    <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
+                        <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+                    <?php endif; ?>
+
+                    <?php if (isset($_SESSION['usuario'])): ?>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                Olá, <?= htmlspecialchars($_SESSION['usuario']['nome']) ?>!
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#"
+                                        data-bs-toggle="modal" data-bs-target="#perfilModal"
+                                        data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                        data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                        data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                        data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                        data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                        data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                        data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                        Perfil
+                                    </a>
+                                </li>
+                                <li><a class="dropdown-item" href="../admin/sair.php">Sair</a></li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a href="../login.php" class="btn btn-agendar">Login/Cadastre-se</a>
+                    <?php endif; ?>
+
                 </div>
             </div>
-        </div>
 
-        <!-- Menu de navegação inferior centralizado -->
-        <div class="bottom-bar border-top">
-            <nav class="py-2">
-                <ul class="nav justify-content-center gap-4 mb-0">
-                    <li class="nav-item"><a class="nav-link link-nav px-3" href="../Servicos/index.php">Serviços</a></li>
-                    <li class="nav-item"><a class="nav-link link-nav px-3" href="../Contato/index.php">Contato</a></li>
-                </ul>
-            </nav>
+            <div class="collapse d-lg-block border-top" id="navbarMenu">
+                <nav class="py-2">
+                    <ul class="nav justify-content-center gap-lg-4 mb-0 flex-column flex-lg-row">
+                        <li class="nav-item"><a class="nav-link link-nav px-3" href="../Servicos/index.php">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link link-nav px-3" href="../Contato/index.php">Contato</a></li>
+
+                        <?php if (isset($_SESSION['usuario'])): ?>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="../Agendamento/index.php">Agendar</a></li>
+                        <?php else: ?>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="#" id="btn-agendar-mobile">Agendar</a></li>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="../Dashboard/index.php">Dashboard</a></li>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['usuario'])): ?>
+                            <li class="nav-item d-lg-none">
+                                <a class="nav-link link-nav px-3" href="#"
+                                    data-bs-toggle="modal" data-bs-target="#perfilModal"
+                                    data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                    data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                    data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                    data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                    data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                    data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                    data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                    Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="../admin/sair.php">Sair</a></li>
+                        <?php else: ?>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="../login.php">Login/Cadastre-se</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+            </div>
+
         </div>
     </header>
     <!-- /HEADER -->
@@ -294,17 +329,16 @@ $servicos    = $servicosObj->listarServicos();
      SCRIPTS — Dependências e lógica JavaScript
 ============================================================ -->
 
-   <!-- Bootstrap Bundle JS (inclui Popper) -->
+    <!-- Bootstrap Bundle JS (inclui Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-
         /* =============================================================
          *  URL — Lê os parâmetros de retorno ANTES de limpar a URL
          * ============================================================= */
-        const cleanUrl  = new URL(window.location.href);
-        const msgParam  = cleanUrl.searchParams.get('msg');
-        const errParam  = cleanUrl.searchParams.get('err');
+        const cleanUrl = new URL(window.location.href);
+        const msgParam = cleanUrl.searchParams.get('msg');
+        const errParam = cleanUrl.searchParams.get('err');
 
         // Limpa os parâmetros da URL sem recarregar a página
         cleanUrl.searchParams.delete('msg');
@@ -313,9 +347,9 @@ $servicos    = $servicosObj->listarServicos();
 
         // Mapeamento de mensagens de erro
         const erros = {
-            servico_nao_selecionado : 'Nenhum serviço foi selecionado.',
-            horario_nao_selecionado : 'Nenhum horário foi selecionado.',
-            erro_ao_agendar         : 'Ocorreu um erro ao realizar o agendamento. Tente novamente.',
+            servico_nao_selecionado: 'Nenhum serviço foi selecionado.',
+            horario_nao_selecionado: 'Nenhum horário foi selecionado.',
+            erro_ao_agendar: 'Ocorreu um erro ao realizar o agendamento. Tente novamente.',
         };
 
         // Dispara o SweetAlert conforme o parâmetro recebido
@@ -339,10 +373,10 @@ $servicos    = $servicosObj->listarServicos();
         /* =============================================================
          *  PERFIL — Preenche o modal com dados do usuário logado
          * ============================================================= */
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const perfilModal = document.getElementById('perfilModal');
 
-            perfilModal.addEventListener('show.bs.modal', function (event) {
+            perfilModal.addEventListener('show.bs.modal', function(event) {
                 const botao = event.relatedTarget;
 
                 document.getElementById('modal-nome').textContent =
@@ -365,16 +399,16 @@ $servicos    = $servicosObj->listarServicos();
          *  SERVIÇOS — Seleção de card de serviço
          * ============================================================= */
         document.querySelectorAll('.card-servico.selecionavel').forEach(card => {
-            card.addEventListener('click', function () {
+            card.addEventListener('click', function() {
                 // Remove seleção anterior e marca o card clicado
                 document.querySelectorAll('.card-servico.selecionavel').forEach(c => c.classList.remove('selecionado'));
                 this.classList.add('selecionado');
 
                 // Preenche os campos hidden com os dados do serviço selecionado
-                document.getElementById('servico_id').value    = this.dataset.id;
-                document.getElementById('servico_nome').value  = this.dataset.servico;
-                document.getElementById('preco').value         = this.dataset.preco;
-                document.getElementById('duracao').value       = this.dataset.tempo;
+                document.getElementById('servico_id').value = this.dataset.id;
+                document.getElementById('servico_nome').value = this.dataset.servico;
+                document.getElementById('preco').value = this.dataset.preco;
+                document.getElementById('duracao').value = this.dataset.tempo;
             });
         });
 
@@ -382,24 +416,39 @@ $servicos    = $servicosObj->listarServicos();
         /* =============================================================
          *  AGENDAMENTO — Validação + confirmação SweetAlert + envio
          * ============================================================= */
-        document.getElementById('form-agendamento').addEventListener('submit', function (e) {
+        document.getElementById('form-agendamento').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const servicoId   = document.getElementById('servico_id').value.trim();
-            const data        = document.getElementById('data_hidden').value.trim();
-            const horarioId   = document.getElementById('horario_hidden').value.trim();
+            const servicoId = document.getElementById('servico_id').value.trim();
+            const data = document.getElementById('data_hidden').value.trim();
+            const horarioId = document.getElementById('horario_hidden').value.trim();
             const servicoNome = document.getElementById('servico_nome').value.trim();
             const horarioText = document.querySelector('.horario-btn.selected')?.textContent || '';
 
             // Validações
             if (!servicoId) {
-                return Swal.fire({ icon: 'warning', title: 'Atenção', text: 'Selecione um serviço antes de continuar.', confirmButtonColor: '#EB6B9C' });
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'Atenção',
+                    text: 'Selecione um serviço antes de continuar.',
+                    confirmButtonColor: '#EB6B9C'
+                });
             }
             if (!data) {
-                return Swal.fire({ icon: 'warning', title: 'Atenção', text: 'Escolha uma data válida.', confirmButtonColor: '#EB6B9C' });
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'Atenção',
+                    text: 'Escolha uma data válida.',
+                    confirmButtonColor: '#EB6B9C'
+                });
             }
             if (!horarioId) {
-                return Swal.fire({ icon: 'warning', title: 'Atenção', text: 'Selecione um horário disponível.', confirmButtonColor: '#EB6B9C' });
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'Atenção',
+                    text: 'Selecione um horário disponível.',
+                    confirmButtonColor: '#EB6B9C'
+                });
             }
 
             // Confirmação com resumo do agendamento
@@ -436,22 +485,22 @@ $servicos    = $servicosObj->listarServicos();
         /* =============================================================
          *  CALENDÁRIO — Picker customizado de data + carregamento de horários
          * ============================================================= */
-        (function () {
+        (function() {
 
             // Nomes dos meses e letras dos dias da semana
             const MESES = [
-                'Janeiro', 'Fevereiro', 'Março',    'Abril',
-                'Maio',    'Junho',     'Julho',    'Agosto',
-                'Setembro','Outubro',   'Novembro', 'Dezembro'
+                'Janeiro', 'Fevereiro', 'Março', 'Abril',
+                'Maio', 'Junho', 'Julho', 'Agosto',
+                'Setembro', 'Outubro', 'Novembro', 'Dezembro'
             ];
             const DIAS_SEMANA = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
             // Estado atual do calendário
-            const hoje  = new Date();
-            let mesSel  = hoje.getMonth();
-            let anoSel  = hoje.getFullYear();
-            let dataSel = null;   // string "YYYY-MM-DD"
-            let aberto  = false;
+            const hoje = new Date();
+            let mesSel = hoje.getMonth();
+            let anoSel = hoje.getFullYear();
+            let dataSel = null; // string "YYYY-MM-DD"
+            let aberto = false;
 
             // Formata número com zero à esquerda: 9 → "09"
             function pad(n) {
@@ -470,7 +519,7 @@ $servicos    = $servicosObj->listarServicos();
 
             // Verifica se uma data já passou (anterior a hoje)
             function ehPassado(ano, mes, dia) {
-                const data  = new Date(ano, mes, dia);
+                const data = new Date(ano, mes, dia);
                 const agora = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
                 return data < agora;
             }
@@ -483,8 +532,8 @@ $servicos    = $servicosObj->listarServicos();
 
                 // Cabeçalho: letras dos dias da semana
                 DIAS_SEMANA.forEach(letra => {
-                    const cel       = document.createElement('div');
-                    cel.className   = 'agd-dia-sem';
+                    const cel = document.createElement('div');
+                    cel.className = 'agd-dia-sem';
                     cel.textContent = letra;
                     grade.appendChild(cel);
                 });
@@ -498,18 +547,18 @@ $servicos    = $servicosObj->listarServicos();
                 // Botão para cada dia do mês
                 const totalDias = new Date(anoSel, mesSel + 1, 0).getDate();
                 for (let dia = 1; dia <= totalDias; dia++) {
-                    const iso   = toISO(anoSel, mesSel, dia);
-                    const btn   = document.createElement('button');
-                    btn.type        = 'button';
-                    btn.className   = 'agd-dia';
+                    const iso = toISO(anoSel, mesSel, dia);
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'agd-dia';
                     btn.textContent = dia;
 
                     const passado = ehPassado(anoSel, mesSel, dia);
-                    if (passado)           btn.classList.add('agd-dia-passado');
+                    if (passado) btn.classList.add('agd-dia-passado');
                     if (iso === hojeISO()) btn.classList.add('agd-dia-hoje');
-                    if (iso === dataSel)   btn.classList.add('agd-dia-sel');
+                    if (iso === dataSel) btn.classList.add('agd-dia-sel');
 
-                    btn.addEventListener('click', function () {
+                    btn.addEventListener('click', function() {
                         if (passado) return;
                         selecionarData(iso);
                     });
@@ -541,7 +590,7 @@ $servicos    = $servicosObj->listarServicos();
             }
 
             // Abre ou fecha o dropdown do calendário
-            window.agdToggleCal = function () {
+            window.agdToggleCal = function() {
                 aberto = !aberto;
                 document.getElementById('agd-cal-dropdown').classList.toggle('visivel', aberto);
                 document.getElementById('agd-cal-trigger').classList.toggle('aberto', aberto);
@@ -556,9 +605,9 @@ $servicos    = $servicosObj->listarServicos();
             }
 
             // Fecha ao clicar fora do calendário
-            document.addEventListener('click', function (e) {
+            document.addEventListener('click', function(e) {
                 if (!aberto) return;
-                const trigger  = document.getElementById('agd-cal-trigger');
+                const trigger = document.getElementById('agd-cal-trigger');
                 const dropdown = document.getElementById('agd-cal-dropdown');
                 if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
                     fecharCalendario();
@@ -566,29 +615,35 @@ $servicos    = $servicosObj->listarServicos();
             });
 
             // Avança ou volta um mês (direcao: +1 ou -1)
-            window.agdNavMes = function (direcao) {
+            window.agdNavMes = function(direcao) {
                 mesSel += direcao;
-                if (mesSel < 0)  { mesSel = 11; anoSel--; }
-                if (mesSel > 11) { mesSel = 0;  anoSel++; }
+                if (mesSel < 0) {
+                    mesSel = 11;
+                    anoSel--;
+                }
+                if (mesSel > 11) {
+                    mesSel = 0;
+                    anoSel++;
+                }
                 renderizarCalendario();
             };
 
             // Limpa a data selecionada e os horários
-            window.agdLimparData = function () {
+            window.agdLimparData = function() {
                 dataSel = null;
 
                 const inputLegado = document.getElementById('data-agendamento');
                 if (inputLegado) inputLegado.value = '';
-                document.getElementById('data_hidden').value    = '';
+                document.getElementById('data_hidden').value = '';
                 document.getElementById('agd-cal-texto').textContent = 'Selecione uma data';
                 document.getElementById('agd-cal-trigger').classList.remove('com-data');
-                document.getElementById('horarios').innerHTML   = '';
+                document.getElementById('horarios').innerHTML = '';
 
                 renderizarCalendario();
             };
 
             // Navega para o mês atual e seleciona hoje
-            window.agdIrHoje = function () {
+            window.agdIrHoje = function() {
                 mesSel = hoje.getMonth();
                 anoSel = hoje.getFullYear();
                 renderizarCalendario();
@@ -609,10 +664,10 @@ $servicos    = $servicosObj->listarServicos();
                         }
 
                         lista.forEach(item => {
-                            const btn       = document.createElement('button');
-                            btn.type        = 'button';
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
                             btn.textContent = item.horario.slice(0, 5);
-                            btn.dataset.id  = item.id;
+                            btn.dataset.id = item.id;
                             btn.classList.add('horario-btn', 'btn');
 
                             btn.addEventListener('click', () => {
@@ -633,7 +688,6 @@ $servicos    = $servicosObj->listarServicos();
             document.addEventListener('DOMContentLoaded', renderizarCalendario);
 
         })();
-
     </script>
 
 </body>

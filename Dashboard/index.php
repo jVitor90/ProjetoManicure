@@ -85,33 +85,78 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
     <!-- ============================================================
      HEADER — Barra de navegação superior fixa
 ============================================================ -->
-    <header class="header-custom sticky-top bg-white">
+    <header class="header-custom sticky-top bg-white border-bottom">
         <div class="container-fluid px-4">
 
-            <!-- Linha superior: espaço esquerdo / logo central / ações à direita -->
-            <div class="header-top d-flex align-items-center justify-content-between py-3">
-                <div class="header-left"></div>
+            <div class="d-flex align-items-center justify-content-between py-3 position-relative">
 
-                <!-- Logo central -->
-                <div class="text-center">
-                    <a href="../index.php" class="logo fw-bold d-inline-block">Nail Pro</a>
+                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <a href="../index.php" class="logo fw-bold position-absolute start-50 translate-middle-x">Nail Pro</a>
+
+                <div class="ms-auto d-none d-lg-flex align-items-center gap-2">
+
+                    <?php if (isset($_SESSION['usuario'])): ?>
+                        <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                    <?php else: ?>
+                        <a href="#" class="btn btn-agendar" id="btn-agendar-header">Agendar</a>
+                    <?php endif; ?>
+
+                    <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
+                        <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+                    <?php endif; ?>
+
+                    <?php if (isset($_SESSION['usuario'])): ?>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                Olá, <?= htmlspecialchars($_SESSION['usuario']['nome']) ?>!
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#"
+                                        data-bs-toggle="modal" data-bs-target="#perfilModal"
+                                        data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                        data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                        data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                        data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                        data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                        data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                        data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                        Perfil
+                                    </a>
+                                </li>
+                                <li><a class="dropdown-item" href="../admin/sair.php">Sair</a></li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a href="../login.php" class="btn btn-agendar">Login/Cadastre-se</a>
+                    <?php endif; ?>
+
                 </div>
+            </div>
 
-                <!-- Ações à direita: dropdown do usuário + toggler mobile -->
-                <div class="header-right d-flex align-items-center gap-2">
+            <div class="collapse d-lg-block border-top" id="navbarMenu">
+                <nav class="py-2">
+                    <ul class="nav justify-content-center gap-lg-4 mb-0 flex-column flex-lg-row">
+                        <li class="nav-item"><a class="nav-link link-nav px-3" href="../Servicos/index.php">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link link-nav px-3" href="../Contato/index.php">Contato</a></li>
 
-                    <!-- Dropdown do usuário logado -->
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                            id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                            Olá, <?= $_SESSION['usuario']['nome'] ?>!
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li>
-                                <!-- Abre o modal de perfil com dados da sessão via data-attributes -->
-                                <a class="dropdown-item" href="#"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#perfilModal"
+                        <?php if (isset($_SESSION['usuario'])): ?>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="../Agendamento/index.php">Agendar</a></li>
+                        <?php else: ?>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="#" id="btn-agendar-mobile">Agendar</a></li>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="../Dashboard/index.php">Dashboard</a></li>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['usuario'])): ?>
+                            <li class="nav-item d-lg-none">
+                                <a class="nav-link link-nav px-3" href="#"
+                                    data-bs-toggle="modal" data-bs-target="#perfilModal"
                                     data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
                                     data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
                                     data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
@@ -122,19 +167,12 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                                     Perfil
                                 </a>
                             </li>
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="../admin/sair.php">Sair</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Botão hamburguer (visível apenas em telas < lg) -->
-                    <button class="navbar-toggler d-lg-none border-0 ms-2"
-                        type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                </div>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="../admin/sair.php">Sair</a></li>
+                        <?php else: ?>
+                            <li class="nav-item d-lg-none"><a class="nav-link link-nav px-3" href="../login.php">Login/Cadastre-se</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
             </div>
 
         </div>
