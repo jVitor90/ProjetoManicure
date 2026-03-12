@@ -796,18 +796,39 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                             </small>
                         </div>
 
-                        <!-- Campo Data -->
+                        <!-- Campo Data com calendário customizado -->
                         <div class="mb-3">
-                            <label for="dataAgendamento" class="form-label fw-semibold">
+                            <label class="form-label fw-semibold">
                                 <i class="bi bi-calendar-event me-1"></i>Data
                             </label>
-                            <input
-                                type="date"
-                                class="form-control"
-                                id="dataAgendamento"
-                                name="data"
-                                required
-                                min="<?= date('Y-m-d') ?>">
+                            <div style="position: relative;">
+
+                                <!-- Trigger -->
+                                <div id="mod-cal-trigger" role="button" tabindex="0"
+                                    onclick="modToggleCal()"
+                                    onkeydown="if(event.key==='Enter'||event.key===' ')modToggleCal()">
+                                    <i class="bi bi-calendar3" id="agd-cal-icon"></i>
+                                    <span id="mod-cal-texto">Selecione uma data</span>
+                                    <i class="bi bi-chevron-down ms-auto" id="mod-cal-chevron"></i>
+                                </div>
+
+                                <!-- Dropdown -->
+                                <div id="mod-cal-dropdown">
+                                    <div id="agd-cal-nav" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                                        <button type="button" id="mod-cal-prev" onclick="modNavMes(-1)">&#8249;</button>
+                                        <span id="mod-cal-mesano" style="font-weight:700;font-size:.9rem;color:#1a1a2e;font-family:'Inter',sans-serif;"></span>
+                                        <button type="button" id="mod-cal-next" onclick="modNavMes(1)">&#8250;</button>
+                                    </div>
+                                    <div id="mod-cal-grade"></div>
+                                    <div id="agd-cal-footer" style="display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #fce8f0;">
+                                        <button type="button" onclick="modLimparData()">Limpar</button>
+                                        <button type="button" onclick="modIrHoje()">Hoje</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- Campo hidden que o formulário já usa -->
+                            <input type="hidden" name="data" id="dataAgendamento">
                         </div>
 
                         <!-- Campo Serviço -->
@@ -2828,6 +2849,165 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                 // [FIX reset] Limpa estado ao fechar o modal
                 modalEl.addEventListener('resetarHorarios', resetarEstado);
             });
+
+        })();
+        /* =============================================================
+         *  CALENDÁRIO DO MODAL NOVO AGENDAMENTO
+         * ============================================================= */
+        (function() {
+            const MESES = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril',
+                'Maio', 'Junho', 'Julho', 'Agosto',
+                'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+            const DIAS_SEMANA = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+
+            const hoje = new Date();
+            let mesSel = hoje.getMonth();
+            let anoSel = hoje.getFullYear();
+            let dataSel = null;
+            let aberto = false;
+
+            function pad(n) {
+                return String(n).padStart(2, '0');
+            }
+
+            function toISO(ano, mes, dia) {
+                return `${ano}-${pad(mes+1)}-${pad(dia)}`;
+            }
+
+            function hojeISO() {
+                return toISO(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+            }
+
+            function ehPassado(ano, mes, dia) {
+                return new Date(ano, mes, dia) < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+            }
+
+            function renderizarCalendario() {
+                const grade = document.getElementById('mod-cal-grade');
+                if (!grade) return;
+                grade.innerHTML = '';
+
+                DIAS_SEMANA.forEach(letra => {
+                    const cel = document.createElement('div');
+                    cel.className = 'agd-dia-sem';
+                    cel.textContent = letra;
+                    grade.appendChild(cel);
+                });
+
+                const primeiroDia = new Date(anoSel, mesSel, 1).getDay();
+                for (let i = 0; i < primeiroDia; i++) {
+                    grade.appendChild(document.createElement('div'));
+                }
+
+                const totalDias = new Date(anoSel, mesSel + 1, 0).getDate();
+                for (let dia = 1; dia <= totalDias; dia++) {
+                    const iso = toISO(anoSel, mesSel, dia);
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'agd-dia';
+                    btn.textContent = dia;
+
+                    const passado = ehPassado(anoSel, mesSel, dia);
+                    if (passado) btn.classList.add('agd-dia-passado');
+                    if (iso === hojeISO()) btn.classList.add('agd-dia-hoje');
+                    if (iso === dataSel) btn.classList.add('agd-dia-sel');
+
+                    btn.addEventListener('click', function() {
+                        if (passado) return;
+                        selecionarData(iso);
+                    });
+                    grade.appendChild(btn);
+                }
+
+                document.getElementById('mod-cal-mesano').textContent = `${MESES[mesSel]} ${anoSel}`;
+            }
+
+            function selecionarData(iso) {
+                dataSel = iso;
+
+                // Preenche o hidden que o form já usa (e dispara o carregamento de horários)
+                const inputData = document.getElementById('dataAgendamento');
+                inputData.value = iso;
+                inputData.dispatchEvent(new Event('change')); // aciona carregarHorariosModal
+
+                const [ano, mes, dia] = iso.split('-');
+                document.getElementById('mod-cal-texto').textContent = `${dia}/${mes}/${ano}`;
+                document.getElementById('mod-cal-trigger').classList.add('com-data');
+
+                fecharCalendario();
+                renderizarCalendario();
+            }
+
+            function fecharCalendario() {
+                aberto = false;
+                document.getElementById('mod-cal-dropdown').classList.remove('visivel');
+                document.getElementById('mod-cal-trigger').classList.remove('aberto');
+            }
+
+            window.modToggleCal = function() {
+                aberto = !aberto;
+                document.getElementById('mod-cal-dropdown').classList.toggle('visivel', aberto);
+                document.getElementById('mod-cal-trigger').classList.toggle('aberto', aberto);
+                if (aberto) renderizarCalendario();
+            };
+
+            window.modNavMes = function(direcao) {
+                mesSel += direcao;
+                if (mesSel < 0) {
+                    mesSel = 11;
+                    anoSel--;
+                }
+                if (mesSel > 11) {
+                    mesSel = 0;
+                    anoSel++;
+                }
+                renderizarCalendario();
+            };
+
+            window.modLimparData = function() {
+                dataSel = null;
+                document.getElementById('dataAgendamento').value = '';
+                document.getElementById('mod-cal-texto').textContent = 'Selecione uma data';
+                document.getElementById('mod-cal-trigger').classList.remove('com-data');
+                document.getElementById('horarioSelect').innerHTML = '<option value="">Selecione um horário</option>';
+                renderizarCalendario();
+            };
+
+            window.modIrHoje = function() {
+                mesSel = hoje.getMonth();
+                anoSel = hoje.getFullYear();
+                renderizarCalendario();
+                selecionarData(hojeISO());
+            };
+
+            // Fecha ao clicar fora
+            document.addEventListener('click', function(e) {
+                if (!aberto) return;
+                const trigger = document.getElementById('mod-cal-trigger');
+                const dropdown = document.getElementById('mod-cal-dropdown');
+                if (!trigger || !dropdown) return;
+                if (!trigger.contains(e.target) && !dropdown.contains(e.target)) fecharCalendario();
+            });
+
+            // Reinicia ao fechar o modal
+            document.getElementById('modalNovoAgendamento')
+                ?.addEventListener('hidden.bs.modal', function() {
+                    dataSel = null;
+                    mesSel = hoje.getMonth();
+                    anoSel = hoje.getFullYear();
+                    document.getElementById('mod-cal-texto').textContent = 'Selecione uma data';
+                    document.getElementById('mod-cal-trigger').classList.remove('com-data');
+                });
+
+            // Inicializa quando o modal abre
+            document.getElementById('modalNovoAgendamento')
+                ?.addEventListener('show.bs.modal', function() {
+                    mesSel = hoje.getMonth();
+                    anoSel = hoje.getFullYear();
+                    renderizarCalendario();
+                });
 
         })();
     </script>

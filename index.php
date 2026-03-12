@@ -3,7 +3,7 @@
 session_start();
 
 if (isset($_SESSION['usuario']['id'])) {
-    require_once('agendamento_class.php');
+require_once(__DIR__ . '/classes/agendamento_class.php');
 
     $agendamento = new Agendamento();
     $_SESSION['usuario']['data_ultimo_agendamento'] = $agendamento->UltimoAgendamentoPorUsuario($_SESSION['usuario']['id']);
