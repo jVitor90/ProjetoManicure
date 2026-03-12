@@ -28,33 +28,38 @@ session_start();
 
                 <div class="ms-auto d-none d-lg-flex align-items-center gap-2">
 
-                    <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                    <?php if (isset($_SESSION['usuario'])): ?>
+                        <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                    <?php else: ?>
+                        <a href="#" class="btn btn-agendar" id="btn-agendar-header">Agendar</a>
+                    <?php endif; ?>
+
 
                     <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
                         <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                Olá, <?= htmlspecialchars($_SESSION['usuario']['nome']) ?>!
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#"
+                                        data-bs-toggle="modal" data-bs-target="#perfilModal"
+                                        data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                        data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                        data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                        data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                        data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                        data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                        data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                        Perfil
+                                    </a>
+                                </li>
+                                <li><a class="dropdown-item" href="../admin/sair.php">Sair</a></li>
+                            </ul>
+                        </div>
                     <?php endif; ?>
 
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                            Olá, <?= htmlspecialchars($_SESSION['usuario']['nome']) ?>!
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="#"
-                                    data-bs-toggle="modal" data-bs-target="#perfilModal"
-                                    data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
-                                    data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
-                                    data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
-                                    data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
-                                    data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
-                                    data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
-                                    data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
-                                    Perfil
-                                </a>
-                            </li>
-                            <li><a class="dropdown-item" href="../admin/sair.php">Sair</a></li>
-                        </ul>
-                    </div>
 
                 </div>
             </div>
@@ -247,6 +252,30 @@ session_start();
             }
 
         });
+
+          /* =============================================================
+         *  AGENDAR SEM LOGIN — SweetAlert para usuários não logados
+         * ============================================================= */
+        const btnAgendar = document.getElementById('btn-agendar-header');
+        if (btnAgendar) {
+            btnAgendar.addEventListener('click', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Faça login primeiro',
+                    text: 'Você precisa estar logado para fazer um agendamento.',
+                    confirmButtonText: 'Fazer Login',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#eb6b9b',
+                    cancelButtonColor: '#aaa',
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        window.location.href = '../login.php';
+                    }
+                });
+            });
+        }
     </script>
 
 </body>

@@ -4,7 +4,7 @@
  * ============================================================= */
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: login.php?err=usuario_sessao_invaliada");
+    header("Location: ../login.php?err=usuario_sessao_invaliada");
     exit();
 }
 

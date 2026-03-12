@@ -37,9 +37,9 @@ session_start();
                 <div class="ms-auto d-none d-lg-flex align-items-center gap-2">
 
                     <?php if (isset($_SESSION['usuario'])): ?>
-                        <a href="./Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                        <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
                     <?php else: ?>
-                        <a href="#" class="btn btn-agendar" id="btn-agendar-header">Agendar</a>
+                        <a href="#" class="btn btn-agendar sw-agendar"  id="btn-agendar-header">Agendar</a>
                     <?php endif; ?>
 
                     <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
@@ -157,7 +157,7 @@ session_start();
                     </p>
 
                     <div class="d-flex flex-wrap gap-3 mb-5">
-                        <a href="./Agendamento/index.php" class="btn btn-lg btn-primary btn-schedule">Agendar Horário</a>
+                        <a href="./Agendamento/index.php" class="btn btn-lg btn-primary btn-schedule sw-agendar">Agendar Horário</a>
                         <a href="./Servicos/index.php" class="btn btn-lg btn-services">Ver Serviços</a>
                     </div>
 
@@ -222,6 +222,7 @@ session_start();
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         // Script para preencher o modal de perfil com os dados do usuário
@@ -245,6 +246,28 @@ session_start();
                 document.getElementById('modal-criado-em').textContent = criadoEm ? new Date(criadoEm).toLocaleDateString('pt-BR') : '—';
             });
         });
+
+         const btnAgendar = document.getElementsByClassName('sw-agendar');
+        if (btnAgendar.length > 0) {
+            for (let i = 0; i < btnAgendar.length; i++) {
+                btnAgendar[i].addEventListener('click', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'info',
+                    title: 'Faça login primeiro',
+                    text: 'Você precisa estar logado para fazer um agendamento.',
+                    confirmButtonText: 'Fazer Login',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#eb6b9b',
+                    cancelButtonColor: '#aaa',
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        window.location.href = '../login.php';
+                    }
+                });
+            });
+        }}
     </script>
 </body>
 
