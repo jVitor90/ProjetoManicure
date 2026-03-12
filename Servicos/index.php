@@ -3,10 +3,6 @@
  *  AUTENTICAÇÃO — Verifica se o usuário está logado
  * ============================================================= */
 session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: login.php?err=usuario_sessao_invaliada");
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -43,36 +39,47 @@ if (!isset($_SESSION['usuario'])) {
 
         <!-- Ações à direita: Agendar, Dashboard e dropdown do usuário -->
         <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
-            <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
-            <a href="../Dashboard/index.php"   class="btn btn-agendar">Dashboard</a>
 
-            <!-- Dropdown do usuário logado -->
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button"
-                        id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                    Olá, <?= $_SESSION['usuario']['nome'] ?>!
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li>
-                        <!-- Abre o modal de perfil com dados da sessão via data-attributes -->
-                        <a class="dropdown-item" href="#"
-                            data-bs-toggle="modal"
-                            data-bs-target="#perfilModal"
-                            data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
-                            data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
-                            data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
-                            data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
-                            data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
-                            data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
-                            data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
-                            Perfil
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="./admin/sair.php">Sair</a>
-                    </li>
-                </ul>
-            </div>
+            <?php if (isset($_SESSION['usuario'])): ?>
+                <a href="../Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+            <?php else: ?>
+                <a href="#" class="btn btn-agendar" id="btn-agendar-header">Agendar</a>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
+                <a href="../Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['usuario'])): ?>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button"
+                            id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                        Olá, <?= htmlspecialchars($_SESSION['usuario']['nome']) ?>!
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li>
+                            <a class="dropdown-item" href="#"
+                                data-bs-toggle="modal"
+                                data-bs-target="#perfilModal"
+                                data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="../admin/sair.php">Sair</a>
+                        </li>
+                    </ul>
+                </div>
+            <?php else: ?>
+                <a href="../login.php" class="btn btn-agendar">Login/Cadastre-se</a>
+            <?php endif; ?>
+
         </div>
     </div>
 
@@ -299,8 +306,35 @@ if (!isset($_SESSION['usuario'])) {
 
 <!-- Bootstrap Bundle JS (inclui Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+/* =============================================================
+ *  AGENDAR SEM LOGIN — SweetAlert para usuários não logados
+ * ============================================================= */
+const btnAgendar = document.getElementById('btn-agendar-header');
+if (btnAgendar) {
+    btnAgendar.addEventListener('click', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'info',
+            title: 'Faça login primeiro',
+            text: 'Você precisa estar logado para fazer um agendamento.',
+            confirmButtonText: 'Fazer Login',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#eb6b9b',
+            cancelButtonColor: '#aaa',
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                window.location.href = '../login.php';
+            }
+        });
+    });
+}
+
+
 /* =============================================================
  *  PERFIL — Preenche o modal com dados do usuário logado
  * ============================================================= */

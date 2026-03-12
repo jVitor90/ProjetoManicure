@@ -1,6 +1,13 @@
 <?php
 // Inicia a sessão
 session_start();
+
+if (isset($_SESSION['usuario']['id'])) {
+    require_once('agendamento_class.php');
+
+    $agendamento = new Agendamento();
+    $_SESSION['usuario']['data_ultimo_agendamento'] = $agendamento->UltimoAgendamentoPorUsuario($_SESSION['usuario']['id']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,45 +37,46 @@ session_start();
             <!-- Ações à direita (Agendar + Dashboard + Dropdown) -->
             <div class="header-right position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2">
 
-                <a href="./Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                <?php if (isset($_SESSION['usuario'])): ?>
+                    <!-- Usuário logado: vai direto para o agendamento -->
+                    <a href="./Agendamento/index.php" class="btn btn-agendar">Agendar</a>
+                <?php else: ?>
+                    <!-- CORREÇÃO 2: Usuário não logado — intercepta o clique e exibe SweetAlert -->
+                    <a href="#" class="btn btn-agendar" id="btn-agendar-header">Agendar</a>
+                <?php endif; ?>
 
                 <?php if (isset($_SESSION['usuario']['id_tipo']) && $_SESSION['usuario']['id_tipo'] == 1): ?>
                     <a href="./Dashboard/index.php" class="btn btn-agendar">Dashboard</a>
                 <?php endif; ?>
 
-                <?php
-                if (isset($_SESSION['usuario'])) {
-                ?>
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Olá, <?= $_SESSION['usuario']['nome'] ?>!
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li>
-                            <a class="dropdown-item" href="#"
-                                data-bs-toggle="modal"
-                                data-bs-target="#perfilModal"
-                                data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
-                                data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
-                                data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
-                                data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
-                                data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
-                                data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
-                                data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
-                                Perfil
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="./admin/sair.php">Sair</a>
-                        </li>
-                    </ul>
-                </div>
-                 <?php
-                } else {
-                ?>
+                <?php if (isset($_SESSION['usuario'])): ?>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                            Olá, <?= htmlspecialchars($_SESSION['usuario']['nome']) ?>!
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li>
+                                <a class="dropdown-item" href="#"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#perfilModal"
+                                    data-id="<?= htmlspecialchars($_SESSION['usuario']['id']) ?>"
+                                    data-nome="<?= htmlspecialchars($_SESSION['usuario']['nome']) ?>"
+                                    data-sobrenome="<?= htmlspecialchars($_SESSION['usuario']['sobrenome'] ?? '') ?>"
+                                    data-email="<?= htmlspecialchars($_SESSION['usuario']['email']) ?>"
+                                    data-telefone="<?= htmlspecialchars($_SESSION['usuario']['telefone'] ?? '') ?>"
+                                    data-ultimo-agendamento="<?= htmlspecialchars($_SESSION['usuario']['data_ultimo_agendamento'] ?? '') ?>"
+                                    data-criado-em="<?= htmlspecialchars($_SESSION['usuario']['criado_em'] ?? '') ?>">
+                                    Perfil
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="./admin/sair.php">Sair</a>
+                            </li>
+                        </ul>
+                    </div>
+                <?php else: ?>
                     <a href="./login.php" class="btn btn-agendar">Login/Cadastre-se</a>
-                <?php
-                }
-                ?>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -107,7 +115,12 @@ session_start();
                     </p>
 
                     <div class="d-flex flex-wrap gap-3 mb-5">
-                        <a href="./Agendamento/index.php" class="btn btn-lg btn-primary btn-schedule">Agendar Horário</a>
+                        <?php if (isset($_SESSION['usuario'])): ?>
+                            <a href="./Agendamento/index.php" class="btn btn-lg btn-primary btn-schedule">Agendar Horário</a>
+                        <?php else: ?>
+                            <!-- CORREÇÃO 2: botão do hero também interceptado quando não logado -->
+                            <a href="#" class="btn btn-lg btn-primary btn-schedule" id="btn-agendar-hero">Agendar Horário</a>
+                        <?php endif; ?>
                         <a href="./Servicos/index.php" class="btn btn-lg btn-services">Ver Serviços</a>
                     </div>
 
@@ -172,27 +185,67 @@ session_start();
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Script para preencher o modal de perfil com os dados do usuário
+        // ── Modal de Perfil ────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', function() {
             const perfilModal = document.getElementById('perfilModal');
 
-            perfilModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
+            if (perfilModal) {
+                perfilModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
 
-                const nome = button.getAttribute('data-nome');
-                const sobrenome = button.getAttribute('data-sobrenome');
-                const email = button.getAttribute('data-email');
-                const telefone = button.getAttribute('data-telefone');
-                const ultimoAgendamento = button.getAttribute('data-ultimo-agendamento');
-                const criadoEm = button.getAttribute('data-criado-em');
+                    const nome = button.getAttribute('data-nome');
+                    const sobrenome = button.getAttribute('data-sobrenome');
+                    const email = button.getAttribute('data-email');
+                    const telefone = button.getAttribute('data-telefone');
+                    const ultimoAgendamento = button.getAttribute('data-ultimo-agendamento');
+                    const criadoEm = button.getAttribute('data-criado-em');
 
-                document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
-                document.getElementById('modal-email').textContent = email || '—';
-                document.getElementById('modal-telefone').textContent = telefone || '—';
-                document.getElementById('modal-ultimo-agendamento').textContent = ultimoAgendamento || 'Nenhum agendamento';
-                document.getElementById('modal-criado-em').textContent = criadoEm ? new Date(criadoEm).toLocaleDateString('pt-BR') : '—';
+                    document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
+                    document.getElementById('modal-email').textContent = email || '—';
+                    document.getElementById('modal-telefone').textContent = telefone || '—';
+
+                    // CORREÇÃO 1: formata a data corretamente, adicionando 'T00:00:00'
+                    // para evitar que o JS interprete a data como UTC e subtraia um dia
+                    if (ultimoAgendamento) {
+                        const dataFormatada = new Date(ultimoAgendamento + 'T00:00:00')
+                            .toLocaleDateString('pt-BR');
+                        document.getElementById('modal-ultimo-agendamento').textContent = dataFormatada;
+                    } else {
+                        document.getElementById('modal-ultimo-agendamento').textContent = 'Nenhum agendamento';
+                    }
+
+                    document.getElementById('modal-criado-em').textContent = criadoEm ?
+                        new Date(criadoEm).toLocaleDateString('pt-BR') :
+                        '—';
+                });
+            }
+
+            //weetAlert para botões de agendar sem login, seleciona os dois possíveis botões (header e hero) de uma vez
+            const botoesAgendar = document.querySelectorAll('#btn-agendar-header, #btn-agendar-hero');
+
+            botoesAgendar.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault(); // impede a navegação imediata
+
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Faça login primeiro',
+                        text: 'Você precisa estar logado para fazer um agendamento.',
+                        confirmButtonText: 'Fazer Login',
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#eb6b9b',
+                        cancelButtonColor: '#aaa',
+                    }).then(function(result) {
+                        if (result.isConfirmed) {
+                            window.location.href = './login.php';
+                        }
+                    });
+                });
             });
         });
     </script>

@@ -19,7 +19,7 @@ class Banco
     {
         if(null == self::$cont){
             try{
-                self::$cont = new PDO("mysql:host=".self::$dbHost.";"."dbname=".self::$bdNome, self::$dbUsuario, self::$dbSenha);
+                self::$cont = new PDO("mysql:host=".self::$dbHost.";"."dbname=".self::$bdNome.";charset=utf8mb4", self::$dbUsuario, self::$dbSenha);
             }
             catch(PDOException $exception){
                 die($exception->getMessage());
