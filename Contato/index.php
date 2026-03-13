@@ -5,7 +5,7 @@ session_start();
  * DADOS DO USUÁRIO — Atualiza a data do último agendamento para o usuário logado
  * ============================================================= */
 if (isset($_SESSION['usuario']['id'])) {
-    require_once('classes/agendamento_class.php');
+    require_once('./classes/agendamento_class.php');
 
     $agendamento = new Agendamento();
     $_SESSION['usuario']['data_ultimo_agendamento'] = $agendamento->UltimoAgendamentoPorUsuario($_SESSION['usuario']['id']);
