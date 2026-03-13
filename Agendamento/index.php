@@ -9,6 +9,16 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 /* =============================================================
+ * DADOS DO USUÁRIO — Atualiza a data do último agendamento para o usuário logado
+ * ============================================================= */
+if (isset($_SESSION['usuario']['id'])) {
+    require_once('classes/agendamento_class.php');
+
+    $agendamento = new Agendamento();
+    $_SESSION['usuario']['data_ultimo_agendamento'] = $agendamento->UltimoAgendamentoPorUsuario($_SESSION['usuario']['id']);
+}
+
+/* =============================================================
  *  DEPENDÊNCIAS — Carrega a classe de serviços
  * ============================================================= */
 require_once('../classes/servicos_class.php');
@@ -376,23 +386,38 @@ $servicos    = $servicosObj->listarServicos();
         document.addEventListener('DOMContentLoaded', function() {
             const perfilModal = document.getElementById('perfilModal');
 
-            perfilModal.addEventListener('show.bs.modal', function(event) {
-                const botao = event.relatedTarget;
+            if (perfilModal) {
+                perfilModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
 
-                document.getElementById('modal-nome').textContent =
-                    botao.getAttribute('data-nome') + ' ' + botao.getAttribute('data-sobrenome');
-                document.getElementById('modal-email').textContent =
-                    botao.getAttribute('data-email') || '—';
-                document.getElementById('modal-telefone').textContent =
-                    botao.getAttribute('data-telefone') || '—';
-                document.getElementById('modal-ultimo-agendamento').textContent =
-                    botao.getAttribute('data-ultimo-agendamento') || 'Nenhum agendamento';
+                    const nome = button.getAttribute('data-nome');
+                    const sobrenome = button.getAttribute('data-sobrenome');
+                    const email = button.getAttribute('data-email');
+                    const telefone = button.getAttribute('data-telefone');
+                    const ultimoAgendamento = button.getAttribute('data-ultimo-agendamento');
+                    const criadoEm = button.getAttribute('data-criado-em');
 
-                const criadoEm = botao.getAttribute('data-criado-em');
-                document.getElementById('modal-criado-em').textContent =
-                    criadoEm ? new Date(criadoEm).toLocaleDateString('pt-BR') : '—';
-            });
+                    document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
+                    document.getElementById('modal-email').textContent = email || '—';
+                    document.getElementById('modal-telefone').textContent = telefone || '—';
+
+                    // CORREÇÃO 1: formata a data corretamente, adicionando 'T00:00:00'
+                    // para evitar que o JS interprete a data como UTC e subtraia um dia
+                    if (ultimoAgendamento) {
+                        const dataFormatada = new Date(ultimoAgendamento + 'T00:00:00')
+                            .toLocaleDateString('pt-BR');
+                        document.getElementById('modal-ultimo-agendamento').textContent = dataFormatada;
+                    } else {
+                        document.getElementById('modal-ultimo-agendamento').textContent = 'Nenhum agendamento';
+                    }
+
+                    document.getElementById('modal-criado-em').textContent = criadoEm ?
+                        new Date(criadoEm).toLocaleDateString('pt-BR') :
+                        '—';
+                });
+            }
         });
+
 
 
         /* =============================================================

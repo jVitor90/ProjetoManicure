@@ -12,6 +12,16 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 /* =============================================================
+ * DADOS DO USUÁRIO — Atualiza a data do último agendamento para o usuário logado
+ * ============================================================= */
+if (isset($_SESSION['usuario']['id'])) {
+    require_once('classes/agendamento_class.php');
+
+    $agendamento = new Agendamento();
+    $_SESSION['usuario']['data_ultimo_agendamento'] = $agendamento->UltimoAgendamentoPorUsuario($_SESSION['usuario']['id']);
+}
+
+/* =============================================================
  *  DEPENDÊNCIAS — Carrega as classes necessárias
  * ============================================================= */
 require_once('../classes/servicos_class.php');
@@ -782,7 +792,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
 
                 <!-- Body -->
                 <div class="modal-body">
-                    <form id="formNovoAgendamento" action="../actions/agenda_agendar.php" method="POST">
+                    <form id="formNovoAgendamento" action="../admin/Dashboard_agendar.php" method="POST">
 
                         <!-- Campo Cliente com Datalist -->
                         <div class="mb-3">
@@ -1752,25 +1762,40 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
         /* =============================================================
          *  PERFIL — Preenche o modal com dados do usuário logado
          * ============================================================= */
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const perfilModal = document.getElementById('perfilModal');
 
-            perfilModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                const nome = button.getAttribute('data-nome');
-                const sobrenome = button.getAttribute('data-sobrenome');
-                const email = button.getAttribute('data-email');
-                const telefone = button.getAttribute('data-telefone');
-                const ultimoAgendamento = button.getAttribute('data-ultimo-agendamento');
-                const criadoEm = button.getAttribute('data-criado-em');
+            if (perfilModal) {
+                perfilModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
 
-                document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
-                document.getElementById('modal-email').textContent = email || '—';
-                document.getElementById('modal-telefone').textContent = telefone || '—';
-                document.getElementById('modal-ultimo-agendamento').textContent = ultimoAgendamento || 'Nenhum agendamento';
-                document.getElementById('modal-criado-em').textContent = criadoEm ? new Date(criadoEm).toLocaleDateString('pt-BR') : '—';
+                    const nome               = button.getAttribute('data-nome');
+                    const sobrenome          = button.getAttribute('data-sobrenome');
+                    const email              = button.getAttribute('data-email');
+                    const telefone           = button.getAttribute('data-telefone');
+                    const ultimoAgendamento  = button.getAttribute('data-ultimo-agendamento');
+                    const criadoEm           = button.getAttribute('data-criado-em');
+
+                    document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
+                    document.getElementById('modal-email').textContent = email || '—';
+                    document.getElementById('modal-telefone').textContent = telefone || '—';
+
+                    // CORREÇÃO 1: formata a data corretamente, adicionando 'T00:00:00'
+                    // para evitar que o JS interprete a data como UTC e subtraia um dia
+                    if (ultimoAgendamento) {
+                        const dataFormatada = new Date(ultimoAgendamento + 'T00:00:00')
+                            .toLocaleDateString('pt-BR');
+                        document.getElementById('modal-ultimo-agendamento').textContent = dataFormatada;
+                    } else {
+                        document.getElementById('modal-ultimo-agendamento').textContent = 'Nenhum agendamento';
+                    }
+
+                    document.getElementById('modal-criado-em').textContent = criadoEm
+                        ? new Date(criadoEm).toLocaleDateString('pt-BR')
+                        : '—';
+                });
+                }
             });
-        });
 
 
         /* =============================================================

@@ -1,5 +1,15 @@
 <?php
 session_start();
+
+/* =============================================================
+ * DADOS DO USUÁRIO — Atualiza a data do último agendamento para o usuário logado
+ * ============================================================= */
+if (isset($_SESSION['usuario']['id'])) {
+    require_once('classes/agendamento_class.php');
+
+    $agendamento = new Agendamento();
+    $_SESSION['usuario']['data_ultimo_agendamento'] = $agendamento->UltimoAgendamentoPorUsuario($_SESSION['usuario']['id']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -212,46 +222,44 @@ session_start();
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const btnAgendar = document.getElementById('btn-agendar-header');
-            if (btnAgendar) {
-                btnAgendar.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Faça login primeiro',
-                        text: 'Você precisa estar logado para fazer um agendamento.',
-                        confirmButtonText: 'Fazer Login',
-                        showCancelButton: true,
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonColor: '#eb6b9b',
-                        cancelButtonColor: '#aaa',
-                    }).then(function(result) {
-                        if (result.isConfirmed) window.location.href = '../login.php';
-                    });
-                });
-            }
-
+        /* =============================================================
+         *  PERFIL — Preenche o modal com dados do usuário logado
+         * ============================================================= */
+        document.addEventListener('DOMContentLoaded', function () {
             const perfilModal = document.getElementById('perfilModal');
-            if (perfilModal) {
-                perfilModal.addEventListener('show.bs.modal', function(event) {
-                    const btn = event.relatedTarget;
-                    document.getElementById('modal-nome').textContent =
-                        btn.getAttribute('data-nome') + ' ' + btn.getAttribute('data-sobrenome');
-                    document.getElementById('modal-email').textContent =
-                        btn.getAttribute('data-email') || '—';
-                    document.getElementById('modal-telefone').textContent =
-                        btn.getAttribute('data-telefone') || '—';
-                    document.getElementById('modal-ultimo-agendamento').textContent =
-                        btn.getAttribute('data-ultimo-agendamento') || 'Nenhum agendamento';
-                    const criadoEm = btn.getAttribute('data-criado-em');
-                    document.getElementById('modal-criado-em').textContent =
-                        criadoEm ? new Date(criadoEm).toLocaleDateString('pt-BR') : '—';
-                });
-            }
 
-        });
+            if (perfilModal) {
+                perfilModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+
+                    const nome               = button.getAttribute('data-nome');
+                    const sobrenome          = button.getAttribute('data-sobrenome');
+                    const email              = button.getAttribute('data-email');
+                    const telefone           = button.getAttribute('data-telefone');
+                    const ultimoAgendamento  = button.getAttribute('data-ultimo-agendamento');
+                    const criadoEm           = button.getAttribute('data-criado-em');
+
+                    document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
+                    document.getElementById('modal-email').textContent = email || '—';
+                    document.getElementById('modal-telefone').textContent = telefone || '—';
+
+                    // CORREÇÃO 1: formata a data corretamente, adicionando 'T00:00:00'
+                    // para evitar que o JS interprete a data como UTC e subtraia um dia
+                    if (ultimoAgendamento) {
+                        const dataFormatada = new Date(ultimoAgendamento + 'T00:00:00')
+                            .toLocaleDateString('pt-BR');
+                        document.getElementById('modal-ultimo-agendamento').textContent = dataFormatada;
+                    } else {
+                        document.getElementById('modal-ultimo-agendamento').textContent = 'Nenhum agendamento';
+                    }
+
+                    document.getElementById('modal-criado-em').textContent = criadoEm
+                        ? new Date(criadoEm).toLocaleDateString('pt-BR')
+                        : '—';
+                });
+                }
+            });
+
 
           /* =============================================================
          *  AGENDAR SEM LOGIN — SweetAlert para usuários não logados
