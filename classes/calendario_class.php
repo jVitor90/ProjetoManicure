@@ -34,10 +34,12 @@ class Calendario
         return $comando->rowCount();
     }
 
-    // Remover todos os horários de uma data
+    // Remover todos os horários de uma data (apenas os sem agendamentos vinculados)
     function RemoverPorData($data)
     {
-        $sql = "DELETE FROM calendario WHERE data = ?";
+        $sql = "DELETE FROM calendario 
+                WHERE data = ? 
+                AND id NOT IN (SELECT id_calendario FROM agendamento WHERE id_calendario IS NOT NULL)";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);
         $comando->execute([$data]);
@@ -81,7 +83,11 @@ class Calendario
     public function LimparPorData(string $data): void
     {
         $banco = Banco::conectar();
-        $stmt = $banco->prepare("DELETE FROM calendario WHERE data = :data");
+        $stmt = $banco->prepare(
+            "DELETE FROM calendario 
+             WHERE data = :data 
+             AND id NOT IN (SELECT id_calendario FROM agendamento WHERE id_calendario IS NOT NULL)"
+        );
         $stmt->bindParam(':data', $data);
         $stmt->execute();
         Banco::desconectar();
@@ -90,10 +96,15 @@ class Calendario
     public function RemoverHorario(string $data, string $horario): void
     {
         $banco = Banco::conectar();
-        $stmt = $banco->prepare("DELETE FROM calendario WHERE data = :data AND horario = :horario");
+        $stmt = $banco->prepare(
+            "DELETE FROM calendario 
+             WHERE data = :data AND horario = :horario 
+             AND id NOT IN (SELECT id_calendario FROM agendamento WHERE id_calendario IS NOT NULL)"
+        );
         $stmt->bindParam(':data', $data);
         $stmt->bindParam(':horario', $horario);
         $stmt->execute();
         Banco::desconectar();
     }
 }
+?>
