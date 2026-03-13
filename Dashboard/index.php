@@ -446,7 +446,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                                         <td><?= htmlspecialchars($usuario['email']) ?></td>
                                         <td><?= htmlspecialchars($usuario['data_ultimo_agendamento'] ?? '—') ?></td>
 
-                                        <!-- Ações: Editar e Excluir -->
+                                        <!-- Ações: Editar -->
                                         <td class="text-end">
                                             <button
                                                 type="button"
@@ -459,13 +459,6 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                                                 data-email="<?= htmlspecialchars($usuario['email']) ?>"
                                                 data-telefone="<?= htmlspecialchars($usuario['telefone'] ?? '') ?>">
                                                 <i class="bi bi-pencil"></i> Editar
-                                            </button>
-                                            <button
-                                                type="button"
-                                                class="btn btn-sm btn-outline-danger btnExcluirCliente"
-                                                data-id="<?= $usuario['id'] ?>"
-                                                data-nome="<?= htmlspecialchars($usuario['nome'] . ' ' . $usuario['sobrenome']) ?>">
-                                                <i class="bi bi-trash"></i> Excluir
                                             </button>
                                         </td>
 
@@ -789,7 +782,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
 
                 <!-- Body -->
                 <div class="modal-body">
-                    <form id="formNovoAgendamento" action="../admin/agenda_agendar.php" method="POST">
+                    <form id="formNovoAgendamento" action="../actions/agenda_agendar.php" method="POST">
 
                         <!-- Campo Cliente com Datalist -->
                         <div class="mb-3">
@@ -901,7 +894,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                 <i class="bi bi-x-lg me-1"></i>Cancelar
                             </button>
-                            <button type="button" id="btnConfirmarAgendamento" class="btn btn-primary">
+                            <button type="button" id="btnConfirmarNovoAgendamento" class="btn btn-primary">
                                 <i class="bi bi-check-lg me-1"></i>Confirmar Agendamento
                             </button>
                         </div>
@@ -1558,7 +1551,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     title: 'Serviço Cadastrado!',
                     text: 'O serviço foi adicionado com sucesso.',
                     icon: 'success',
-                    buttonsStyling: false,
+                    confirmButtonColor: '#EB6B9C',
                     confirmButtonText: 'OK'
                 }).then(limparUrl);
 
@@ -1568,7 +1561,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     title: 'Serviço Atualizado!',
                     text: 'As alterações foram salvas com sucesso.',
                     icon: 'success',
-                    buttonsStyling: false,
+                    confirmButtonColor: '#EB6B9C',
                     confirmButtonText: 'OK'
                 }).then(limparUrl);
 
@@ -1578,7 +1571,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     title: 'Serviço Excluído!',
                     text: 'O serviço foi removido com sucesso.',
                     icon: 'success',
-                    buttonsStyling: false,
+                    confirmButtonColor: '#EB6B9C',
                     confirmButtonText: 'OK'
                 }).then(limparUrl);
 
@@ -1588,7 +1581,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     title: 'Erro!',
                     text: 'Não foi possível cadastrar o serviço. Tente novamente.',
                     icon: 'error',
-                    buttonsStyling: false,
+                    confirmButtonColor: '#EB6B9C',
                     confirmButtonText: 'OK'
                 }).then(limparUrl);
 
@@ -1598,7 +1591,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     title: 'Erro!',
                     text: 'Não foi possível editar o serviço. Tente novamente.',
                     icon: 'error',
-                    buttonsStyling: false,
+                    confirmButtonColor: '#EB6B9C',
                     confirmButtonText: 'OK'
                 }).then(limparUrl);
 
@@ -1608,7 +1601,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     title: 'Erro!',
                     text: 'ID do serviço inválido.',
                     icon: 'error',
-                    buttonsStyling: false,
+                    confirmButtonColor: '#EB6B9C',
                     confirmButtonText: 'OK'
                 }).then(limparUrl);
 
@@ -1618,7 +1611,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     title: 'Erro!',
                     text: 'Não foi possível excluir o serviço. Tente novamente.',
                     icon: 'error',
-                    buttonsStyling: false,
+                    confirmButtonColor: '#EB6B9C',
                     confirmButtonText: 'OK'
                 }).then(limparUrl);
             }
@@ -1686,50 +1679,6 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                 });
             });
         }
-
-        /* =============================================================
-         *  CLIENTES — Exclusão com confirmação SweetAlert (delegação)
-         * ============================================================= */
-        document.addEventListener('DOMContentLoaded', function() {
-            const tbody = document.querySelector('#modalListaClientes tbody');
-
-            if (tbody) {
-                tbody.addEventListener('click', function(e) {
-                    const botaoExcluir = e.target.closest('.btnExcluirCliente');
-                    if (!botaoExcluir) return;
-
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const id = botaoExcluir.getAttribute('data-id');
-                    const nome = botaoExcluir.getAttribute('data-nome');
-
-                    Swal.fire({
-                        title: 'Tem certeza?',
-                        text: `Deseja realmente excluir ${nome}? Esta ação não pode ser desfeita!`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Sim, excluir!',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = '../actions/usuario_excluir.php';
-                            const inputId = document.createElement('input');
-                            inputId.type = 'hidden';
-                            inputId.name = 'id';
-                            inputId.value = id;
-                            form.appendChild(inputId);
-                            document.body.appendChild(form);
-                            form.submit();
-                        }
-                    });
-                });
-            }
-        });
 
         /* =============================================================
          *  CLIENTES — Busca e paginação na tabela de clientes
@@ -2017,7 +1966,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
         /* =============================================================
          *  NOVO AGENDAMENTO — Confirmação com SweetAlert antes de enviar
          * ============================================================= */
-        document.getElementById('btnConfirmarAgendamento').addEventListener('click', function(e) {
+        document.getElementById('btnConfirmarNovoAgendamento').addEventListener('click', function(e) {
             e.preventDefault();
 
             const form = document.getElementById('formNovoAgendamento');

@@ -151,7 +151,7 @@ session_start();
                         <a href="https://wa.me/5512999999999" target="_blank" class="btn-contato-wa">
                             <i class="bi bi-whatsapp"></i> WhatsApp
                         </a>
-                        <a href="https://instagram.com/seu_perfil" target="_blank" class="btn-contato-ig">
+                        <a href="https://instagram.com" target="_blank" class="btn-contato-ig">
                             <i class="bi bi-instagram"></i> Instagram
                         </a>
                     </div>

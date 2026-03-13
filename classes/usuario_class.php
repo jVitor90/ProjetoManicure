@@ -117,15 +117,15 @@ class Usuario
         return $usuarios;
     }
 
-    public function ExcluirUsuario($id_usuario)
-    {
-        $sql = "DELETE FROM usuarios WHERE id = ?";
-        $banco = Banco::conectar();
-        $comando = $banco->prepare($sql);
-        $comando->execute([
-            $id_usuario
-        ]);
-        Banco::desconectar();
-        return $comando->rowCount();
-    }
+    // public function ExcluirUsuario($id_usuario)
+    // {
+    //     $sql = "DELETE FROM usuarios WHERE id = ?";
+    //     $banco = Banco::conectar();
+    //     $comando = $banco->prepare($sql);
+    //     $comando->execute([
+    //         $id_usuario
+    //     ]);
+    //     Banco::desconectar();
+    //     return $comando->rowCount();
+    // }
 }
