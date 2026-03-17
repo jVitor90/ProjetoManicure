@@ -88,6 +88,49 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
 
     <!-- SweetAlert2 JS (carregado no head para disponibilidade imediata) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Aliases CSS: calendário da Agenda Completa usa os mesmos estilos do calendário do Novo Agendamento -->
+    <style>
+        #mod-cal-trigger, #agd2-cal-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border: 1.5px solid #e8d5e0;
+            border-radius: 12px;
+            background: #fff;
+            cursor: pointer;
+            font-size: .9rem;
+            color: #888;
+            transition: border-color .2s, box-shadow .2s;
+            user-select: none;
+        }
+        #mod-cal-trigger:hover, #agd2-cal-trigger:hover,
+        #mod-cal-trigger.aberto, #agd2-cal-trigger.aberto {
+            border-color: #EB6B9C;
+            box-shadow: 0 0 0 3px rgba(235,107,156,.12);
+        }
+        #mod-cal-trigger.com-data, #agd2-cal-trigger.com-data {
+            color: #1a1a2e;
+            border-color: #EB6B9C;
+        }
+        #mod-cal-dropdown, #agd2-cal-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            z-index: 1055;
+            background: #fff;
+            border: 1.5px solid #fce8f0;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(235,107,156,.18);
+            padding: 16px;
+            min-width: 280px;
+        }
+        #mod-cal-dropdown.visivel, #agd2-cal-dropdown.visivel {
+            display: block;
+        }
+    </style>
 </head>
 
 <body class="bg-white">
@@ -1288,7 +1331,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
 
     <!-- ============================================================
      MODAL: Ver Agenda Completa
-============================================================ -->
+    ============================================================ -->
     <div class="modal fade" id="modalAgenda" tabindex="-1"
         aria-labelledby="modalAgendaLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -1309,23 +1352,57 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                 <div class="modal-body pt-4">
 
                     <!-- Filtros -->
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label small fw-medium">Data</label>
-                            <input type="date" class="form-control" value="2026-01-30">
+                    <div class="row g-3 mb-3">
+
+                        <!-- Filtro: Data -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-calendar-event me-1"></i>Data
+                            </label>
+                            <div style="position: relative;">
+
+                                <!-- Trigger -->
+                                <div id="agd2-cal-trigger" role="button" tabindex="0"
+                                    onclick="agd2ToggleCal()"
+                                    onkeydown="if(event.key==='Enter'||event.key===' ')agd2ToggleCal()">
+                                    <i class="bi bi-calendar3"></i>
+                                    <span id="agd2-cal-texto">Selecione uma data</span>
+                                    <i class="bi bi-chevron-down ms-auto" id="agd2-cal-chevron"></i>
+                                </div>
+
+                                <!-- Dropdown calendário -->
+                                <div id="agd2-cal-dropdown">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                                        <button type="button" onclick="agd2NavMes(-1)">&#8249;</button>
+                                        <span id="agd2-cal-mesano" style="font-weight:700;font-size:.9rem;color:#1a1a2e;font-family:'Inter',sans-serif;"></span>
+                                        <button type="button" onclick="agd2NavMes(1)">&#8250;</button>
+                                    </div>
+                                    <div id="agd2-cal-grade"></div>
+                                    <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #fce8f0;">
+                                        <button type="button" onclick="agd2LimparData()">Limpar</button>
+                                        <button type="button" onclick="agd2IrHoje()">Hoje</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <input type="hidden" name="data_filtro" id="agd2-dataFiltro">
                         </div>
-                        <div class="col-md-4">
+
+                        <!-- Filtro: Status -->
+                        <div class="col-md-6">
                             <label class="form-label small fw-medium">Status</label>
-                            <select class="form-select">
+                            <select class="form-select" id="agd2-filtroStatus">
                                 <option value="">Todos</option>
                                 <option value="confirmado">Confirmado</option>
                                 <option value="pendente">Pendente</option>
                                 <option value="cancelado">Cancelado</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+
+                        <!-- Filtro: Serviço -->
+                        <div class="col-md-6">
                             <label class="form-label small fw-medium">Serviço</label>
-                            <select class="form-select">
+                            <select class="form-select" id="agd2-filtroServico">
                                 <option value="">Todos</option>
                                 <option value="manicure">Manicure</option>
                                 <option value="pedicure">Pedicure</option>
@@ -1334,7 +1411,9 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                                 <option value="nail-art">Nail Art</option>
                             </select>
                         </div>
+
                     </div>
+                    <!-- /Filtros -->
 
                     <!-- Lista de Agendamentos -->
                     <div class="list-group list-group-flush">
@@ -3020,6 +3099,130 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     anoSel = hoje.getFullYear();
                     renderizarCalendario();
                 });
+
+        })();
+
+        /* =============================================================
+         *  CALENDÁRIO DO MODAL AGENDA COMPLETA (agd2)
+         * ============================================================= */
+        (function() {
+            const MESES = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril',
+                'Maio', 'Junho', 'Julho', 'Agosto',
+                'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+            const DIAS_SEMANA = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+
+            const hoje = new Date();
+            let mesSel = hoje.getMonth();
+            let anoSel = hoje.getFullYear();
+            let dataSel = null;
+            let aberto = false;
+
+            function pad(n) { return String(n).padStart(2, '0'); }
+            function toISO(ano, mes, dia) { return `${ano}-${pad(mes+1)}-${pad(dia)}`; }
+            function hojeISO() { return toISO(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()); }
+
+            function renderizar() {
+                const grade = document.getElementById('agd2-cal-grade');
+                if (!grade) return;
+                grade.innerHTML = '';
+
+                DIAS_SEMANA.forEach(letra => {
+                    const cel = document.createElement('div');
+                    cel.className = 'agd-dia-sem';
+                    cel.textContent = letra;
+                    grade.appendChild(cel);
+                });
+
+                const primeiroDia = new Date(anoSel, mesSel, 1).getDay();
+                for (let i = 0; i < primeiroDia; i++) {
+                    grade.appendChild(document.createElement('div'));
+                }
+
+                const totalDias = new Date(anoSel, mesSel + 1, 0).getDate();
+                for (let dia = 1; dia <= totalDias; dia++) {
+                    const iso = toISO(anoSel, mesSel, dia);
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'agd-dia';
+                    btn.textContent = dia;
+                    if (iso === hojeISO()) btn.classList.add('agd-dia-hoje');
+                    if (iso === dataSel) btn.classList.add('agd-dia-sel');
+                    btn.addEventListener('click', function() { selecionar(iso); });
+                    grade.appendChild(btn);
+                }
+
+                document.getElementById('agd2-cal-mesano').textContent = `${MESES[mesSel]} ${anoSel}`;
+            }
+
+            function selecionar(iso) {
+                dataSel = iso;
+                const [ano, mes, dia] = iso.split('-');
+                document.getElementById('agd2-cal-texto').textContent = `${dia}/${mes}/${ano}`;
+                document.getElementById('agd2-cal-trigger').classList.add('com-data');
+                document.getElementById('agd2-dataFiltro').value = iso;
+                fechar();
+                renderizar();
+            }
+
+            function fechar() {
+                aberto = false;
+                document.getElementById('agd2-cal-dropdown').classList.remove('visivel');
+                document.getElementById('agd2-cal-trigger').classList.remove('aberto');
+            }
+
+            window.agd2ToggleCal = function() {
+                aberto = !aberto;
+                document.getElementById('agd2-cal-dropdown').classList.toggle('visivel', aberto);
+                document.getElementById('agd2-cal-trigger').classList.toggle('aberto', aberto);
+                if (aberto) renderizar();
+            };
+
+            window.agd2NavMes = function(dir) {
+                mesSel += dir;
+                if (mesSel < 0) { mesSel = 11; anoSel--; }
+                if (mesSel > 11) { mesSel = 0; anoSel++; }
+                renderizar();
+            };
+
+            window.agd2LimparData = function() {
+                dataSel = null;
+                document.getElementById('agd2-dataFiltro').value = '';
+                document.getElementById('agd2-cal-texto').textContent = 'Selecione uma data';
+                document.getElementById('agd2-cal-trigger').classList.remove('com-data');
+                renderizar();
+            };
+
+            window.agd2IrHoje = function() {
+                mesSel = hoje.getMonth();
+                anoSel = hoje.getFullYear();
+                renderizar();
+                selecionar(hojeISO());
+            };
+
+            // Fecha ao clicar fora
+            document.addEventListener('click', function(e) {
+                if (!aberto) return;
+                const trigger = document.getElementById('agd2-cal-trigger');
+                const dropdown = document.getElementById('agd2-cal-dropdown');
+                if (!trigger || !dropdown) return;
+                if (!trigger.contains(e.target) && !dropdown.contains(e.target)) fechar();
+            });
+
+            // Inicializa e reseta ao abrir/fechar o modal
+            document.getElementById('modalAgenda')?.addEventListener('show.bs.modal', function() {
+                mesSel = hoje.getMonth();
+                anoSel = hoje.getFullYear();
+                renderizar();
+            });
+            document.getElementById('modalAgenda')?.addEventListener('hidden.bs.modal', function() {
+                dataSel = null;
+                mesSel = hoje.getMonth();
+                anoSel = hoje.getFullYear();
+                document.getElementById('agd2-cal-texto').textContent = 'Selecione uma data';
+                document.getElementById('agd2-cal-trigger').classList.remove('com-data');
+            });
 
         })();
     </script>
