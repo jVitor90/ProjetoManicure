@@ -1,154 +1,478 @@
+ /* ── Design Tokens (espelhados do styles.css) ── */
+ :root {
+     --color-primary: #eb6b9b;
+     --color-primary-dark: #e03e7f;
+     --color-primary-darker: #d13570;
+     --color-primary-light: #f8e2ea;
+     --color-primary-xlight: #fdf2f8;
+     --color-border-pink: #f2d8e0;
+     --color-border-pink2: #fce4f0;
+     --color-bg-pink: #fdf2f8;
+     --color-text-dark: #1a1a1a;
+     --color-text-mid: #5c3a40;
+     --color-text-muted: #999;
+     --gradient-primary: linear-gradient(135deg, #eb6b9b, #e03e7f);
+     --font-display: 'Playfair Display', Georgia, serif;
+     --font-base: 'DM Sans', Arial, sans-serif;
+     --radius-sm: 8px;
+     --radius-md: 12px;
+     --radius-lg: 16px;
+     --radius-xl: 24px;
+     --shadow-pink: 0 6px 20px rgba(235, 107, 155, 0.3);
+     --transition: all 0.3s ease;
+ }
 
-        body {
-            background: linear-gradient(135deg, #fdf2f8 0%, #fceef5 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            font-family: 'Segoe UI', sans-serif;
-        }
 
-        .card-form {
-            background: #ffffff;
-            padding: 45px 40px;
-            border-radius: 24px;
-            border: 3px solid #f8b7d0;
-            box-shadow: 0 20px 40px rgba(155, 249, 155, 0.25);
-            max-width: 460px;
-            width: 100%;
-            animation: fadeInUp 0.8s ease-out;
-        }
+ /*  Reset  */
+ *,
+ *::before,
+ *::after {
+     box-sizing: border-box;
+     margin: 0;
+     padding: 0;
+ }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+ body {
+     font-family: var(--font-base);
+     min-height: 100vh;
+     background: #fff;
+     display: flex;
+     overflow-x: hidden;
+ }
 
-        #titulo {
-            color: #ba2d65;
-            font-weight: 800;
-            font-size: 2.6rem;
-            margin-bottom: 2rem;
-        }
+ /* ══════════════════════════════════════════
+           PAINEL ESQUERDO — decorativo / branding
+        ══════════════════════════════════════════ */
+ .panel-brand {
+     width: 42%;
+     min-height: 100vh;
+     background: var(--gradient-primary);
+     position: relative;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: flex-start;
+     padding: 60px 56px;
+     overflow: hidden;
+     flex-shrink: 0;
+ }
 
-        .form-label {
-            color: #ba2d65;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
+ /* Bolhas decorativas */
+ .panel-brand::before {
+     content: '';
+     position: absolute;
+     width: 340px;
+     height: 340px;
+     border-radius: 50%;
+     background: rgba(255, 255, 255, 0.10);
+     top: -80px;
+     right: -100px;
+ }
 
-        .form-control {
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1.5px solid #e9b8d0;
-            font-size: 1rem;
-        }
+ .panel-brand::after {
+     content: '';
+     position: absolute;
+     width: 220px;
+     height: 220px;
+     border-radius: 50%;
+     background: rgba(255, 255, 255, 0.08);
+     bottom: -60px;
+     left: -60px;
+ }
 
-        .form-control:focus {
-            border-color: #f99bb9;
-            box-shadow: none !important;
-        }
+ .brand-blob {
+     position: absolute;
+     border-radius: 50%;
+     background: rgba(255, 255, 255, 0.06);
+ }
 
-        .input-group-text {
-            background: transparent;
-            border: 1.5px solid #e9b8d0;
-            border-right: none;
-            border-radius: 12px 0 0 12px;
-            color: #ba2d65;
-        }
+ .brand-blob-1 {
+     width: 160px;
+     height: 160px;
+     bottom: 160px;
+     right: -40px;
+ }
 
-        .input-group .form-control {
-            border-left: none;
-            border-radius: 0;
-        }
+ .brand-blob-2 {
+     width: 80px;
+     height: 80px;
+     top: 200px;
+     right: 40px;
+ }
 
-        /* Botão do olho */
-        .btn-pass {
-            background-color: #f99bb9;
-            border: 1.5px solid #e9b8d0;
-            border-left: none;
-            border-radius: 0 12px 12px 0;
-            color: white;
-            padding: 0 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+ /* Logo */
+ .brand-logo {
+     font-family: var(--font-display);
+     font-size: 42px;
+     font-weight: 800;
+     color: #fff;
+     letter-spacing: -1px;
+     line-height: 1;
+     margin-bottom: 12px;
+     position: relative;
+     z-index: 1;
+ }
 
-        .btn-pass:hover {
-            background-color: #f970a8;
-            color: white;
-        }
+ /* Linha decorativa abaixo do logo */
+ .brand-divider {
+     width: 48px;
+     height: 3px;
+     background: rgba(255, 255, 255, 0.5);
+     border-radius: 99px;
+     margin-bottom: 32px;
+     position: relative;
+     z-index: 1;
+ }
 
-        /* Sombra rosa no foco do grupo inteiro */
-        .input-group:focus-within {
-            box-shadow: 0 0 0 0.25rem rgba(249, 155, 185, 0.4);
-            border-radius: 12px;
-        }
+ .brand-tagline {
+     font-family: var(--font-display);
+     font-size: 28px;
+     font-weight: 700;
+     color: #fff;
+     line-height: 1.3;
+     margin-bottom: 20px;
+     position: relative;
+     z-index: 1;
+ }
 
-        .input-group:focus-within .form-control,
-        .input-group:focus-within .input-group-text,
-        .input-group:focus-within .btn-pass {
-            border-color: #f99bb9;
-        }
+ .brand-sub {
+     font-size: 15px;
+     color: rgba(255, 255, 255, 0.78);
+     font-weight: 300;
+     line-height: 1.7;
+     max-width: 280px;
+     position: relative;
+     z-index: 1;
+ }
 
-        .btn-custom {
-            background-color: #f99bb9 !important;
-            border-color: #f99bb9 !important;
-            color: #fff !important;
-            font-weight: 600;
-            padding: 12px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
+ /* Badges de features */
+ .brand-features {
+     display: flex;
+     flex-direction: column;
+     gap: 14px;
+     margin-top: 40px;
+     position: relative;
+     z-index: 1;
+ }
 
-        .btn-custom:hover {
-            background-color: #f970a8 !important;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(249, 155, 185, 0.4);
-        }
+ .brand-feature {
+     display: flex;
+     align-items: center;
+     gap: 12px;
+     color: rgba(255, 255, 255, 0.9);
+     font-size: 14px;
+     font-weight: 500;
+ }
 
-        .toggle-link {
-            color: #f99bb9;
-            font-weight: 700;
-            text-decoration: none;
-            font-size: 1.02rem;
-        }
+ .brand-feature-icon {
+     width: 34px;
+     height: 34px;
+     background: rgba(255, 255, 255, 0.18);
+     border-radius: var(--radius-sm);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 16px;
+     flex-shrink: 0;
+     backdrop-filter: blur(4px);
+ }
 
-        .toggle-link:hover {
-            color: #f970a8;
-            text-decoration: underline;
-        }
+ /* ══════════════════════════════════════════
+           PAINEL DIREITO — formulário
+        ══════════════════════════════════════════ */
+ .panel-form {
+     flex: 1;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     padding: 40px 32px;
+     background: #fff;
+     position: relative;
+ }
 
-        .senha-error {
-            color: #dc3545;
-            font-size: 0.9em;
-            margin-top: 6px;
-            display: none;
-        }
+ /* Detalhe decorativo no canto superior direito */
+ .panel-form::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     right: 0;
+     width: 180px;
+     height: 180px;
+     background: var(--color-primary-xlight);
+     border-radius: 0 0 0 100%;
+     z-index: 0;
+ }
 
-        .form-container {
-            position: relative;
-            min-height: 500px;
-        }
+ .form-shell {
+     width: 100%;
+     max-width: 400px;
+     position: relative;
+     z-index: 1;
+ }
 
-        .form-wrapper {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease;
-        }
+ /* Cabeçalho do formulário */
+ .form-head {
+     margin-bottom: 36px;
+ }
 
-        .form-wrapper.active {
-            opacity: 1;
-            visibility: visible;
-            position: relative;
-        }
+ .form-eyebrow {
+     font-size: 11px;
+     font-weight: 700;
+     letter-spacing: 2.5px;
+     text-transform: uppercase;
+     color: var(--color-primary);
+     margin-bottom: 10px;
+     display: block;
+ }
 
-        @media (max-width: 576px) {
-            .card-form {
-                margin: 15px;
-                padding: 35px 25px;
-            }
-            #titulo { font-size: 2.3rem; }
-        }
+ #titulo {
+     font-family: var(--font-display);
+     font-size: 2.4rem;
+     font-weight: 800;
+     color: var(--color-primary-darker);
+     line-height: 1.1;
+     margin: 0;
+ }
+
+ /* ── Labels ── */
+ .form-label {
+     color: var(--color-text-mid);
+     font-weight: 600;
+     font-size: 12px;
+     letter-spacing: 0.5px;
+     text-transform: uppercase;
+     margin-bottom: 8px;
+     display: block;
+ }
+
+ /* ── Inputs ── */
+ .form-control {
+     padding: 13px 16px;
+     border-radius: var(--radius-md);
+     border: 1.5px solid var(--color-border-pink);
+     font-size: 15px;
+     color: var(--color-text-dark);
+     font-family: var(--font-base);
+     background: #fff;
+     transition: var(--transition);
+     width: 100%;
+ }
+
+ .form-control:focus {
+     border-color: var(--color-primary);
+     box-shadow: 0 0 0 3px rgba(235, 107, 155, 0.12);
+     outline: none;
+ }
+
+ .form-control::placeholder {
+     color: var(--color-text-muted);
+     font-weight: 300;
+ }
+
+ /* ── Input group ── */
+ .input-group {
+     position: relative;
+ }
+
+ .input-group-text {
+     background: var(--color-primary-xlight);
+     border: 1.5px solid var(--color-border-pink);
+     border-right: none;
+     border-radius: var(--radius-md) 0 0 var(--radius-md);
+     color: var(--color-primary);
+     padding: 0 14px;
+     display: flex;
+     align-items: center;
+ }
+
+ .input-group .form-control {
+     border-left: none;
+     border-radius: 0;
+     width: 1%;
+     /* Bootstrap flex fix */
+     flex: 1 1 auto;
+ }
+
+ /* Botão olho */
+ .btn-pass {
+     background: var(--color-primary-light);
+     border: 1.5px solid var(--color-border-pink);
+     border-left: none;
+     border-radius: 0 var(--radius-md) var(--radius-md) 0;
+     color: var(--color-primary);
+     padding: 0 14px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     cursor: pointer;
+     transition: var(--transition);
+ }
+
+ .btn-pass:hover {
+     background: var(--color-primary);
+     color: #fff;
+     border-color: var(--color-primary);
+ }
+
+ /* Foco no grupo inteiro */
+ .input-group:focus-within .form-control,
+ .input-group:focus-within .input-group-text,
+ .input-group:focus-within .btn-pass {
+     border-color: var(--color-primary);
+ }
+
+ .input-group:focus-within {
+     box-shadow: 0 0 0 3px rgba(235, 107, 155, 0.12);
+     border-radius: var(--radius-md);
+ }
+
+ /* ── Botão de submit ── */
+ .btn-custom {
+     background: var(--gradient-primary);
+     border: none;
+     color: #fff;
+     font-family: var(--font-base);
+     font-weight: 700;
+     font-size: 15px;
+     letter-spacing: 0.3px;
+     padding: 15px 24px;
+     border-radius: var(--radius-full, 999px);
+     width: 100%;
+     cursor: pointer;
+     transition: var(--transition);
+     position: relative;
+     overflow: hidden;
+ }
+
+ .btn-custom::after {
+     content: '';
+     position: absolute;
+     inset: 0;
+     background: rgba(255, 255, 255, 0);
+     transition: background 0.2s ease;
+ }
+
+ .btn-custom:hover {
+     transform: translateY(-2px);
+     box-shadow: var(--shadow-pink);
+     color: #fff;
+ }
+
+ .btn-custom:hover::after {
+     background: rgba(255, 255, 255, 0.06);
+ }
+
+ /* ── Link toggle ── */
+ .toggle-link {
+     color: var(--color-primary);
+     font-weight: 700;
+     text-decoration: none;
+     font-size: 14px;
+     transition: var(--transition);
+ }
+
+ .toggle-link:hover {
+     color: var(--color-primary-dark);
+     text-decoration: underline;
+ }
+
+ /* ── Erro de senha ── */
+ .senha-error {
+     color: #dc3545;
+     font-size: 0.85em;
+     margin-top: 6px;
+     display: none;
+ }
+
+ /* ── Separador entre formulários ── */
+ .form-divider {
+     display: flex;
+     align-items: center;
+     gap: 12px;
+     margin: 24px 0;
+     color: var(--color-text-muted);
+     font-size: 12px;
+ }
+
+ .form-divider::before,
+ .form-divider::after {
+     content: '';
+     flex: 1;
+     height: 1px;
+     background: var(--color-border-pink);
+ }
+
+ /* ── Animação de entrada ── */
+ .form-shell {
+     animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+ }
+
+ @keyframes slideUp {
+     from {
+         opacity: 0;
+         transform: translateY(28px);
+     }
+
+     to {
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
+
+ /* ── Transição login ↔ cadastro ── */
+ .form-container {
+     position: relative;
+ }
+
+ .form-wrapper {
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     opacity: 0;
+     visibility: hidden;
+     transition: opacity 0.45s ease;
+     pointer-events: none;
+ }
+
+ .form-wrapper.active {
+     opacity: 1;
+     visibility: visible;
+     position: relative;
+     pointer-events: auto;
+ }
+
+ /* ── Responsivo: mobile ── */
+ @media (max-width: 768px) {
+     .panel-brand {
+         display: none;
+     }
+
+     .panel-form {
+         padding: 48px 24px;
+         background: linear-gradient(160deg, var(--color-primary-xlight) 0%, #fff 40%);
+     }
+
+     .panel-form::before {
+         display: none;
+     }
+
+     #titulo {
+         font-size: 2rem;
+     }
+ }
+
+ @media (max-width: 480px) {
+     .form-shell {
+         max-width: 100%;
+     }
+ }
+
+ /* ── Micro-detalhe: campo mb ── */
+ .field-group {
+     margin-bottom: 20px;
+ }
+
+ .field-group-sm {
+     margin-bottom: 16px;
+ }
