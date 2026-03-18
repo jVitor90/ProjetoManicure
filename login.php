@@ -57,7 +57,7 @@
 
                         <p class="text-center" style="font-size:14px; color:var(--color-text-muted);">
                             Ainda não tem conta?
-                            <a href="#" class="toggle-link ms-1" id="mostrarCadastro">Criar conta grátis</a>
+                            <a href="#mostrarCadastro" class="toggle-link ms-1" id="mostrarCadastro">Criar conta grátis</a>
                         </p>
                     </form>
                 </div>
@@ -139,7 +139,7 @@
 
                         <p class="text-center" style="font-size:14px; color:var(--color-text-muted);">
                             já tem conta?
-                            <a href="#" class="toggle-link ms-1" id="mostrarCadastro">Entrar agora</a>
+                            <a href="#mostrarLogin" class="toggle-link ms-1" id="mostrarLogin">Entrar agora</a>
                         </p>
 
                         <!-- <button type="submit" class="btn btn-custom mb-4">
@@ -220,6 +220,17 @@
                 e.preventDefault();
                 irParaLogin();
             });
+        });
+
+        // Links de texto dentro dos formulários
+        document.getElementById('mostrarCadastro').addEventListener('click', function(e) {
+            e.preventDefault();
+            irParaCadastro();
+        });
+
+        document.getElementById('mostrarLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            irParaLogin();
         });
 
         // ── Toggle visibilidade da senha (botão olho) ────────────────────
