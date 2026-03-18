@@ -31,13 +31,14 @@ body {
     font-family: var(--font-base);
     min-height: 100vh;
     background: var(--gradient-primary);
-    overflow: hidden;
+    overflow-x: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 16px;
 }
 
-/* Bolhas decorativas de fundo (página) */
+/* Bolhas decorativas de fundo */
 body::before {
     content: '';
     position: fixed;
@@ -62,13 +63,15 @@ body::after {
     pointer-events: none;
 }
 
-/* Card container centralizado */
+/* ══════════════════════════════════════════
+   CARD
+══════════════════════════════════════════ */
 .auth-card {
     position: relative;
     width: 980px;
-    max-width: 96vw;
+    max-width: 100%;
     height: 740px;
-    max-height: 95vh;
+    max-height: calc(100vh - 32px);
     border-radius: 24px;
     overflow: hidden;
     background: #fff;
@@ -77,7 +80,7 @@ body::after {
 }
 
 /* ══════════════════════════════════════════
-   CONTAINER PRINCIPAL
+   WRAPPER
 ══════════════════════════════════════════ */
 .auth-wrapper {
     position: relative;
@@ -100,9 +103,9 @@ body::after {
     background: #fff;
     position: relative;
     transition: transform var(--transition-slide), opacity 0.5s ease;
+    overflow-y: auto;
 }
 
-/* Formulário de login — fica na DIREITA por padrão */
 .panel-login {
     position: absolute;
     right: 0;
@@ -110,7 +113,6 @@ body::after {
     transform: translateX(0);
 }
 
-/* Formulário de cadastro — começa escondido na ESQUERDA */
 .panel-cadastro {
     position: absolute;
     left: 0;
@@ -119,7 +121,6 @@ body::after {
     pointer-events: none;
 }
 
-/* Estado CADASTRO ativo */
 .auth-wrapper.modo-cadastro .panel-login {
     opacity: 0;
     transform: translateX(80px);
@@ -163,7 +164,7 @@ body::after {
     border-radius: 210px 0 0 210px;
 }
 
-/* Bolhas decorativas */
+/* Bolhas decorativas do painel */
 .panel-brand::before {
     content: '';
     position: absolute;
@@ -206,7 +207,7 @@ body::after {
     right: 40px;
 }
 
-/* Conteúdo do painel rosa — dois estados */
+/* Conteúdo do painel — dois estados */
 .brand-content {
     position: relative;
     z-index: 1;
@@ -317,7 +318,6 @@ body::after {
     backdrop-filter: blur(4px);
 }
 
-/* CTA no painel rosa */
 .brand-cta-text {
     font-size: 15px;
     color: rgba(255, 255, 255, 0.92);
@@ -413,7 +413,6 @@ body::after {
     font-weight: 300;
 }
 
-/* Input group */
 .input-group {
     position: relative;
 }
@@ -467,7 +466,6 @@ body::after {
     border-radius: var(--radius-md);
 }
 
-/* Botão submit */
 .btn-custom {
     background: var(--gradient-primary);
     border: none;
@@ -490,7 +488,6 @@ body::after {
     color: #fff;
 }
 
-/* Link toggle */
 .toggle-link {
     color: var(--color-primary);
     font-weight: 700;
@@ -504,7 +501,6 @@ body::after {
     text-decoration: underline;
 }
 
-/* Erro de senha */
 .senha-error {
     color: #dc3545;
     font-size: 0.85em;
@@ -512,7 +508,6 @@ body::after {
     display: none;
 }
 
-/* Separador */
 .form-divider {
     display: flex;
     align-items: center;
@@ -530,7 +525,6 @@ body::after {
     background: var(--color-border-pink);
 }
 
-/* Espaçamentos de campo */
 .field-group {
     margin-bottom: 18px;
 }
@@ -540,48 +534,427 @@ body::after {
 }
 
 /* ══════════════════════════════════════════
-   RESPONSIVO — MOBILE
+   DESKTOP GRANDE — 1400px+
+   (TVs, monitores ultrawide)
 ══════════════════════════════════════════ */
-@media (max-width: 768px) {
-    .panel-brand {
-        display: none;
+@media (min-width: 1400px) {
+    .auth-card {
+        width: 1100px;
+        height: 780px;
+    }
+
+    .brand-logo {
+        font-size: 46px;
+    }
+
+    .brand-tagline {
+        font-size: 30px;
+    }
+
+    .brand-sub {
+        font-size: 15px;
+        max-width: 290px;
+    }
+
+    .form-title {
+        font-size: 2.8rem;
+    }
+
+    .form-control {
+        padding: 15px 18px;
+        font-size: 16px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   DESKTOP MÉDIO — 1200px a 1399px
+══════════════════════════════════════════ */
+@media (max-width: 1399px) and (min-width: 1200px) {
+    .auth-card {
+        width: 1000px;
+        height: 750px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   LAPTOP / DESKTOP PEQUENO — 1024px a 1199px
+══════════════════════════════════════════ */
+@media (max-width: 1199px) and (min-width: 1025px) {
+    .auth-card {
+        width: 920px;
+        height: 720px;
+    }
+
+    .brand-logo {
+        font-size: 36px;
+    }
+
+    .brand-tagline {
+        font-size: 23px;
     }
 
     .panel-form {
-        width: 100%;
-        position: relative !important;
-        left: auto !important;
-        right: auto !important;
-        padding: 48px 24px;
-        background: linear-gradient(160deg, var(--color-primary-xlight) 0%, #fff 40%);
+        padding: 36px 40px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   TABLET LANDSCAPE — 768px a 1024px
+   Design mantido, proporções reduzidas
+══════════════════════════════════════════ */
+@media (max-width: 1024px) and (min-width: 769px) {
+    body {
+        padding: 12px;
     }
 
-    .panel-form::before {
+    .auth-card {
+        width: 100%;
+        height: auto;
+        min-height: 560px;
+        max-height: calc(100vh - 24px);
+        border-radius: 20px;
+    }
+
+    .panel-brand {
+        width: 38%;
+        padding: 36px 24px;
+        border-radius: 0 130px 130px 0;
+    }
+
+    .auth-wrapper.modo-cadastro .panel-brand {
+        transform: translateX(calc(100% / 0.38 * 0.62));
+        border-radius: 130px 0 0 130px;
+    }
+
+    .panel-form {
+        width: 62%;
+        padding: 28px 32px;
+    }
+
+    .brand-logo {
+        font-size: 30px;
+    }
+
+    .brand-tagline {
+        font-size: 20px;
+    }
+
+    .brand-sub {
+        font-size: 12px;
+        max-width: 220px;
+        margin-bottom: 20px;
+    }
+
+    .brand-features {
+        gap: 10px;
+    }
+
+    .brand-feature {
+        font-size: 13px;
+    }
+
+    .brand-feature-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .brand-divider {
+        margin-bottom: 18px;
+    }
+
+    .form-title {
+        font-size: 1.9rem;
+    }
+
+    .form-head {
+        margin-bottom: 20px;
+    }
+
+    .field-group {
+        margin-bottom: 14px;
+    }
+
+    .field-group-sm {
+        margin-bottom: 10px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE — até 768px
+   Remove design decorativo. Só formulário.
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+        background: #fff;
+        align-items: stretch;
+    }
+
+    body::before,
+    body::after {
         display: none;
     }
 
-    .panel-login {
+    .auth-card {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        background: #fff;
+    }
+
+    .auth-wrapper {
+        flex-direction: column;
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    /* Painel rosa some completamente */
+    .panel-brand {
+        display: none !important;
+    }
+
+    /* Formulário ocupa tela inteira */
+    .panel-form {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        flex: 1;
+        left: auto !important;
+        right: auto !important;
         opacity: 1 !important;
         transform: none !important;
         pointer-events: auto !important;
+        padding: 48px 32px;
+        background: #fff;
+        display: none;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    /* Barra rosa no topo — único detalhe decorativo */
+    .panel-form::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: var(--gradient-primary);
+        z-index: 100;
+    }
+
+    /* Mostra apenas o form ativo */
+    .panel-login {
+        display: flex;
     }
 
     .panel-cadastro {
-        opacity: 0;
-        transform: none;
+        display: none;
     }
 
     .auth-wrapper.modo-cadastro .panel-login {
-        opacity: 0 !important;
-        pointer-events: none !important;
+        display: none;
     }
 
     .auth-wrapper.modo-cadastro .panel-cadastro {
+        display: flex;
+    }
+
+    .panel-login,
+    .panel-cadastro {
         opacity: 1 !important;
-        pointer-events: auto !important;
+        transform: none !important;
+    }
+
+    .form-shell {
+        max-width: 460px;
+        width: 100%;
     }
 
     .form-title {
         font-size: 2rem;
+    }
+
+    /* Logo Nail Pro aparece no topo do formulário */
+    .form-head::before {
+        content: 'Nail Pro';
+        display: block;
+        font-family: var(--font-display);
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--color-primary);
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE MÉDIO — 481px a 768px
+══════════════════════════════════════════ */
+@media (max-width: 768px) and (min-width: 481px) {
+    .panel-form {
+        padding: 48px 48px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE PEQUENO — até 480px
+══════════════════════════════════════════ */
+@media (max-width: 480px) {
+    .panel-form {
+        padding: 40px 20px;
+    }
+
+    .form-title {
+        font-size: 1.7rem;
+    }
+
+    .form-control {
+        padding: 11px 14px;
+        font-size: 14px;
+    }
+
+    .btn-custom {
+        font-size: 14px;
+        padding: 13px 20px;
+    }
+
+    .field-group {
+        margin-bottom: 14px;
+    }
+
+    .field-group-sm {
+        margin-bottom: 10px;
+    }
+
+    .form-head::before {
+        font-size: 24px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE MUITO PEQUENO — até 360px
+   (Galaxy S, iPhone SE)
+══════════════════════════════════════════ */
+@media (max-width: 360px) {
+    .panel-form {
+        padding: 32px 16px;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+
+    .form-control {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .form-label {
+        font-size: 11px;
+    }
+
+    .btn-custom {
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+
+    .input-group-text {
+        padding: 0 10px;
+        font-size: 13px;
+    }
+
+    .form-head::before {
+        font-size: 22px;
+        margin-bottom: 14px;
+    }
+
+    .form-head {
+        margin-bottom: 18px;
+    }
+
+    .field-group {
+        margin-bottom: 12px;
+    }
+
+    .field-group-sm {
+        margin-bottom: 8px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   ALTURA BAIXA — landscape mobile
+   (telefone deitado)
+══════════════════════════════════════════ */
+@media (max-height: 500px) and (max-width: 900px) {
+    .panel-brand {
+        display: none !important;
+    }
+
+    .panel-form {
+        position: relative !important;
+        width: 100% !important;
+        padding: 24px 32px !important;
+        display: none;
+        align-items: flex-start !important;
+        overflow-y: auto;
+        height: 100vh !important;
+    }
+
+    .panel-login {
+        display: flex;
+    }
+
+    .panel-cadastro {
+        display: none;
+    }
+
+    .auth-wrapper.modo-cadastro .panel-login {
+        display: none;
+    }
+
+    .auth-wrapper.modo-cadastro .panel-cadastro {
+        display: flex;
+    }
+
+    .panel-login,
+    .panel-cadastro {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .form-head::before {
+        display: none;
+    }
+
+    .form-head {
+        margin-bottom: 12px;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+
+    .field-group {
+        margin-bottom: 10px;
+    }
+
+    .field-group-sm {
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        padding: 9px 12px;
+    }
+
+    .btn-custom {
+        padding: 11px 20px;
+    }
+
+    .form-divider {
+        margin: 12px 0;
     }
 }
