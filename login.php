@@ -52,6 +52,13 @@
                         <button type="submit" class="btn btn-custom mb-4">
                             Entrar <i class="bi bi-arrow-right ms-2"></i>
                         </button>
+
+                        <div class="form-divider">ou</div>
+
+                        <p class="text-center" style="font-size:14px; color:var(--color-text-muted);">
+                            Ainda não tem conta?
+                            <a href="#" class="toggle-link ms-1" id="mostrarCadastro">Criar conta grátis</a>
+                        </p>
                     </form>
                 </div>
             </div>
@@ -128,9 +135,16 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-custom mb-4">
+                        <div class="form-divider">ou</div>
+
+                        <p class="text-center" style="font-size:14px; color:var(--color-text-muted);">
+                            já tem conta?
+                            <a href="#" class="toggle-link ms-1" id="mostrarCadastro">Entrar agora</a>
+                        </p>
+
+                        <!-- <button type="submit" class="btn btn-custom mb-4">
                             Criar conta <i class="bi bi-arrow-right ms-2"></i>
-                        </button>
+                        </button> -->
                     </form>
                 </div>
             </div>
