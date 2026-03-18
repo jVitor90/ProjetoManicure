@@ -119,4 +119,68 @@ class Agendamento
 
         return $resultado['data_ultimo_agendamento'] ?? null;
     }
+
+
+    public function ListarAgendamentos($status = '', $data = '', $servico = '')
+    {
+        // Mapeia os nomes legíveis para os valores numéricos do banco
+        $mapaStatus = [
+            'confirmado' => 0,
+            'pendente'   => 1,
+        ];
+
+        $sql = "SELECT
+                a.id,
+                a.data,
+                a.horario,
+                a.status,
+                CONCAT(u.nome, ' ', u.sobrenome) AS usuario_nome,
+                u.telefone                        AS usuario_telefone,
+                s.nome                            AS servico_nome,
+                s.valor,
+                s.duracao
+            FROM agendamentos a
+            INNER JOIN usuarios u ON u.id = a.id_usuario
+            INNER JOIN servicos s ON s.id = a.id_servico
+            WHERE 1=1";
+
+        $params = [];
+
+        // Filtro: status (somente confirmado=0 ou pendente=1)
+        if ($status !== '' && array_key_exists($status, $mapaStatus)) {
+            $sql .= " AND a.status = :status";
+            $params[':status'] = $mapaStatus[$status];
+        }
+
+        // Filtro: data específica
+        if ($data !== '') {
+            $sql .= " AND a.data = :data";
+            $params[':data'] = $data;
+        }
+
+        // Filtro: nome do serviço (busca parcial)
+        if ($servico !== '') {
+            $sql .= " AND s.nome LIKE :servico";
+            $params[':servico'] = '%' . $servico . '%';
+        }
+
+        $sql .= " ORDER BY a.data ASC, a.horario ASC";
+
+        try {
+            $banco   = Banco::conectar();
+            $comando = $banco->prepare($sql);
+
+            foreach ($params as $chave => $valor) {
+                $comando->bindValue($chave, $valor);
+            }
+
+            $comando->execute();
+            $resultado = $comando->fetchAll(PDO::FETCH_ASSOC);
+            Banco::desconectar();
+
+            return $resultado;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
