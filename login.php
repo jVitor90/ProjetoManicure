@@ -1,3 +1,7 @@
+<?php
+// session_start();
+// if(!isset($_SESSION['usuario.logado'])){ header("Location: login.php?err=usuario_sessao_invalida"); exit(); }
+?>
 <!doctype html>
 <html lang="pt-br">
 
@@ -13,6 +17,8 @@
 </head>
 
 <body>
+
+    <!-- O body é o container flex centralizador — sem div extra -->
     <div class="auth-card">
         <div class="auth-wrapper" id="authWrapper">
 
@@ -45,19 +51,17 @@
                             </div>
                         </div>
 
-                        <div class="field-group" style="text-align: right;">
-                            <a href="#" class="toggle-link" style="font-weight: 500; font-size: 13px;">Esqueci minha senha</a>
+                        <div class="field-group" style="text-align:right;">
+                            <a href="#" class="toggle-link" style="font-weight:500;font-size:13px;">Esqueci minha senha</a>
                         </div>
 
                         <button type="submit" class="btn btn-custom mb-4">
                             Entrar <i class="bi bi-arrow-right ms-2"></i>
                         </button>
 
-                        <div class="form-divider">ou</div>
-
-                        <p class="text-center" style="font-size:14px; color:var(--color-text-muted);">
+                        <p class="text-center" style="font-size:14px;color:var(--color-text-muted);">
                             Ainda não tem conta?
-                            <a href="#mostrarCadastro" class="toggle-link ms-1" id="mostrarCadastro">Criar conta grátis</a>
+                            <a href="#" class="toggle-link ms-1" id="mostrarCadastro">Criar conta grátis</a>
                         </p>
                     </form>
                 </div>
@@ -71,9 +75,9 @@
                         <h1 class="form-title">Cadastro</h1>
                     </div>
 
-                    <form id="formCadastro" action="./actions/usuario_cadastra.php" method="POST" novalidate>
+                    <form id="formCadastro" action="./actions/usuario_cadastrar.php" method="POST" novalidate>
 
-                        <div class="row g-3 mb-0">
+                        <div class="row g-2 mb-0">
                             <div class="col-6">
                                 <div class="field-group-sm">
                                     <label class="form-label">Nome</label>
@@ -121,7 +125,7 @@
                             </div>
                         </div>
 
-                        <div class="field-group">
+                        <div class="field-group-sm">
                             <label class="form-label">Confirmar Senha</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
@@ -135,16 +139,18 @@
                             </div>
                         </div>
 
-                        <div class="form-divider">ou</div>
+                        <div class="field-group-sm">
+                            <button type="submit" class="btn btn-custom">
+                                Criar conta <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </div>
 
-                        <p class="text-center" style="font-size:14px; color:var(--color-text-muted);">
-                            já tem conta?
-                            <a href="#mostrarLogin" class="toggle-link ms-1" id="mostrarLogin">Entrar agora</a>
+
+                        <p class="text-center" style="font-size:14px;color:var(--color-text-muted);">
+                            Já tem conta?
+                            <a href="#" class="toggle-link ms-1" id="mostrarLogin">Entrar agora</a>
                         </p>
 
-                        <!-- <button type="submit" class="btn btn-custom mb-4">
-                            Criar conta <i class="bi bi-arrow-right ms-2"></i>
-                        </button> -->
                     </form>
                 </div>
             </div>
@@ -173,7 +179,7 @@
                             <div class="brand-feature-icon"><i class="bi bi-shield-check"></i></div>
                             Dados protegidos e seguros
                         </div>
-                        <p class="brand-cta-text">Não tem uma conta?</p>
+                        <p class="brand-cta-text" style="margin-top:8px;">Não tem uma conta?</p>
                         <button class="brand-cta-btn js-para-cadastro">Cadastre-se agora</button>
                     </div>
                 </div>
