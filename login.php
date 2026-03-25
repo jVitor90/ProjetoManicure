@@ -99,7 +99,7 @@
 
                 <!--  CADASTRO  -->
                 <div class="form-wrapper" id="cadastroForm">
-                    <form id="formCadastro" action="./actions/usuario_cadastra.php" method="POST" novalidate>
+                    <form id="formCadastro" action="./actions/usuario_cadastrar.php" method="POST" novalidate>
 
                         <div class="row g-3 mb-0">
                             <div class="col-6">
