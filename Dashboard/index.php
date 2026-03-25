@@ -7,7 +7,7 @@
 session_start();
 if (!isset($_SESSION['usuario'])) {
     // Redireciona para o login caso a sessão seja inválida
-    header("Location: login.php?err=usuario_sessao_invaliada");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -89,48 +89,6 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
     <!-- SweetAlert2 JS (carregado no head para disponibilidade imediata) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-    <!-- Aliases CSS: calendário da Agenda Completa usa os mesmos estilos do calendário do Novo Agendamento -->
-    <style>
-        #mod-cal-trigger, #agd2-cal-trigger {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            border: 1.5px solid #e8d5e0;
-            border-radius: 12px;
-            background: #fff;
-            cursor: pointer;
-            font-size: .9rem;
-            color: #888;
-            transition: border-color .2s, box-shadow .2s;
-            user-select: none;
-        }
-        #mod-cal-trigger:hover, #agd2-cal-trigger:hover,
-        #mod-cal-trigger.aberto, #agd2-cal-trigger.aberto {
-            border-color: #EB6B9C;
-            box-shadow: 0 0 0 3px rgba(235,107,156,.12);
-        }
-        #mod-cal-trigger.com-data, #agd2-cal-trigger.com-data {
-            color: #1a1a2e;
-            border-color: #EB6B9C;
-        }
-        #mod-cal-dropdown, #agd2-cal-dropdown {
-            display: none;
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            z-index: 1055;
-            background: #fff;
-            border: 1.5px solid #fce8f0;
-            border-radius: 14px;
-            box-shadow: 0 8px 32px rgba(235,107,156,.18);
-            padding: 16px;
-            min-width: 280px;
-        }
-        #mod-cal-dropdown.visivel, #agd2-cal-dropdown.visivel {
-            display: block;
-        }
-    </style>
 </head>
 
 <body class="bg-white">
@@ -292,52 +250,100 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
         <!-- Conteúdo Principal: Agenda + Sidebar -->
         <div class="row g-4">
 
-            <!-- Coluna Esquerda: Agenda do dia -->
+            <!-- Coluna Esquerda: Agenda Completa -->
             <div class="col-lg-8">
-                <div class="card-custom">
-                    <div class="card-header-custom">
-                        <div>
-                            <h5 class="card-title">Agenda de Hoje</h5>
-                            <p class="card-subtitle">quinta-feira, 11 de dezembro</p>
+                <div class="card-custom agenda-completa-card">
+
+                    <!-- Cabeçalho com abas de dias da semana -->
+                    <div class="agenda-header">
+                        <div class="agenda-header-top">
+                            <div>
+                                <h5 class="card-title mb-0">Agenda Completa</h5>
+                                <p class="card-subtitle mb-0" id="agenda-subtitulo">
+                                    <?= (new DateTime())->format('d') ?> de <?= strftime('%B', time()) ?> · <?= $totalAgendamentos ?> agendamento(s) hoje
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="agenda-search-wrap">
+                                    <i class="bi bi-search"></i>
+                                    <input type="text" id="agendaBuscaInline" placeholder="Buscar cliente ou serviço..." autocomplete="off">
+                                </div>
+                                <button class="agenda-nav-btn" id="agendaPrevSemana" title="Semana anterior"><i class="bi bi-chevron-left"></i></button>
+                                <button class="agenda-nav-btn" id="agendaNextSemana" title="Próxima semana"><i class="bi bi-chevron-right"></i></button>
+                                <button class="agenda-nav-btn agenda-hoje-btn" id="agendaIrHoje" title="Ir para hoje">Hoje</button>
+                            </div>
                         </div>
-                        <a href="#" class="link-view-all"
-                            data-bs-toggle="modal" data-bs-target="#modalAgenda">
-                            Ver tudo
-                        </a>
+
+                        <!-- Faixa de dias da semana -->
+                        <div class="agenda-semana-strip" id="agendaSemanaStrip">
+                            <!-- Preenchido via JS -->
+                        </div>
                     </div>
 
-                    <?php foreach ($listar as $l) { ?>
+                    <!-- Filtros rápidos de status -->
+                    <div class="agenda-filtros-bar">
+                        <button class="agenda-filtro-btn ativo" data-status="todos"><i class="bi bi-grid me-1"></i>Todos</button>
+                        <button class="agenda-filtro-btn" data-status="pendente"><i class="bi bi-clock me-1"></i>Pendentes</button>
+                        <button class="agenda-filtro-btn" data-status="confirmado"><i class="bi bi-check-circle me-1"></i>Confirmados</button>
+                        <span class="ms-auto agenda-count-badge" id="agendaCount">
+                            <?= count($listar) ?> agendamento(s)
+                        </span>
+                    </div>
 
-                        <!-- Agendamento 1 -->
-                        <div class="appointment-card">
-                            <div class="d-flex align-items-center gap-4 w-100">
+                    <!-- Lista de agendamentos -->
+                    <div class="agenda-lista" id="agendaLista">
+                        <?php if (empty($listar)): ?>
+                            <div class="agenda-vazia">
+                                <i class="bi bi-calendar-x"></i>
+                                <p>Nenhum agendamento para hoje.</p>
+                                <small>Selecione outro dia ou crie um novo agendamento.</small>
+                            </div>
+                        <?php else: ?>
+                            <?php foreach ($listar as $l):
+                                $iniciais = strtoupper(substr($l['usuario_nome'], 0, 1) . (strpos($l['usuario_nome'], ' ') !== false ? substr($l['usuario_nome'], strpos($l['usuario_nome'], ' ') + 1, 1) : ''));
+                                $horarioFmt = substr($l['horario'], 0, 5);
+                                $valorFmt = 'R$ ' . number_format((float)$l['valor'], 2, ',', '.');
+                                $duracaoFmt = isset($l['duracao']) ? ($l['duracao'] >= 60 ? floor($l['duracao']/60).'h'.($l['duracao']%60 ? ($l['duracao']%60).'min' : '') : $l['duracao'].'min') : '';
+                            ?>
+                            <div class="agenda-item"
+                                data-status="pendente"
+                                data-nome="<?= htmlspecialchars(strtolower($l['usuario_nome'])) ?>"
+                                data-servico="<?= htmlspecialchars(strtolower($l['servico_nome'])) ?>"
+                                data-id="<?= $l['id'] ?>">
 
-                                <div class="avatar avatar-pink">MS</div>
-
-                                <div class="flex-grow-1">
-                                    <div class="appointment-name"><?= $l['usuario_nome'] ?></div>
-                                    <div class="appointment-service"><?= $l['servico_nome'] ?></div>
+                                <!-- Horário lateral -->
+                                <div class="agenda-item-hora">
+                                    <span class="hora-principal"><?= $horarioFmt ?></span>
+                                    <?php if ($duracaoFmt): ?><span class="hora-duracao"><?= $duracaoFmt ?></span><?php endif; ?>
                                 </div>
 
-                                <div class="text-end me-3">
-                                    <div class="appointment-time"><?= $l['horario'] ?></div>
-                                    <div class="appointment-price"><?= $l['valor'] ?></div>
-                                </div>
+                                <!-- Linha vertical colorida -->
+                                <div class="agenda-item-linha"></div>
 
-                                <!-- Ações do agendamento -->
-                                <div class="appointment-actions">
-                                    <button class="btn-action confirm btnConfirmarAgendamento" data-id="<?= $l['id'] ?>" title="Confirmar">
-                                        <i class="bi bi-check-lg"></i>
-                                    </button>
-                                    <button class="btn-action cancel btnExcluirAgendamento" data-id="<?= $l['id'] ?>" title="Excluir">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
+                                <!-- Conteúdo principal -->
+                                <div class="agenda-item-body">
+                                    <div class="agenda-item-avatar"><?= $iniciais ?></div>
+                                    <div class="agenda-item-info">
+                                        <span class="agenda-item-nome"><?= htmlspecialchars($l['usuario_nome']) ?></span>
+                                        <span class="agenda-item-servico"><?= htmlspecialchars($l['servico_nome']) ?></span>
+                                    </div>
+                                    <div class="agenda-item-preco"><?= $valorFmt ?></div>
+                                    <div class="agenda-item-badge pendente">Pendente</div>
+                                    <div class="agenda-item-acoes">
+                                        <button class="btn-agenda-acao confirmar btnConfirmarAgendamento" data-id="<?= $l['id'] ?>" title="Confirmar">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <button class="btn-agenda-acao excluir btnExcluirAgendamento" data-id="<?= $l['id'] ?>" title="Excluir">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
                                 </div>
 
                             </div>
-                        </div>
-                    <?php } ?>
-
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    <!-- /Lista -->
                 </div>
             </div>
             <!-- /Coluna Esquerda -->
@@ -1327,145 +1333,6 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
         </div>
     </div>
     <!-- /MODAL: Cadastrar Horários -->
-
-
-    <!-- ============================================================
-     MODAL: Ver Agenda Completa
-    ============================================================ -->
-    <div class="modal fade" id="modalAgenda" tabindex="-1"
-        aria-labelledby="modalAgendaLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content border-0 shadow">
-
-                <!-- Header -->
-                <div class="modal-header border-0 pb-0">
-                    <div>
-                        <h5 class="modal-title fw-bold titulo" id="modalAgendaLabel">
-                            <i class="bi bi-calendar3 me-2 text-rosa"></i>Agenda Completa
-                        </h5>
-                        <p class="text-muted small mb-0">Visualize e gerencie todos os agendamentos</p>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-
-                <!-- Body -->
-                <div class="modal-body pt-4">
-
-                    <!-- Filtros -->
-                    <div class="row g-3 mb-3">
-
-                        <!-- Filtro: Data -->
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">
-                                <i class="bi bi-calendar-event me-1"></i>Data
-                            </label>
-                            <div style="position: relative;">
-
-                                <!-- Trigger -->
-                                <div id="agd2-cal-trigger" role="button" tabindex="0"
-                                    onclick="agd2ToggleCal()"
-                                    onkeydown="if(event.key==='Enter'||event.key===' ')agd2ToggleCal()">
-                                    <i class="bi bi-calendar3"></i>
-                                    <span id="agd2-cal-texto">Selecione uma data</span>
-                                    <i class="bi bi-chevron-down ms-auto" id="agd2-cal-chevron"></i>
-                                </div>
-
-                                <!-- Dropdown calendário -->
-                                <div id="agd2-cal-dropdown">
-                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                                        <button type="button" onclick="agd2NavMes(-1)">&#8249;</button>
-                                        <span id="agd2-cal-mesano" style="font-weight:700;font-size:.9rem;color:#1a1a2e;font-family:'Inter',sans-serif;"></span>
-                                        <button type="button" onclick="agd2NavMes(1)">&#8250;</button>
-                                    </div>
-                                    <div id="agd2-cal-grade"></div>
-                                    <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #fce8f0;">
-                                        <button type="button" onclick="agd2LimparData()">Limpar</button>
-                                        <button type="button" onclick="agd2IrHoje()">Hoje</button>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <input type="hidden" name="data_filtro" id="agd2-dataFiltro">
-                        </div>
-
-                        <!-- Filtro: Status -->
-                        <div class="col-md-6">
-                            <label class="form-label small fw-medium">Status</label>
-                            <select class="form-select" id="agd2-filtroStatus">
-                                <option value="">Todos</option>
-                                <option value="confirmado">Confirmado</option>
-                                <option value="pendente">Pendente</option>
-                                <option value="cancelado">Cancelado</option>
-                            </select>
-                        </div>
-
-                        <!-- Filtro: Serviço -->
-                        <div class="col-md-6">
-                            <label class="form-label small fw-medium">Serviço</label>
-                            <select class="form-select" id="agd2-filtroServico">
-                                <option value="">Todos</option>
-                                <option value="manicure">Manicure</option>
-                                <option value="pedicure">Pedicure</option>
-                                <option value="unhas-gel">Unhas em Gel</option>
-                                <option value="combo">Combo</option>
-                                <option value="nail-art">Nail Art</option>
-                            </select>
-                        </div>
-
-                    </div>
-                    <!-- /Filtros -->
-
-                    <!-- Lista de Agendamentos -->
-                    <div class="list-group list-group-flush">
-
-                        <!-- Agendamento 1 (exemplo estático) -->
-                        <div class="list-group-item border rounded-3 mb-2 p-3">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                                <div class="d-flex align-items-center gap-3">
-                                    <span class="rounded-circle bg-rosa text-white d-flex align-items-center justify-content-center fw-semibold avatar">MS</span>
-                                    <div>
-                                        <span class="fw-semibold d-block">Mariana Silva</span>
-                                        <span class="text-muted small">Manicure em Gel</span>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="text-end">
-                                        <span class="d-block fw-medium">10:00 - 11:00</span>
-                                        <span class="text-rosa fw-semibold">R$ 80</span>
-                                    </div>
-                                    <span class="badge bg-success-subtle text-success px-3 py-2">Confirmado</span>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#"><i class="bi bi-pencil me-1"></i>Editar</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="bi bi-check-circle me-1"></i>Finalizar</a></li>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-x-circle me-2"></i>Cancelar</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /Agendamento 1 -->
-
-                    </div>
-                </div>
-                <!-- /Body -->
-
-                <!-- Footer -->
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!-- /MODAL: Ver Agenda Completa -->
-
 
     <!-- ============================================================
      MODAL: Perfil do Usuário Logado
@@ -3103,125 +2970,274 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
         })();
 
         /* =============================================================
-         *  CALENDÁRIO DO MODAL AGENDA COMPLETA (agd2)
+         *  AGENDA COMPLETA — Navegação semanal + filtros
          * ============================================================= */
-        (function() {
-            const MESES = [
-                'Janeiro', 'Fevereiro', 'Março', 'Abril',
-                'Maio', 'Junho', 'Julho', 'Agosto',
-                'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-            ];
-            const DIAS_SEMANA = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+        (function () {
+            const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const MESES_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 
-            const hoje = new Date();
-            let mesSel = hoje.getMonth();
-            let anoSel = hoje.getFullYear();
-            let dataSel = null;
-            let aberto = false;
+            let hoje = new Date();
+            hoje.setHours(0,0,0,0);
+            let diaSelecionado = new Date(hoje);
+            let statusFiltro = 'todos';
+            let termoBusca = '';
+            // Dados PHP disponíveis apenas para hoje; para outros dias fazemos fetch
+            let cacheAgendamentos = {}; // key: 'YYYY-MM-DD'
 
-            function pad(n) { return String(n).padStart(2, '0'); }
-            function toISO(ano, mes, dia) { return `${ano}-${pad(mes+1)}-${pad(dia)}`; }
-            function hojeISO() { return toISO(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()); }
+            function pad(n){ return String(n).padStart(2,'0'); }
+            function toISO(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 
-            function renderizar() {
-                const grade = document.getElementById('agd2-cal-grade');
-                if (!grade) return;
-                grade.innerHTML = '';
+            function inicioSemana(ref){
+                const d = new Date(ref);
+                d.setDate(d.getDate() - d.getDay());
+                return d;
+            }
 
-                DIAS_SEMANA.forEach(letra => {
-                    const cel = document.createElement('div');
-                    cel.className = 'agd-dia-sem';
-                    cel.textContent = letra;
-                    grade.appendChild(cel);
-                });
-
-                const primeiroDia = new Date(anoSel, mesSel, 1).getDay();
-                for (let i = 0; i < primeiroDia; i++) {
-                    grade.appendChild(document.createElement('div'));
-                }
-
-                const totalDias = new Date(anoSel, mesSel + 1, 0).getDate();
-                for (let dia = 1; dia <= totalDias; dia++) {
-                    const iso = toISO(anoSel, mesSel, dia);
+            function renderizarStrip(){
+                const strip = document.getElementById('agendaSemanaStrip');
+                if(!strip) return;
+                const inicio = inicioSemana(diaSelecionado);
+                strip.innerHTML = '';
+                for(let i = 0; i < 7; i++){
+                    const d = new Date(inicio);
+                    d.setDate(inicio.getDate() + i);
                     const btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.className = 'agd-dia';
-                    btn.textContent = dia;
-                    if (iso === hojeISO()) btn.classList.add('agd-dia-hoje');
-                    if (iso === dataSel) btn.classList.add('agd-dia-sel');
-                    btn.addEventListener('click', function() { selecionar(iso); });
-                    grade.appendChild(btn);
+                    btn.className = 'agenda-dia-btn';
+                    const isHoje = toISO(d) === toISO(hoje);
+                    const isSel  = toISO(d) === toISO(diaSelecionado);
+                    if(isHoje) btn.classList.add('hoje');
+                    if(isSel)  btn.classList.add('selecionado');
+                    btn.innerHTML = `<span class="dia-semana-label">${DIAS_SEMANA[d.getDay()]}</span><span class="dia-num-label">${d.getDate()}</span>`;
+                    btn.addEventListener('click', () => {
+                        diaSelecionado = new Date(d);
+                        renderizarStrip();
+                        carregarDia(toISO(diaSelecionado));
+                    });
+                    strip.appendChild(btn);
+                }
+            }
+
+            function carregarDia(iso){
+                // Se já está em cache usa direto
+                if(cacheAgendamentos[iso] !== undefined){
+                    renderizarLista(cacheAgendamentos[iso]);
+                    return;
+                }
+                const lista = document.getElementById('agendaLista');
+                lista.innerHTML = '<div class="agenda-loading"><span class="spinner-border spinner-border-sm me-2"></span>Carregando...</div>';
+                fetch(`../admin/listar_agendamentos.php?data=${iso}`)
+                    .then(r => r.json())
+                    .then(json => {
+                        cacheAgendamentos[iso] = json.agendamentos || [];
+                        renderizarLista(cacheAgendamentos[iso]);
+                    })
+                    .catch(() => {
+                        lista.innerHTML = '<div class="agenda-vazia"><i class="bi bi-wifi-off"></i><p>Erro ao carregar agendamentos.</p></div>';
+                    });
+            }
+
+            function renderizarLista(agendamentos){
+                const lista = document.getElementById('agendaLista');
+                const count = document.getElementById('agendaCount');
+                // Filtra por status e busca
+                let filtrados = agendamentos.filter(a => {
+                    // pendente = 1, confirmado = 0
+                    const st = String(a.status).toLowerCase();
+                    const isPendente   = st === '1' || st === 'pendente';
+                    const isConfirmado = st === '0' || st === 'confirmado';
+                    const statusOk = statusFiltro === 'todos' ||
+                        (statusFiltro === 'pendente'   && isPendente) ||
+                        (statusFiltro === 'confirmado' && isConfirmado);
+                    const buscaOk  = !termoBusca ||
+                        (a.usuario_nome  || '').toLowerCase().includes(termoBusca) ||
+                        (a.servico_nome  || '').toLowerCase().includes(termoBusca);
+                    return statusOk && buscaOk;
+                });
+
+                if(count) count.textContent = `${filtrados.length} agendamento(s)`;
+
+                // Atualiza subtítulo com contagem
+                const sub = document.getElementById('agenda-subtitulo');
+                if(sub){
+                    const iso = toISO(diaSelecionado);
+                    const [a,m,di] = iso.split('-');
+                    sub.textContent = `${parseInt(di)} de ${MESES_PT[parseInt(m)-1]} de ${a} · ${filtrados.length} agendamento(s)`;
                 }
 
-                document.getElementById('agd2-cal-mesano').textContent = `${MESES[mesSel]} ${anoSel}`;
+                if(!filtrados.length){
+                    lista.innerHTML = `
+                        <div class="agenda-vazia">
+                            <i class="bi bi-calendar-x"></i>
+                            <p>Nenhum agendamento encontrado.</p>
+                            <small>Tente outro filtro ou crie um novo agendamento.</small>
+                        </div>`;
+                    return;
+                }
+
+                lista.innerHTML = filtrados.map(a => {
+                    const nome    = a.usuario_nome || '';
+                    const servico = a.servico_nome || '';
+                    const partes  = nome.trim().split(' ');
+                    const iniciais = (partes[0]?.[0] || '') + (partes[1]?.[0] || '');
+                    const horario  = (a.horario || '').slice(0,5);
+                    const valor    = 'R$ ' + parseFloat(a.valor || 0).toFixed(2).replace('.',',');
+                    const duracao  = a.duracao >= 60
+                        ? Math.floor(a.duracao/60)+'h'+(a.duracao%60 ? (a.duracao%60)+'min' : '')
+                        : (a.duracao ? a.duracao+'min' : '');
+                    const st = String(a.status).toLowerCase();
+                    const isPendente   = st === '1' || st === 'pendente';
+                    const badgeClass   = isPendente ? 'pendente' : 'confirmado';
+                    const badgeLabel   = isPendente ? 'Pendente' : 'Confirmado';
+
+                    return `
+                    <div class="agenda-item"
+                        data-status="${badgeClass}"
+                        data-nome="${nome.toLowerCase()}"
+                        data-servico="${servico.toLowerCase()}"
+                        data-id="${a.id}">
+                        <div class="agenda-item-hora">
+                            <span class="hora-principal">${horario}</span>
+                            ${duracao ? `<span class="hora-duracao">${duracao}</span>` : ''}
+                        </div>
+                        <div class="agenda-item-linha"></div>
+                        <div class="agenda-item-body">
+                            <div class="agenda-item-avatar">${iniciais.toUpperCase()}</div>
+                            <div class="agenda-item-info">
+                                <span class="agenda-item-nome">${nome}</span>
+                                <span class="agenda-item-servico">${servico}</span>
+                            </div>
+                            <div class="agenda-item-preco">${valor}</div>
+                            <div class="agenda-item-badge ${badgeClass}">${badgeLabel}</div>
+                            <div class="agenda-item-acoes">
+                                <button class="btn-agenda-acao confirmar btnConfirmarAgendamento" data-id="${a.id}" title="Confirmar">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                                <button class="btn-agenda-acao excluir btnExcluirAgendamento" data-id="${a.id}" title="Excluir">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                // Reattach event listeners para novos botões
+                reattachBotoes();
             }
 
-            function selecionar(iso) {
-                dataSel = iso;
-                const [ano, mes, dia] = iso.split('-');
-                document.getElementById('agd2-cal-texto').textContent = `${dia}/${mes}/${ano}`;
-                document.getElementById('agd2-cal-trigger').classList.add('com-data');
-                document.getElementById('agd2-dataFiltro').value = iso;
-                fechar();
-                renderizar();
+            function reattachBotoes(){
+                document.querySelectorAll('#agendaLista .btnExcluirAgendamento').forEach(btn => {
+                    btn.addEventListener('click', function(){
+                        const card = this.closest('.agenda-item');
+                        const nome = card.querySelector('.agenda-item-nome')?.textContent || '';
+                        const servico = card.querySelector('.agenda-item-servico')?.textContent || '';
+                        const horario = card.querySelector('.hora-principal')?.textContent || '';
+                        const id = this.getAttribute('data-id');
+                        Swal.fire({
+                            title: 'Excluir Agendamento?',
+                            html: `<div class="text-start"><p class="mb-2"><strong>Cliente:</strong> ${nome}</p><p class="mb-2"><strong>Serviço:</strong> ${servico}</p><p class="mb-0"><strong>Horário:</strong> ${horario}</p></div>`,
+                            icon: 'question', showCancelButton: true,
+                            confirmButtonColor: '#EB6B9C', cancelButtonColor: '#6c757d',
+                            confirmButtonText: '<i class="bi bi-trash me-1"></i> Excluir',
+                            cancelButtonText: 'Cancelar', reverseButtons: true
+                        }).then(r => {
+                            if(!r.isConfirmed) return;
+                            fetch('../actions/excluir_agendamento.php', {
+                                method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                                body: new URLSearchParams({exclui_id: id})
+                            }).then(r=>r.json()).then(data => {
+                                if(data.sucesso){
+                                    invalidarCache();
+                                    Swal.fire({title:'Excluído!',icon:'success',timer:1500,showConfirmButton:false,confirmButtonColor:'#EB6B9C'})
+                                    .then(() => carregarDia(toISO(diaSelecionado)));
+                                } else Swal.fire({title:'Erro!',text:'Falha ao excluir.',icon:'error',confirmButtonColor:'#dc3545'});
+                            });
+                        });
+                    });
+                });
+
+                document.querySelectorAll('#agendaLista .btnConfirmarAgendamento').forEach(btn => {
+                    btn.addEventListener('click', function(){
+                        const card = this.closest('.agenda-item');
+                        const nome = card.querySelector('.agenda-item-nome')?.textContent || '';
+                        const id = this.getAttribute('data-id');
+                        Swal.fire({
+                            title: 'Confirmar Agendamento?',
+                            html: `<p class="mb-0"><strong>${nome}</strong></p>`,
+                            icon: 'question', showCancelButton: true,
+                            confirmButtonColor: '#28a745', cancelButtonColor: '#6c757d',
+                            confirmButtonText: '<i class="bi bi-check-lg me-1"></i> Confirmar',
+                            cancelButtonText: 'Cancelar', reverseButtons: true
+                        }).then(r => {
+                            if(!r.isConfirmed) return;
+                            fetch('../actions/atualizar_agendamento.php', {
+                                method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                                body: new URLSearchParams({atualizar_id: id})
+                            }).then(r=>r.json()).then(data => {
+                                if(data.sucesso){
+                                    invalidarCache();
+                                    Swal.fire({title:'Confirmado!',icon:'success',timer:1500,showConfirmButton:false})
+                                    .then(() => carregarDia(toISO(diaSelecionado)));
+                                } else Swal.fire({title:'Erro!',text:'Falha ao confirmar.',icon:'error',confirmButtonColor:'#dc3545'});
+                            });
+                        });
+                    });
+                });
             }
 
-            function fechar() {
-                aberto = false;
-                document.getElementById('agd2-cal-dropdown').classList.remove('visivel');
-                document.getElementById('agd2-cal-trigger').classList.remove('aberto');
+            function invalidarCache(){
+                cacheAgendamentos = {};
             }
 
-            window.agd2ToggleCal = function() {
-                aberto = !aberto;
-                document.getElementById('agd2-cal-dropdown').classList.toggle('visivel', aberto);
-                document.getElementById('agd2-cal-trigger').classList.toggle('aberto', aberto);
-                if (aberto) renderizar();
-            };
-
-            window.agd2NavMes = function(dir) {
-                mesSel += dir;
-                if (mesSel < 0) { mesSel = 11; anoSel--; }
-                if (mesSel > 11) { mesSel = 0; anoSel++; }
-                renderizar();
-            };
-
-            window.agd2LimparData = function() {
-                dataSel = null;
-                document.getElementById('agd2-dataFiltro').value = '';
-                document.getElementById('agd2-cal-texto').textContent = 'Selecione uma data';
-                document.getElementById('agd2-cal-trigger').classList.remove('com-data');
-                renderizar();
-            };
-
-            window.agd2IrHoje = function() {
-                mesSel = hoje.getMonth();
-                anoSel = hoje.getFullYear();
-                renderizar();
-                selecionar(hojeISO());
-            };
-
-            // Fecha ao clicar fora
-            document.addEventListener('click', function(e) {
-                if (!aberto) return;
-                const trigger = document.getElementById('agd2-cal-trigger');
-                const dropdown = document.getElementById('agd2-cal-dropdown');
-                if (!trigger || !dropdown) return;
-                if (!trigger.contains(e.target) && !dropdown.contains(e.target)) fechar();
+            // Filtros de status
+            document.querySelectorAll('.agenda-filtro-btn').forEach(btn => {
+                btn.addEventListener('click', function(){
+                    document.querySelectorAll('.agenda-filtro-btn').forEach(b => b.classList.remove('ativo'));
+                    this.classList.add('ativo');
+                    statusFiltro = this.dataset.status;
+                    const iso = toISO(diaSelecionado);
+                    if(cacheAgendamentos[iso]) renderizarLista(cacheAgendamentos[iso]);
+                });
             });
 
-            // Inicializa e reseta ao abrir/fechar o modal
-            document.getElementById('modalAgenda')?.addEventListener('show.bs.modal', function() {
-                mesSel = hoje.getMonth();
-                anoSel = hoje.getFullYear();
-                renderizar();
+            // Busca inline
+            let buscaTimer;
+            document.getElementById('agendaBuscaInline')?.addEventListener('input', function(){
+                clearTimeout(buscaTimer);
+                buscaTimer = setTimeout(() => {
+                    termoBusca = this.value.toLowerCase().trim();
+                    const iso = toISO(diaSelecionado);
+                    if(cacheAgendamentos[iso]) renderizarLista(cacheAgendamentos[iso]);
+                }, 250);
             });
-            document.getElementById('modalAgenda')?.addEventListener('hidden.bs.modal', function() {
-                dataSel = null;
-                mesSel = hoje.getMonth();
-                anoSel = hoje.getFullYear();
-                document.getElementById('agd2-cal-texto').textContent = 'Selecione uma data';
-                document.getElementById('agd2-cal-trigger').classList.remove('com-data');
+
+            // Navegação semana
+            document.getElementById('agendaPrevSemana')?.addEventListener('click', () => {
+                diaSelecionado.setDate(diaSelecionado.getDate() - 7);
+                renderizarStrip();
+                carregarDia(toISO(diaSelecionado));
+            });
+            document.getElementById('agendaNextSemana')?.addEventListener('click', () => {
+                diaSelecionado.setDate(diaSelecionado.getDate() + 7);
+                renderizarStrip();
+                carregarDia(toISO(diaSelecionado));
+            });
+            document.getElementById('agendaIrHoje')?.addEventListener('click', () => {
+                diaSelecionado = new Date(hoje);
+                renderizarStrip();
+                carregarDia(toISO(diaSelecionado));
+            });
+
+            // Init — carrega hoje com dados do PHP já disponíveis
+            const isoHoje = toISO(hoje);
+            <?php
+                $listarJSON = json_encode($listar);
+            ?>
+            cacheAgendamentos[isoHoje] = <?= $listarJSON ?>;
+
+            document.addEventListener('DOMContentLoaded', () => {
+                renderizarStrip();
+                renderizarLista(cacheAgendamentos[isoHoje]);
             });
 
         })();

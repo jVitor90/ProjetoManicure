@@ -53,7 +53,7 @@ class Agendamento
         return $comando->rowCount();
     }
 
-    // Listar agendamentos por data
+    // Listar agendamentos por data (usado no carregamento inicial do Dashboard)
     public function ListarPorData($data)
     {
         $sql = "SELECT a.*, 
@@ -64,7 +64,7 @@ class Agendamento
                 INNER JOIN calendario c ON a.id_calendario = c.id
                 INNER JOIN servicos s ON a.id_servico = s.id
                 INNER JOIN usuarios u ON a.id_usuario_agenda = u.id
-                WHERE c.data = ? AND a.status = 1
+                WHERE DATE(c.data) = ?
                 ORDER BY c.horario ASC";
 
         $banco = Banco::conectar();
@@ -120,67 +120,57 @@ class Agendamento
         return $resultado['data_ultimo_agendamento'] ?? null;
     }
 
-
+    // Listar agendamentos com filtros (usado pelo listar_agendamentos.php via AJAX)
     public function ListarAgendamentos($status = '', $data = '', $servico = '')
     {
-        // Mapeia os nomes legíveis para os valores numéricos do banco
-        $mapaStatus = [
-            'confirmado' => 0,
-            'pendente'   => 1,
-        ];
+        $con = Banco::conectar();
 
-        $sql = "SELECT
+        $sql = "SELECT 
                 a.id,
-                a.data,
-                a.horario,
                 a.status,
-                CONCAT(u.nome, ' ', u.sobrenome) AS usuario_nome,
-                u.telefone                        AS usuario_telefone,
-                s.nome                            AS servico_nome,
+                c.data,
+                c.horario,
+                s.nome     AS servico_nome,
                 s.valor,
-                s.duracao
-            FROM agendamentos a
-            INNER JOIN usuarios u ON u.id = a.id_usuario
-            INNER JOIN servicos s ON s.id = a.id_servico
+                s.duracao,
+                u.nome     AS usuario_nome,
+                u.sobrenome AS usuario_sobrenome
+            FROM agendamento a
+            INNER JOIN calendario c ON a.id_calendario    = c.id
+            INNER JOIN servicos   s ON a.id_servico       = s.id
+            INNER JOIN usuarios   u ON a.id_usuario_agenda = u.id
             WHERE 1=1";
 
-        $params = [];
-
-        // Filtro: status (somente confirmado=0 ou pendente=1)
-        if ($status !== '' && array_key_exists($status, $mapaStatus)) {
+        if ($status !== '') {
             $sql .= " AND a.status = :status";
-            $params[':status'] = $mapaStatus[$status];
         }
-
-        // Filtro: data específica
         if ($data !== '') {
-            $sql .= " AND a.data = :data";
-            $params[':data'] = $data;
+            $sql .= " AND DATE(c.data) = :data";
         }
-
-        // Filtro: nome do serviço (busca parcial)
         if ($servico !== '') {
             $sql .= " AND s.nome LIKE :servico";
-            $params[':servico'] = '%' . $servico . '%';
         }
 
-        $sql .= " ORDER BY a.data ASC, a.horario ASC";
+        $sql .= " ORDER BY c.data ASC, c.horario ASC";
 
-        try {
-            $banco   = Banco::conectar();
-            $comando = $banco->prepare($sql);
+        $stmt = $con->prepare($sql);
 
-            foreach ($params as $chave => $valor) {
-                $comando->bindValue($chave, $valor);
-            }
-
-            $comando->execute();
-            $resultado = $comando->fetchAll(PDO::FETCH_ASSOC);
-            Banco::desconectar();
-
-            return $resultado;
-        } catch (PDOException $e) {
-            return false;
+        if ($status !== '') {
+            // pendente = 1, confirmado = 0
+            $stmt->bindValue(':status', $status === 'confirmado' ? 0 : 1, PDO::PARAM_INT);
         }
+        if ($data !== '') {
+            $stmt->bindValue(':data', $data);
+        }
+        if ($servico !== '') {
+            $stmt->bindValue(':servico', "%$servico%");
+        }
+
+        $stmt->execute();
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        Banco::desconectar();
+
+        return $resultado;
     }
 }
