@@ -1,10 +1,8 @@
 <?php
-/* =============================================================
- *  ACTION: Listar Agendamentos
- * ============================================================= */
 session_start();
 require_once '../classes/agendamento_class.php';
 
+header('Content-Type: application/json; charset=utf-8');
 
 // Apenas admins autenticados
 if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['id_tipo'] != 1) {
@@ -13,33 +11,53 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['id_tipo'] != 1) {
     exit;
 }
 
-// Sanitização dos parâmetros
-$nivel   = trim(filter_input(INPUT_GET, 'nivel',   FILTER_SANITIZE_SPECIAL_CHARS) ?? 'todos');
-$data    = trim(filter_input(INPUT_GET, 'data',    FILTER_SANITIZE_SPECIAL_CHARS) ?? '');
-$servico = trim(filter_input(INPUT_GET, 'servico', FILTER_SANITIZE_SPECIAL_CHARS) ?? '');
+$nivel   = trim($_GET['nivel']   ?? 'todos');
+$data    = trim($_GET['data']    ?? '');
+$servico = trim($_GET['servico'] ?? '');
 
-// Valida nível — somente valores aceitos
+// Valida nível
 if (!in_array($nivel, ['todos', 'confirmado', 'pendente'])) {
     $nivel = 'todos';
 }
 
-// Valida formato da data
-if ($data !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $data)) {
-    $data = '';
-}
-
-// todos = sem filtro de status
+// Status para a classe ('' = todos)
 $status = ($nivel !== 'todos') ? $nivel : '';
 
-// Executa via classe
-$agendamento  = new Agendamento();
-$agendamentos = $agendamento->ListarAgendamentos($status, $data, $servico);
-
-if ($agendamentos === false) {
-    http_response_code(500);
-    echo json_encode(['erro' => 'Erro ao buscar agendamentos']);
-    exit;
+// Valida data (aceita YYYY-MM-DD ou vazio)
+if ($data !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $data)) {
+    $data = ''; // data inválida será ignorada
 }
 
-echo json_encode(['agendamentos' => $agendamentos]);
+$agendamento = new Agendamento();
+
+try {
+    $agendamentos = $agendamento->ListarAgendamentos($status, $data, $servico);
+
+    if ($agendamentos === false) {
+        throw new Exception('Método ListarAgendamentos retornou false');
+    }
+
+    echo json_encode([
+        'agendamentos' => $agendamentos ?? [],
+        'debug'        => [
+            'status'  => $status,
+            'data'    => $data,
+            'servico' => $servico,
+            'total'   => count($agendamentos ?? [])
+        ]
+    ]);
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'erro'    => 'Erro ao buscar agendamentos',
+        'mensagem' => $e->getMessage(),
+        'debug'   => [
+            'status'  => $status,
+            'data'    => $data,
+            'servico' => $servico
+        ]
+    ]);
+}
+
 exit;
