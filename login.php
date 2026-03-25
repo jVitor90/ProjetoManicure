@@ -8,58 +8,29 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login / Cadastro</title>
+    <title>Login / Cadastro — Nail Pro</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/login.css">
-
 </head>
 
 <body>
 
-    <!--  PAINEL ESQUERDO-->
-    <div class="panel-brand">
-        <div class="brand-blob brand-blob-1"></div>
-        <div class="brand-blob brand-blob-2"></div>
+    <!-- O body é o container flex centralizador — sem div extra -->
+    <div class="auth-card">
+        <div class="auth-wrapper" id="authWrapper">
 
-        <div class="brand-logo">Nail Pro</div>
-        <div class="brand-divider"></div>
+            <!-- FORMULÁRIO LOGIN (lado direito por padrão) -->
+            <div class="panel-form panel-login">
+                <div class="form-shell">
+                    <div class="form-head">
+                        <span class="form-eyebrow">Bem-vinda de volta</span>
+                        <h1 class="form-title">Entrar</h1>
+                    </div>
 
-        <p class="brand-tagline">Beleza nas<br>pontas dos dedos.</p>
-        <p class="brand-sub">Agende seu horário, gerencie seus serviços e acompanhe tudo em um só lugar.</p>
-
-        <div class="brand-features">
-            <div class="brand-feature">
-                <div class="brand-feature-icon"><i class="bi bi-calendar-check"></i></div>
-                Agendamento fácil e rápido
-            </div>
-            <div class="brand-feature">
-                <div class="brand-feature-icon"><i class="bi bi-stars"></i></div>
-                Serviços personalizados
-            </div>
-            <div class="brand-feature">
-                <div class="brand-feature-icon"><i class="bi bi-shield-check"></i></div>
-                Dados protegidos e seguros
-            </div>
-        </div>
-    </div>
-
-    <!-- PAINEL DIREITO -->
-    <div class="panel-form">
-        <div class="form-shell">
-            <div class="form-head">
-                <span class="form-eyebrow">Bem-vinda de volta</span>
-                <h1 id="titulo">Entrar</h1>
-            </div>
-
-            <div class="form-container">
-
-                <!-- LOGIN  -->
-                <div class="form-wrapper active" id="loginForm">
-                    <form id="formLogin" action="./actions/usuario_logar.php" method="POST" novalidate>
+                    <form action="./actions/usuario_logar.php" method="POST" novalidate>
 
                         <div class="field-group">
                             <label class="form-label">Email</label>
@@ -80,28 +51,33 @@
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 28px; margin-top: 8px; text-align: right;">
-                            <a href="#" class="toggle-link" style="font-weight:500; font-size:13px;">Esqueci minha senha</a>
+                        <div class="field-group" style="text-align:right;">
+                            <a href="#" class="toggle-link" style="font-weight:500;font-size:13px;">Esqueci minha senha</a>
                         </div>
 
                         <button type="submit" class="btn btn-custom mb-4">
                             Entrar <i class="bi bi-arrow-right ms-2"></i>
                         </button>
 
-                        <div class="form-divider">ou</div>
-
-                        <p class="text-center" style="font-size:14px; color:var(--color-text-muted);">
+                        <p class="text-center" style="font-size:14px;color:var(--color-text-muted);">
                             Ainda não tem conta?
                             <a href="#" class="toggle-link ms-1" id="mostrarCadastro">Criar conta grátis</a>
                         </p>
                     </form>
                 </div>
+            </div>
 
-                <!--  CADASTRO  -->
-                <div class="form-wrapper" id="cadastroForm">
+            <!-- FORMULÁRIO CADASTRO (lado esquerdo por padrão) -->
+            <div class="panel-form panel-cadastro">
+                <div class="form-shell">
+                    <div class="form-head">
+                        <span class="form-eyebrow">Crie sua conta gratuita</span>
+                        <h1 class="form-title">Cadastro</h1>
+                    </div>
+
                     <form id="formCadastro" action="./actions/usuario_cadastrar.php" method="POST" novalidate>
 
-                        <div class="row g-3 mb-0">
+                        <div class="row g-2 mb-0">
                             <div class="col-6">
                                 <div class="field-group-sm">
                                     <label class="form-label">Nome</label>
@@ -149,7 +125,7 @@
                             </div>
                         </div>
 
-                        <div class="field-group">
+                        <div class="field-group-sm">
                             <label class="form-label">Confirmar Senha</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
@@ -163,84 +139,151 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-custom mb-4">
-                            Criar conta <i class="bi bi-arrow-right ms-2"></i>
-                        </button>
+                        <div class="field-group-sm">
+                            <button type="submit" class="btn btn-custom">
+                                Criar conta <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </div>
 
-                        <div class="form-divider">ou</div>
 
-                        <p class="text-center" style="font-size:14px; color:var(--color-text-muted);">
-                            Já tem uma conta?
+                        <p class="text-center" style="font-size:14px;color:var(--color-text-muted);">
+                            Já tem conta?
                             <a href="#" class="toggle-link ms-1" id="mostrarLogin">Entrar agora</a>
                         </p>
+
                     </form>
                 </div>
-
             </div>
-        </div>
-    </div>
 
+            <!-- PAINEL ROSA DESLIZANTE -->
+            <div class="panel-brand">
+                <div class="brand-blob brand-blob-1"></div>
+                <div class="brand-blob brand-blob-2"></div>
+
+                <!-- Exibido no modo LOGIN -->
+                <div class="brand-content for-login">
+                    <div class="brand-logo">Nail Pro</div>
+                    <div class="brand-divider"></div>
+                    <p class="brand-tagline">Beleza nas<br>pontas dos dedos.</p>
+                    <p class="brand-sub">Agende seu horário, gerencie seus serviços e acompanhe tudo em um só lugar.</p>
+                    <div class="brand-features">
+                        <div class="brand-feature">
+                            <div class="brand-feature-icon"><i class="bi bi-calendar-check"></i></div>
+                            Agendamento fácil e rápido
+                        </div>
+                        <div class="brand-feature">
+                            <div class="brand-feature-icon"><i class="bi bi-stars"></i></div>
+                            Serviços personalizados
+                        </div>
+                        <div class="brand-feature">
+                            <div class="brand-feature-icon"><i class="bi bi-shield-check"></i></div>
+                            Dados protegidos e seguros
+                        </div>
+                        <p class="brand-cta-text" style="margin-top:8px;">Não tem uma conta?</p>
+                        <button class="brand-cta-btn js-para-cadastro">Cadastre-se agora</button>
+                    </div>
+                </div>
+
+                <!-- Exibido no modo CADASTRO -->
+                <div class="brand-content for-cadastro">
+                    <div class="brand-logo">Nail Pro</div>
+                    <div class="brand-divider"></div>
+                    <p class="brand-tagline">Já faz parte<br>da família?</p>
+                    <p class="brand-sub">Acesse sua conta e continue gerenciando sua agenda com praticidade.</p>
+                    <br>
+                    <p class="brand-cta-text">Já tem uma conta?</p>
+                    <button class="brand-cta-btn js-para-login">Entrar agora</button>
+                </div>
+            </div>
+
+        </div><!-- /auth-wrapper -->
+    </div><!-- /auth-card -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/imask"></script>
-
     <script>
-        $(document).ready(function() {
+        // ── Alternância entre Login e Cadastro ──────────────────────────
+        const wrapper = document.getElementById('authWrapper');
 
-            // Troca entre login e cadastro
-            $("#mostrarCadastro").click(function(e) {
+        function irParaCadastro() {
+            wrapper.classList.add('modo-cadastro');
+        }
+
+        function irParaLogin() {
+            wrapper.classList.remove('modo-cadastro');
+        }
+
+        document.querySelectorAll('.js-para-cadastro').forEach(function(el) {
+            el.addEventListener('click', function(e) {
                 e.preventDefault();
-                $("#loginForm").removeClass("active");
-                $("#cadastroForm").addClass("active");
-                $(".form-eyebrow").text("Crie sua conta gratuita");
-                $("#titulo").fadeOut(200, function() {
-                    $(this).text("Cadastro").fadeIn(200);
-                });
+                irParaCadastro();
             });
-
-            $("#mostrarLogin").click(function(e) {
-                e.preventDefault();
-                $("#cadastroForm").removeClass("active");
-                $("#loginForm").addClass("active");
-                $(".form-eyebrow").text("Bem-vinda de volta");
-                $("#titulo").fadeOut(200, function() {
-                    $(this).text("Entrar").fadeIn(200);
-                });
-            });
-
-            // Toggle senha (olho)
-            $(".toggle-pass").click(function() {
-                const targetId = $(this).data("target");
-                const input = $("#" + targetId);
-                const icon = $(this).find("i");
-
-                if (input.attr("type") === "password") {
-                    input.attr("type", "text");
-                    icon.removeClass("bi-eye").addClass("bi-eye-slash");
-                } else {
-                    input.attr("type", "password");
-                    icon.removeClass("bi-eye-slash").addClass("bi-eye");
-                }
-            });
-
-            // Validação em tempo real das senhas
-            $("#senhaCad, #confirmaSenhaCad").on("keyup blur", validarSenhas);
-
-            $("#formCadastro").on("submit", function(e) {
-                if (!validarSenhas()) {
-                    e.preventDefault();
-                    $("#confirmaSenhaCad").focus();
-                }
-            });
-
         });
 
-        // Máscara de telefone
-        document.addEventListener('DOMContentLoaded', function() {
-            IMask(document.getElementById('telefoneCad'), {
-                mask: '(00) 00000-0000'
+        document.querySelectorAll('.js-para-login').forEach(function(el) {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                irParaLogin();
             });
+        });
+
+        // Links de texto dentro dos formulários
+        document.getElementById('mostrarCadastro').addEventListener('click', function(e) {
+            e.preventDefault();
+            irParaCadastro();
+        });
+
+        document.getElementById('mostrarLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            irParaLogin();
+        });
+
+        // ── Toggle visibilidade da senha (botão olho) ────────────────────
+        document.querySelectorAll('.toggle-pass').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var input = document.getElementById(this.dataset.target);
+                var icon = this.querySelector('i');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.replace('bi-eye', 'bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.replace('bi-eye-slash', 'bi-eye');
+                }
+            });
+        });
+
+        // ── Validação de confirmação de senha ────────────────────────────
+        function validarSenhas() {
+            var s1 = document.getElementById('senhaCad').value;
+            var s2 = document.getElementById('confirmaSenhaCad').value;
+            var err = document.getElementById('senhaError');
+
+            if (s2 && s1 !== s2) {
+                err.style.display = 'block';
+                return false;
+            }
+
+            err.style.display = 'none';
+            return true;
+        }
+
+        document.getElementById('senhaCad').addEventListener('keyup', validarSenhas);
+        document.getElementById('confirmaSenhaCad').addEventListener('keyup', validarSenhas);
+        document.getElementById('confirmaSenhaCad').addEventListener('blur', validarSenhas);
+
+        document.getElementById('formCadastro').addEventListener('submit', function(e) {
+            if (!validarSenhas()) {
+                e.preventDefault();
+                document.getElementById('confirmaSenhaCad').focus();
+            }
+        });
+
+        // ── Máscara de telefone ──────────────────────────────────────────
+        IMask(document.getElementById('telefoneCad'), {
+            mask: '(00) 00000-0000'
         });
     </script>
 
