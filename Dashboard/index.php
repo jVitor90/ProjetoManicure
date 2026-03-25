@@ -3110,12 +3110,12 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                             <div class="agenda-item-preco">${valor}</div>
                             <div class="agenda-item-badge ${badgeClass}">${badgeLabel}</div>
                             <div class="agenda-item-acoes">
-                                <button class="btn-agenda-acao confirmar btnConfirmarAgendamento" data-id="${a.id}" title="Confirmar">
+                                ${isPendente ? `<button class="btn-agenda-acao confirmar btnConfirmarAgendamento" data-id="${a.id}" title="Confirmar">
                                     <i class="bi bi-check-lg"></i>
-                                </button>
-                                <button class="btn-agenda-acao excluir btnExcluirAgendamento" data-id="${a.id}" title="Excluir">
+                                </button>` : ''}
+                                ${isPendente ? `<button class="btn-agenda-acao excluir btnExcluirAgendamento" data-id="${a.id}" title="Excluir">
                                     <i class="bi bi-x-lg"></i>
-                                </button>
+                                </button>` : ''}
                             </div>
                         </div>
                     </div>`;
