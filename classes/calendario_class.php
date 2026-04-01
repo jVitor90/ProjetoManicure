@@ -26,6 +26,13 @@ class Calendario
     // Inserir horário
     function InserirHorario($data, $horario)
     {
+        // Bloqueia cadastro de horários que já passaram no dia de hoje
+        $hoje = date('Y-m-d');
+        $agora = date('H:i:s');
+        if ($data === $hoje && $horario <= $agora) {
+            return 0; // Horário já passou, não insere
+        }
+
         $sql = "INSERT IGNORE INTO calendario (data, horario) VALUES (?, ?)";
         $banco = Banco::conectar();
         $comando = $banco->prepare($sql);

@@ -15,7 +15,7 @@ if (!isset($_SESSION['usuario'])) {
  * DADOS DO USUÁRIO — Atualiza a data do último agendamento para o usuário logado
  * ============================================================= */
 if (isset($_SESSION['usuario']['id'])) {
-   require_once('../classes/agendamento_class.php');
+    require_once('../classes/agendamento_class.php');
 
     $agendamento = new Agendamento();
     $_SESSION['usuario']['data_ultimo_agendamento'] = $agendamento->UltimoAgendamentoPorUsuario($_SESSION['usuario']['id']);
@@ -303,43 +303,43 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                                 $iniciais = strtoupper(substr($l['usuario_nome'], 0, 1) . (strpos($l['usuario_nome'], ' ') !== false ? substr($l['usuario_nome'], strpos($l['usuario_nome'], ' ') + 1, 1) : ''));
                                 $horarioFmt = substr($l['horario'], 0, 5);
                                 $valorFmt = 'R$ ' . number_format((float)$l['valor'], 2, ',', '.');
-                                $duracaoFmt = isset($l['duracao']) ? ($l['duracao'] >= 60 ? floor($l['duracao']/60).'h'.($l['duracao']%60 ? ($l['duracao']%60).'min' : '') : $l['duracao'].'min') : '';
+                                $duracaoFmt = isset($l['duracao']) ? ($l['duracao'] >= 60 ? floor($l['duracao'] / 60) . 'h' . ($l['duracao'] % 60 ? ($l['duracao'] % 60) . 'min' : '') : $l['duracao'] . 'min') : '';
                             ?>
-                            <div class="agenda-item"
-                                data-status="pendente"
-                                data-nome="<?= htmlspecialchars(strtolower($l['usuario_nome'])) ?>"
-                                data-servico="<?= htmlspecialchars(strtolower($l['servico_nome'])) ?>"
-                                data-id="<?= $l['id'] ?>">
+                                <div class="agenda-item"
+                                    data-status="pendente"
+                                    data-nome="<?= htmlspecialchars(strtolower($l['usuario_nome'])) ?>"
+                                    data-servico="<?= htmlspecialchars(strtolower($l['servico_nome'])) ?>"
+                                    data-id="<?= $l['id'] ?>">
 
-                                <!-- Horário lateral -->
-                                <div class="agenda-item-hora">
-                                    <span class="hora-principal"><?= $horarioFmt ?></span>
-                                    <?php if ($duracaoFmt): ?><span class="hora-duracao"><?= $duracaoFmt ?></span><?php endif; ?>
-                                </div>
-
-                                <!-- Linha vertical colorida -->
-                                <div class="agenda-item-linha"></div>
-
-                                <!-- Conteúdo principal -->
-                                <div class="agenda-item-body">
-                                    <div class="agenda-item-avatar"><?= $iniciais ?></div>
-                                    <div class="agenda-item-info">
-                                        <span class="agenda-item-nome"><?= htmlspecialchars($l['usuario_nome']) ?></span>
-                                        <span class="agenda-item-servico"><?= htmlspecialchars($l['servico_nome']) ?></span>
+                                    <!-- Horário lateral -->
+                                    <div class="agenda-item-hora">
+                                        <span class="hora-principal"><?= $horarioFmt ?></span>
+                                        <?php if ($duracaoFmt): ?><span class="hora-duracao"><?= $duracaoFmt ?></span><?php endif; ?>
                                     </div>
-                                    <div class="agenda-item-preco"><?= $valorFmt ?></div>
-                                    <div class="agenda-item-badge pendente">Pendente</div>
-                                    <div class="agenda-item-acoes">
-                                        <button class="btn-agenda-acao confirmar btnConfirmarAgendamento" data-id="<?= $l['id'] ?>" title="Confirmar">
-                                            <i class="bi bi-check-lg"></i>
-                                        </button>
-                                        <button class="btn-agenda-acao excluir btnExcluirAgendamento" data-id="<?= $l['id'] ?>" title="Excluir">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                    </div>
-                                </div>
 
-                            </div>
+                                    <!-- Linha vertical colorida -->
+                                    <div class="agenda-item-linha"></div>
+
+                                    <!-- Conteúdo principal -->
+                                    <div class="agenda-item-body">
+                                        <div class="agenda-item-avatar"><?= $iniciais ?></div>
+                                        <div class="agenda-item-info">
+                                            <span class="agenda-item-nome"><?= htmlspecialchars($l['usuario_nome']) ?></span>
+                                            <span class="agenda-item-servico"><?= htmlspecialchars($l['servico_nome']) ?></span>
+                                        </div>
+                                        <div class="agenda-item-preco"><?= $valorFmt ?></div>
+                                        <div class="agenda-item-badge pendente">Pendente</div>
+                                        <div class="agenda-item-acoes">
+                                            <button class="btn-agenda-acao confirmar btnConfirmarAgendamento" data-id="<?= $l['id'] ?>" title="Confirmar">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                            <button class="btn-agenda-acao excluir btnExcluirAgendamento" data-id="<?= $l['id'] ?>" title="Excluir">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
@@ -1225,14 +1225,13 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                                             <label class="form-label fw-semibold small">
                                                 <i class="bi bi-plus-circle me-1 text-rosa"></i>Adicionar horário
                                             </label>
-                                            <div class="d-flex gap-2">
-                                                <input type="time" class="form-control" id="inputNovoHorario"
-                                                    style="max-width:140px;">
-                                                <button type="button" class="btn btn-rosa btn-sm px-3"
-                                                    onclick="adicionarHorarioManual()">
-                                                    <i class="bi bi-plus-lg me-1"></i>Adicionar
-                                                </button>
+                                            <div class="tp-trigger" id="trig-single" onclick="togglePicker('single', event)" style="max-width:140px;">
+                                                <i class="bi bi-clock" style="color:#eb6b9b;font-size:13px;"></i>
+                                                <span class="tp-value" id="val-single"><?= date('H:') . str_pad(round(date('i')/5)*5%60, 2, '0', STR_PAD_LEFT) ?></span>
+                                                <span class="tp-chevron">▾</span>
+                                                <div class="tp-dropdown" id="drop-single"></div>
                                             </div>
+                                            <input type="hidden" id="inputNovoHorario" value="09:00">
                                         </div>
 
                                         <!-- Gerador de horários em série -->
@@ -1242,15 +1241,27 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                                                 <i class="bi bi-magic me-1 text-rosa"></i>Gerar horários em série
                                             </p>
                                             <div class="row g-2">
+                                                <!-- DAS -->
                                                 <div class="col-4">
                                                     <label class="form-label" style="font-size:0.72rem;color:#888;">Das</label>
-                                                    <input type="time" class="form-control form-control-sm"
-                                                        id="geradorInicio" value="09:00">
+                                                    <div class="tp-trigger" id="trig-inicio" onclick="togglePicker('inicio', event)">
+                                                        <i class="bi bi-clock" style="color:#eb6b9b;font-size:13px;"></i>
+                                                       <span class="tp-value" id="val-single"><?= date('H:') . str_pad(round(date('i')/5)*5%60, 2, '0', STR_PAD_LEFT) ?></span>
+                                                        <span class="tp-chevron">▾</span>
+                                                        <div class="tp-dropdown" id="drop-inicio"></div>
+                                                    </div>
+                                                    <input type="hidden" id="geradorInicio" value="09:00">
                                                 </div>
+                                                <!-- ATÉ -->
                                                 <div class="col-4">
                                                     <label class="form-label" style="font-size:0.72rem;color:#888;">Até</label>
-                                                    <input type="time" class="form-control form-control-sm"
-                                                        id="geradorFim" value="18:00">
+                                                    <div class="tp-trigger" id="trig-fim" onclick="togglePicker('fim', event)">
+                                                        <i class="bi bi-clock" style="color:#eb6b9b;font-size:13px;"></i>
+                                                        <span class="tp-value" id="val-single"><?= date('H:') . str_pad(round(date('i')/5)*5%60, 2, '0', STR_PAD_LEFT) ?></span>
+                                                        <span class="tp-chevron">▾</span>
+                                                        <div class="tp-dropdown" id="drop-fim"></div>
+                                                    </div>
+                                                    <input type="hidden" id="geradorFim" value="18:00">
                                                 </div>
                                                 <div class="col-4">
                                                     <label class="form-label" style="font-size:0.72rem;color:#888;">A cada</label>
@@ -1708,19 +1719,19 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
         /* =============================================================
          *  PERFIL — Preenche o modal com dados do usuário logado
          * ============================================================= */
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const perfilModal = document.getElementById('perfilModal');
 
             if (perfilModal) {
-                perfilModal.addEventListener('show.bs.modal', function (event) {
+                perfilModal.addEventListener('show.bs.modal', function(event) {
                     const button = event.relatedTarget;
 
-                    const nome               = button.getAttribute('data-nome');
-                    const sobrenome          = button.getAttribute('data-sobrenome');
-                    const email              = button.getAttribute('data-email');
-                    const telefone           = button.getAttribute('data-telefone');
-                    const ultimoAgendamento  = button.getAttribute('data-ultimo-agendamento');
-                    const criadoEm           = button.getAttribute('data-criado-em');
+                    const nome = button.getAttribute('data-nome');
+                    const sobrenome = button.getAttribute('data-sobrenome');
+                    const email = button.getAttribute('data-email');
+                    const telefone = button.getAttribute('data-telefone');
+                    const ultimoAgendamento = button.getAttribute('data-ultimo-agendamento');
+                    const criadoEm = button.getAttribute('data-criado-em');
 
                     document.getElementById('modal-nome').textContent = nome + ' ' + sobrenome;
                     document.getElementById('modal-email').textContent = email || '—';
@@ -1736,12 +1747,12 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                         document.getElementById('modal-ultimo-agendamento').textContent = 'Nenhum agendamento';
                     }
 
-                    document.getElementById('modal-criado-em').textContent = criadoEm
-                        ? new Date(criadoEm).toLocaleDateString('pt-BR')
-                        : '—';
+                    document.getElementById('modal-criado-em').textContent = criadoEm ?
+                        new Date(criadoEm).toLocaleDateString('pt-BR') :
+                        '—';
                 });
-                }
-            });
+            }
+        });
 
 
         /* =============================================================
@@ -2342,6 +2353,24 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     return;
                 }
 
+                // [T7b] Horário no passado — só valida se a data selecionada for hoje
+                const _hojeManual = new Date().toISOString().slice(0, 10);
+                if (dataSelecionada === _hojeManual) {
+                    const _agora = new Date();
+                    const _agoraMin = _agora.getHours() * 60 + _agora.getMinutes();
+                    if ((h * 60 + m) <= _agoraMin) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Horário no passado',
+                            text: 'Não é possível adicionar um horário que já passou.',
+                            confirmButtonColor: '#EB6B9C',
+                            timer: 2500,
+                            showConfirmButton: false
+                        });
+                        return;
+                    }
+                }
+
                 if (!horariosDB[dataSelecionada]) horariosDB[dataSelecionada] = [];
 
                 // [T8] Limite de horários por dia
@@ -2575,6 +2604,27 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                 const [hF, mF] = fim.split(':').map(Number);
                 let minAtual = hI * 60 + mI;
                 const minFim = hF * 60 + mF;
+
+                // [T18b] Para o dia de hoje, ignora horários que já passaram
+                const _hojeSerie = new Date().toISOString().slice(0, 10);
+                if (dataSelecionada === _hojeSerie) {
+                    const _agoraSerie = new Date();
+                    const _agoraMinSerie = _agoraSerie.getHours() * 60 + _agoraSerie.getMinutes();
+                    if (minFim <= _agoraMinSerie) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Horários no passado',
+                            text: 'Todos os horários do intervalo selecionado já passaram para hoje.',
+                            confirmButtonColor: '#EB6B9C',
+                            timer: 2500,
+                            showConfirmButton: false
+                        });
+                        return;
+                    }
+                    // Avança o início até o primeiro horário futuro
+                    while (minAtual <= _agoraMinSerie) minAtual += intervalo;
+                }
+
                 if (!horariosDB[dataSelecionada]) horariosDB[dataSelecionada] = [];
 
                 // [T19] Pré-checa o limite antes de inserir
@@ -2972,42 +3022,47 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
         /* =============================================================
          *  AGENDA COMPLETA — Navegação semanal + filtros
          * ============================================================= */
-        (function () {
+        (function() {
             const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-            const MESES_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+            const MESES_PT = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
             let hoje = new Date();
-            hoje.setHours(0,0,0,0);
+            hoje.setHours(0, 0, 0, 0);
             let diaSelecionado = new Date(hoje);
             let statusFiltro = 'todos';
             let termoBusca = '';
             // Dados PHP disponíveis apenas para hoje; para outros dias fazemos fetch
             let cacheAgendamentos = {}; // key: 'YYYY-MM-DD'
 
-            function pad(n){ return String(n).padStart(2,'0'); }
-            function toISO(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+            function pad(n) {
+                return String(n).padStart(2, '0');
+            }
 
-            function inicioSemana(ref){
+            function toISO(d) {
+                return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+            }
+
+            function inicioSemana(ref) {
                 const d = new Date(ref);
                 d.setDate(d.getDate() - d.getDay());
                 return d;
             }
 
-            function renderizarStrip(){
+            function renderizarStrip() {
                 const strip = document.getElementById('agendaSemanaStrip');
-                if(!strip) return;
+                if (!strip) return;
                 const inicio = inicioSemana(diaSelecionado);
                 strip.innerHTML = '';
-                for(let i = 0; i < 7; i++){
+                for (let i = 0; i < 7; i++) {
                     const d = new Date(inicio);
                     d.setDate(inicio.getDate() + i);
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'agenda-dia-btn';
                     const isHoje = toISO(d) === toISO(hoje);
-                    const isSel  = toISO(d) === toISO(diaSelecionado);
-                    if(isHoje) btn.classList.add('hoje');
-                    if(isSel)  btn.classList.add('selecionado');
+                    const isSel = toISO(d) === toISO(diaSelecionado);
+                    if (isHoje) btn.classList.add('hoje');
+                    if (isSel) btn.classList.add('selecionado');
                     btn.innerHTML = `<span class="dia-semana-label">${DIAS_SEMANA[d.getDay()]}</span><span class="dia-num-label">${d.getDate()}</span>`;
                     btn.addEventListener('click', () => {
                         diaSelecionado = new Date(d);
@@ -3018,9 +3073,9 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                 }
             }
 
-            function carregarDia(iso){
+            function carregarDia(iso) {
                 // Se já está em cache usa direto
-                if(cacheAgendamentos[iso] !== undefined){
+                if (cacheAgendamentos[iso] !== undefined) {
                     renderizarLista(cacheAgendamentos[iso]);
                     return;
                 }
@@ -3037,35 +3092,35 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                     });
             }
 
-            function renderizarLista(agendamentos){
+            function renderizarLista(agendamentos) {
                 const lista = document.getElementById('agendaLista');
                 const count = document.getElementById('agendaCount');
                 // Filtra por status e busca
                 let filtrados = agendamentos.filter(a => {
                     // pendente = 1, confirmado = 0
                     const st = String(a.status).toLowerCase();
-                    const isPendente   = st === '1' || st === 'pendente';
+                    const isPendente = st === '1' || st === 'pendente';
                     const isConfirmado = st === '0' || st === 'confirmado';
                     const statusOk = statusFiltro === 'todos' ||
-                        (statusFiltro === 'pendente'   && isPendente) ||
+                        (statusFiltro === 'pendente' && isPendente) ||
                         (statusFiltro === 'confirmado' && isConfirmado);
-                    const buscaOk  = !termoBusca ||
-                        (a.usuario_nome  || '').toLowerCase().includes(termoBusca) ||
-                        (a.servico_nome  || '').toLowerCase().includes(termoBusca);
+                    const buscaOk = !termoBusca ||
+                        (a.usuario_nome || '').toLowerCase().includes(termoBusca) ||
+                        (a.servico_nome || '').toLowerCase().includes(termoBusca);
                     return statusOk && buscaOk;
                 });
 
-                if(count) count.textContent = `${filtrados.length} agendamento(s)`;
+                if (count) count.textContent = `${filtrados.length} agendamento(s)`;
 
                 // Atualiza subtítulo com contagem
                 const sub = document.getElementById('agenda-subtitulo');
-                if(sub){
+                if (sub) {
                     const iso = toISO(diaSelecionado);
-                    const [a,m,di] = iso.split('-');
+                    const [a, m, di] = iso.split('-');
                     sub.textContent = `${parseInt(di)} de ${MESES_PT[parseInt(m)-1]} de ${a} · ${filtrados.length} agendamento(s)`;
                 }
 
-                if(!filtrados.length){
+                if (!filtrados.length) {
                     lista.innerHTML = `
                         <div class="agenda-vazia">
                             <i class="bi bi-calendar-x"></i>
@@ -3076,19 +3131,19 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                 }
 
                 lista.innerHTML = filtrados.map(a => {
-                    const nome    = a.usuario_nome || '';
+                    const nome = a.usuario_nome || '';
                     const servico = a.servico_nome || '';
-                    const partes  = nome.trim().split(' ');
+                    const partes = nome.trim().split(' ');
                     const iniciais = (partes[0]?.[0] || '') + (partes[1]?.[0] || '');
-                    const horario  = (a.horario || '').slice(0,5);
-                    const valor    = 'R$ ' + parseFloat(a.valor || 0).toFixed(2).replace('.',',');
-                    const duracao  = a.duracao >= 60
-                        ? Math.floor(a.duracao/60)+'h'+(a.duracao%60 ? (a.duracao%60)+'min' : '')
-                        : (a.duracao ? a.duracao+'min' : '');
+                    const horario = (a.horario || '').slice(0, 5);
+                    const valor = 'R$ ' + parseFloat(a.valor || 0).toFixed(2).replace('.', ',');
+                    const duracao = a.duracao >= 60 ?
+                        Math.floor(a.duracao / 60) + 'h' + (a.duracao % 60 ? (a.duracao % 60) + 'min' : '') :
+                        (a.duracao ? a.duracao + 'min' : '');
                     const st = String(a.status).toLowerCase();
-                    const isPendente   = st === '1' || st === 'pendente';
-                    const badgeClass   = isPendente ? 'pendente' : 'confirmado';
-                    const badgeLabel   = isPendente ? 'Pendente' : 'Confirmado';
+                    const isPendente = st === '1' || st === 'pendente';
+                    const badgeClass = isPendente ? 'pendente' : 'confirmado';
+                    const badgeLabel = isPendente ? 'Pendente' : 'Confirmado';
 
                     return `
                     <div class="agenda-item"
@@ -3125,9 +3180,9 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                 reattachBotoes();
             }
 
-            function reattachBotoes(){
+            function reattachBotoes() {
                 document.querySelectorAll('#agendaLista .btnExcluirAgendamento').forEach(btn => {
-                    btn.addEventListener('click', function(){
+                    btn.addEventListener('click', function() {
                         const card = this.closest('.agenda-item');
                         const nome = card.querySelector('.agenda-item-nome')?.textContent || '';
                         const servico = card.querySelector('.agenda-item-servico')?.textContent || '';
@@ -3136,78 +3191,115 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                         Swal.fire({
                             title: 'Excluir Agendamento?',
                             html: `<div class="text-start"><p class="mb-2"><strong>Cliente:</strong> ${nome}</p><p class="mb-2"><strong>Serviço:</strong> ${servico}</p><p class="mb-0"><strong>Horário:</strong> ${horario}</p></div>`,
-                            icon: 'question', showCancelButton: true,
-                            confirmButtonColor: '#EB6B9C', cancelButtonColor: '#6c757d',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#EB6B9C',
+                            cancelButtonColor: '#6c757d',
                             confirmButtonText: '<i class="bi bi-trash me-1"></i> Excluir',
-                            cancelButtonText: 'Cancelar', reverseButtons: true
+                            cancelButtonText: 'Cancelar',
+                            reverseButtons: true
                         }).then(r => {
-                            if(!r.isConfirmed) return;
+                            if (!r.isConfirmed) return;
                             fetch('../actions/excluir_agendamento.php', {
-                                method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'},
-                                body: new URLSearchParams({exclui_id: id})
-                            }).then(r=>r.json()).then(data => {
-                                if(data.sucesso){
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    exclui_id: id
+                                })
+                            }).then(r => r.json()).then(data => {
+                                if (data.sucesso) {
                                     invalidarCache();
-                                    Swal.fire({title:'Excluído!',icon:'success',timer:1500,showConfirmButton:false,confirmButtonColor:'#EB6B9C'})
-                                    .then(() => carregarDia(toISO(diaSelecionado)));
-                                } else Swal.fire({title:'Erro!',text:'Falha ao excluir.',icon:'error',confirmButtonColor:'#dc3545'});
+                                    Swal.fire({
+                                            title: 'Excluído!',
+                                            icon: 'success',
+                                            timer: 1500,
+                                            showConfirmButton: false,
+                                            confirmButtonColor: '#EB6B9C'
+                                        })
+                                        .then(() => carregarDia(toISO(diaSelecionado)));
+                                } else Swal.fire({
+                                    title: 'Erro!',
+                                    text: 'Falha ao excluir.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#dc3545'
+                                });
                             });
                         });
                     });
                 });
 
                 document.querySelectorAll('#agendaLista .btnConfirmarAgendamento').forEach(btn => {
-                    btn.addEventListener('click', function(){
+                    btn.addEventListener('click', function() {
                         const card = this.closest('.agenda-item');
                         const nome = card.querySelector('.agenda-item-nome')?.textContent || '';
                         const id = this.getAttribute('data-id');
                         Swal.fire({
                             title: 'Confirmar Agendamento?',
                             html: `<p class="mb-0"><strong>${nome}</strong></p>`,
-                            icon: 'question', showCancelButton: true,
-                            confirmButtonColor: '#28a745', cancelButtonColor: '#6c757d',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#6c757d',
                             confirmButtonText: '<i class="bi bi-check-lg me-1"></i> Confirmar',
-                            cancelButtonText: 'Cancelar', reverseButtons: true
+                            cancelButtonText: 'Cancelar',
+                            reverseButtons: true
                         }).then(r => {
-                            if(!r.isConfirmed) return;
+                            if (!r.isConfirmed) return;
                             fetch('../actions/atualizar_agendamento.php', {
-                                method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'},
-                                body: new URLSearchParams({atualizar_id: id})
-                            }).then(r=>r.json()).then(data => {
-                                if(data.sucesso){
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    atualizar_id: id
+                                })
+                            }).then(r => r.json()).then(data => {
+                                if (data.sucesso) {
                                     invalidarCache();
-                                    Swal.fire({title:'Confirmado!',icon:'success',timer:1500,showConfirmButton:false})
-                                    .then(() => carregarDia(toISO(diaSelecionado)));
-                                } else Swal.fire({title:'Erro!',text:'Falha ao confirmar.',icon:'error',confirmButtonColor:'#dc3545'});
+                                    Swal.fire({
+                                            title: 'Confirmado!',
+                                            icon: 'success',
+                                            timer: 1500,
+                                            showConfirmButton: false
+                                        })
+                                        .then(() => carregarDia(toISO(diaSelecionado)));
+                                } else Swal.fire({
+                                    title: 'Erro!',
+                                    text: 'Falha ao confirmar.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#dc3545'
+                                });
                             });
                         });
                     });
                 });
             }
 
-            function invalidarCache(){
+            function invalidarCache() {
                 cacheAgendamentos = {};
             }
 
             // Filtros de status
             document.querySelectorAll('.agenda-filtro-btn').forEach(btn => {
-                btn.addEventListener('click', function(){
+                btn.addEventListener('click', function() {
                     document.querySelectorAll('.agenda-filtro-btn').forEach(b => b.classList.remove('ativo'));
                     this.classList.add('ativo');
                     statusFiltro = this.dataset.status;
                     const iso = toISO(diaSelecionado);
-                    if(cacheAgendamentos[iso]) renderizarLista(cacheAgendamentos[iso]);
+                    if (cacheAgendamentos[iso]) renderizarLista(cacheAgendamentos[iso]);
                 });
             });
 
             // Busca inline
             let buscaTimer;
-            document.getElementById('agendaBuscaInline')?.addEventListener('input', function(){
+            document.getElementById('agendaBuscaInline')?.addEventListener('input', function() {
                 clearTimeout(buscaTimer);
                 buscaTimer = setTimeout(() => {
                     termoBusca = this.value.toLowerCase().trim();
                     const iso = toISO(diaSelecionado);
-                    if(cacheAgendamentos[iso]) renderizarLista(cacheAgendamentos[iso]);
+                    if (cacheAgendamentos[iso]) renderizarLista(cacheAgendamentos[iso]);
                 }, 250);
             });
 
@@ -3231,7 +3323,7 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
             // Init — carrega hoje com dados do PHP já disponíveis
             const isoHoje = toISO(hoje);
             <?php
-                $listarJSON = json_encode($listar);
+            $listarJSON = json_encode($listar);
             ?>
             cacheAgendamentos[isoHoje] = <?= $listarJSON ?>;
 
@@ -3240,6 +3332,125 @@ $totalAgendamentos = $totalDoDia->TotalAgendamentos();
                 renderizarLista(cacheAgendamentos[isoHoje]);
             });
 
+        })();
+        (function() {
+            var _agora = new Date();
+            var _hAtual = _agora.getHours();
+            var _mAtual = Math.round(_agora.getMinutes() / 5) * 5 % 60; // arredonda p/ múltiplo de 5
+
+            var tpState = {
+                single: {
+                    h: _hAtual,
+                    m: _mAtual
+                },
+                inicio: {
+                    h: _hAtual,
+                    m: _mAtual
+                },
+                fim: {
+                    h: 18,
+                    m: 0
+                }
+            };
+            var tpOpen = null;
+            var mins = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+
+            function pad(n) {
+                return String(n).padStart(2, '0');
+            }
+
+            function tpFmt(h, m) {
+                return pad(h) + ':' + pad(m);
+            }
+
+            function buildTp(id) {
+                var s = tpState[id];
+                var d = document.getElementById('drop-' + id);
+                var horas = '';
+                for (var i = 0; i < 24; i++) {
+                    horas += '<div class="tp-item' + (i === s.h ? ' selected' : '') + '" onclick="tpSelH(\'' + id + '\',' + i + ',event)">' + pad(i) + '</div>';
+                }
+                var minutos = '';
+                for (var j = 0; j < mins.length; j++) {
+                    var m = mins[j];
+                    minutos += '<div class="tp-item' + (m === s.m ? ' selected' : '') + '" onclick="tpSelM(\'' + id + '\',' + m + ',event)">' + pad(m) + '</div>';
+                }
+                d.innerHTML =
+                    '<div class="tp-cols">' +
+                    '<div class="tp-col"><div class="tp-col-title">Hora</div>' +
+                    '<div class="tp-scroll" id="hscroll-' + id + '">' + horas + '</div></div>' +
+                    '<div class="tp-sep"></div>' +
+                    '<div class="tp-col"><div class="tp-col-title">Min</div>' +
+                    '<div class="tp-scroll" id="mscroll-' + id + '">' + minutos + '</div></div>' +
+                    '</div>' +
+                    '<div class="tp-actions">' +
+                    '<button class="tp-btn-cancel" onclick="closeTpBtn(event)">Cancelar</button>' +
+                    '<button class="tp-btn-ok" onclick="tpConfirm(\'' + id + '\',event)">OK</button>' +
+                    '</div>';
+
+                setTimeout(function() {
+                    var hs = document.getElementById('hscroll-' + id);
+                    if (hs) hs.scrollTop = s.h * 36;
+                    var ms = document.getElementById('mscroll-' + id);
+                    var mi = mins.indexOf(s.m);
+                    if (ms && mi >= 0) ms.scrollTop = mi * 36;
+                }, 10);
+            }
+
+            window.togglePicker = function(id, e) {
+                e.stopPropagation();
+                if (tpOpen && tpOpen !== id) closeTp();
+                var drop = document.getElementById('drop-' + id);
+                var trig = document.getElementById('trig-' + id);
+                if (drop.classList.contains('open')) {
+                    closeTp();
+                    return;
+                }
+                buildTp(id);
+                drop.classList.add('open');
+                trig.classList.add('open');
+                tpOpen = id;
+            };
+
+            function closeTp() {
+                if (!tpOpen) return;
+                document.getElementById('drop-' + tpOpen).classList.remove('open');
+                document.getElementById('trig-' + tpOpen).classList.remove('open');
+                tpOpen = null;
+            }
+
+            window.tpSelH = function(id, h, e) {
+                e.stopPropagation();
+                tpState[id].h = h;
+                document.querySelectorAll('#hscroll-' + id + ' .tp-item').forEach(function(el, i) {
+                    el.classList.toggle('selected', i === h);
+                });
+            };
+
+            window.tpSelM = function(id, m, e) {
+                e.stopPropagation();
+                tpState[id].m = m;
+                document.querySelectorAll('#mscroll-' + id + ' .tp-item').forEach(function(el, i) {
+                    el.classList.toggle('selected', mins[i] === m);
+                });
+            };
+
+            window.tpConfirm = function(id, e) {
+                e.stopPropagation();
+                var s = tpState[id];
+                var v = tpFmt(s.h, s.m);
+                document.getElementById('val-' + id).textContent = v;
+                var inputId = id === 'single' ? 'inputNovoHorario' : (id === 'inicio' ? 'geradorInicio' : 'geradorFim');
+                document.getElementById(inputId).value = v;
+                closeTp();
+            };
+
+            window.closeTpBtn = function(e) {
+                e.stopPropagation();
+                closeTp();
+            };
+
+            document.addEventListener('click', closeTp);
         })();
     </script>
 
